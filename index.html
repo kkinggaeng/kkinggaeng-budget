@@ -2,16 +2,46 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#111111" />
-  <title>APPL 가계부</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>낑갱 가계부</title>
+  <meta name="description" content="낑갱 가계부 - 간단 가계부 웹앱" />
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", Roboto, Arial, sans-serif;
+      background: #0b0c10;
+      color: #eaeaea;
+    }
+    .wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 48px 20px;
+    }
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 44px;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+    p {
+      margin: 0;
+      font-size: 18px;
+      opacity: 0.9;
+    }
+  </style>
 </head>
+
 <body>
-  <h1>APPL 가계부</h1>
-  <p>정상적으로 열렸어요 🎉</p>
-  <script src="app.js"></script>
+  <div class="wrap">
+    <div>
+      <h1>낑갱 가계부</h1>
+      <p>정상적으로 열렸어요 🎉</p>
+    </div>
+  </div>
 </body>
 </html>
