@@ -1,5 +1,1 @@
 body{font-family:system-ui;background:#0f1115;color:#fff}
-.fab .plus{
-  display: inline-block;
-  transform: translateY(-10px); /* 또는 -2px */
-}
