@@ -1,0 +1,1 @@
+console.log('APPL Budget App Loaded');

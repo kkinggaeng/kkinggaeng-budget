@@ -1,0 +1,8 @@
+{
+  "name": "APPL 가계부",
+  "short_name": "APPL가계부",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f1115",
+  "theme_color": "#111111"
+}
