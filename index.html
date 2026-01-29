@@ -206,6 +206,12 @@
       color: #111;
       border-color: rgba(255,255,255,.92);
     }
+
+
+    .type-btn {
+      font-size: 13px;   /* ← 여기서 조절 (13~15 추천) */
+      padding: 8px 14px;
+    }
   </style>
 </head>
 
@@ -462,13 +468,10 @@ saveBtn.addEventListener('click', ()=>{
     return n.toLocaleString('ko-KR');
   };
 
-  amountInput.addEventListener('input', () => {
-    // 입력값에서 숫자만 남기기
-    const digits = amountInput.value.replace(/[^\d]/g, '');
-    // raw 값(저장용) 따로 보관
-    amountInput.dataset.raw = digits;
-    // 표시용은 콤마
-    amountInput.value = formatComma(digits);
+  amountEl.addEventListener('input', () => {
+  const digits = amountEl.value.replace(/[^0-9]/g, '');
+  amountEl.dataset.raw = digits;
+  amountEl.value = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   });
 })();
     
