@@ -179,7 +179,33 @@
       flex:1; padding:12px;
       border-radius:12px; border:none;
     }
-    .actions .ghost{background:transparent; color:var(--muted)}    
+    .actions .ghost{background:transparent; color:var(--muted)} 
+
+    /* 지출/수입 토글 버튼 */
+    .segmented{
+      display:flex;
+      gap:10px;
+      margin: 6px 0 14px;
+    }
+
+    .seg-btn{
+      flex:1;
+      height:44px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.85);
+      font-size:16px;
+      font-weight:700;
+      letter-spacing:-0.2px;
+      cursor:pointer;
+    }
+
+    .seg-btn.active{
+      background: rgba(255,255,255,.92);
+      color: #111;
+      border-color: rgba(255,255,255,.92);
+    }
   </style>
 </head>
 
@@ -238,11 +264,15 @@
     <h3>지출 / 수입 추가</h3>
 
     <div class="row">
-      <label>구분</label>
-      <select id="type">
-        <option value="expense">지출</option>
-        <option value="income">수입</option>
-      </select>
+      <label class="label">구분</label>
+
+        <div class="segmented" id="typeSegment" role="group" aria-label="지출 수입 선택">
+          <button type="button" class="seg-btn active" data-value="expense">지출</button>
+          <button type="button" class="seg-btn" data-value="income">수입</button>
+        </div>
+
+      <!-- 실제 저장값을 담는 숨겨진 input -->
+      <input type="hidden" id="type" value="expense" />
     </div>
 
     <div class="row">
@@ -377,7 +407,7 @@ closeBtn.addEventListener('click', ()=>{
 
 // 저장(일단 로컬 저장만)
 saveBtn.addEventListener('click', ()=>{
-  const amount = Number(amountEl.value || 0);
+  const amount = Number(amountEl.dataset.raw || 0);
   if(!amount || amount <= 0){
     alert('금액을 입력해줘!');
     return;
@@ -403,6 +433,45 @@ saveBtn.addEventListener('click', ()=>{
   modal.classList.add('hidden');
   alert('저장됨 👍');
 });
+
+  // 지출/수입 버튼 토글
+(function(){
+  const seg = document.getElementById('typeSegment');
+  const hiddenType = document.getElementById('type');
+  if(!seg || !hiddenType) return;
+
+  seg.addEventListener('click', (e) => {
+    const btn = e.target.closest('.seg-btn');
+    if(!btn) return;
+
+    seg.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    hiddenType.value = btn.dataset.value; // expense | income
+  });
+})();
+
+// 금액 자동 콤마 표시 + 숫자만 저장
+(function(){
+  const amountInput = document.getElementById('amount');
+  if(!amountInput) return;
+
+  const formatComma = (numStr) => {
+    if(numStr === '') return '';
+    const n = Number(numStr);
+    if(Number.isNaN(n)) return '';
+    return n.toLocaleString('ko-KR');
+  };
+
+  amountInput.addEventListener('input', () => {
+    // 입력값에서 숫자만 남기기
+    const digits = amountInput.value.replace(/[^\d]/g, '');
+    // raw 값(저장용) 따로 보관
+    amountInput.dataset.raw = digits;
+    // 표시용은 콤마
+    amountInput.value = formatComma(digits);
+  });
+})();
+    
   </script>
 </body>
 </html>
