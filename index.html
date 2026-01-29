@@ -150,6 +150,37 @@
       color:var(--muted);
       font-size:12px;
     }
+
+    .modal{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.5);
+      display:flex; align-items:flex-end;
+      z-index:20;
+    }
+   .modal.hidden{display:none}
+.sheet{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:20px 20px 0 0;
+  padding:16px;
+}
+.sheet h3{margin:0 0 12px}
+.row{display:flex; flex-direction:column; gap:6px; margin-bottom:10px}
+input,select{
+  background:var(--panel2);
+  border:1px solid var(--line);
+  color:var(--text);
+  padding:10px;
+  border-radius:10px;
+}
+.actions{display:flex; gap:10px; margin-top:6px}
+.actions button{
+  flex:1; padding:12px;
+  border-radius:12px; border:none;
+}
+.actions .ghost{background:transparent; color:var(--muted)}
+    
   </style>
 </head>
 
@@ -202,8 +233,50 @@
   </main>
 
   <!-- Floating + button (Home only) -->
-  <button class="fab"><span class="plus">+</span></button>
+  <button class="fab" id="fab" aria-label="추가">+</button>
+  <div class="modal hidden" id="modal">
+  <div class="sheet">
+    <h3>지출 / 수입 추가</h3>
 
+    <div class="row">
+      <label>구분</label>
+      <select id="type">
+        <option value="expense">지출</option>
+        <option value="income">수입</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <label>금액</label>
+      <input type="number" id="amount" placeholder="금액 입력" inputmode="numeric" />
+    </div>
+
+    <div class="row">
+      <label>카테고리</label>
+      <select id="category"></select>
+    </div>
+
+    <div class="row">
+      <label>사용처</label>
+      <input id="place" placeholder="이마트 / 쿠팡 / 컬리 / 네이버 / 편의점 / 마트 / 기타" />
+    </div>
+
+    <div class="row">
+      <label>카드</label>
+      <select id="card">
+        <option>삼성</option>
+        <option>신한</option>
+        <option>국민</option>
+        <option>현금/계좌</option>
+      </select>
+    </div>
+
+    <div class="actions">
+      <button id="save">저장</button>
+      <button class="ghost" id="close">닫기</button>
+    </div>
+  </div>
+</div>
   <!-- Bottom tabs -->
   <nav class="tabbar" role="tablist" aria-label="하단 탭">
     <button class="tab active" data-target="home" role="tab" aria-selected="true">
@@ -251,10 +324,86 @@
       t.addEventListener('click', ()=> setActiveTab(t.dataset.target));
     });
 
-    // + 버튼은 다음 단계에서 “입력 모달”로 연결할 거라 지금은 안내만
-    fab.addEventListener('click', ()=>{
-      alert('다음 단계: 지출/수입 입력창을 붙일 거야 🙂');
-    });
+// ===== 카테고리(초기값: 나중에 언제든 추가 가능) =====
+const CATEGORIES = [
+  "식비",
+  "외식/배달",
+  "커피/간식",
+  "생필품",
+  "의류/잡화",
+  "아이용품",
+  "아이의류",
+  "교육/체험",
+  "보험료",
+  "공과금",
+  "건강보험료",
+  "상품매입비",
+  "재료·제작비",
+  "배송/택배비",
+  "스토어비용",
+  "기타"
+];
+
+const modal = document.getElementById('modal');
+const closeBtn = document.getElementById('close');
+const saveBtn = document.getElementById('save');
+
+const typeEl = document.getElementById('type');
+const amountEl = document.getElementById('amount');
+const categoryEl = document.getElementById('category');
+const placeEl = document.getElementById('place');
+const cardEl = document.getElementById('card');
+
+function renderCategories(){
+  categoryEl.innerHTML = "";
+  CATEGORIES.forEach(name=>{
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = name;
+    categoryEl.appendChild(opt);
+  });
+}
+renderCategories();
+
+// + 버튼 → 모달 열기
+fab.addEventListener('click', ()=>{
+  modal.classList.remove('hidden');
+  amountEl.focus();
+});
+
+// 닫기
+closeBtn.addEventListener('click', ()=>{
+  modal.classList.add('hidden');
+});
+
+// 저장(일단 로컬 저장만)
+saveBtn.addEventListener('click', ()=>{
+  const amount = Number(amountEl.value || 0);
+  if(!amount || amount <= 0){
+    alert('금액을 입력해줘!');
+    return;
+  }
+
+  const item = {
+    type: typeEl.value,               // expense/income
+    amount,
+    category: categoryEl.value,
+    place: placeEl.value.trim(),
+    card: cardEl.value,
+    date: new Date().toISOString()
+  };
+
+  const list = JSON.parse(localStorage.getItem('kk-budget') || '[]');
+  list.unshift(item);
+  localStorage.setItem('kk-budget', JSON.stringify(list));
+
+  // 입력값 초기화(금액/사용처만)
+  amountEl.value = '';
+  placeEl.value = '';
+
+  modal.classList.add('hidden');
+  alert('저장됨 👍');
+});
   </script>
 </body>
 </html>
