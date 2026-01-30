@@ -6,7 +6,7 @@ let suppressTimer = null;
 // ===== Modal open/close (iOS 앱 느낌) =====
 const fab = document.getElementById("fab");
 const modal = document.getElementById("modal");
-const closeBtn = document.getElementById("close");
+const closeBtn = document.getElementById("close"); 
 
 function openModal() {
   suppressFocus = true;
