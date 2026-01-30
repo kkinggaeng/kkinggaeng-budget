@@ -15,15 +15,18 @@ function openModal() {
   document.body.classList.add("modal-open");
   modal.classList.remove("hidden");
 
-  // 열리는 순간 혹시 잡힌 포커스 제거 + 닫기에 포커스
+  // ✅ iOS 자동 포커스/키보드 방지: 금액칸 잠깐 잠그기
+  const amountEl = document.getElementById("amount");
+  amountEl?.setAttribute("readonly", "true");
+
   setTimeout(() => {
     document.activeElement?.blur();
     closeBtn?.focus({ preventScroll: true });
   }, 0);
 
-  // 0.3초 후부터는 정상적으로 입력 가능
   suppressTimer = setTimeout(() => {
     suppressFocus = false;
+    amountEl?.removeAttribute("readonly"); // ✅ 잠금 해제
   }, 300);
 }
 
