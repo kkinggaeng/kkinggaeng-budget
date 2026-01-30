@@ -41,8 +41,10 @@ function closeModal() {
   modal.classList.add("hidden");
   document.body.classList.remove("modal-open");
 
-  // ✅ 마지막 포커스를 입력칸이 아니라 +버튼으로
-  fab?.focus({ preventScroll: true });
+  // ✅ 금액 입력 원상복구
+  amountReal.value = "";
+  amountReal.classList.add("hidden");
+  amountFake.classList.remove("active");
 }
 
 // + 버튼 누르면 열기
@@ -73,3 +75,17 @@ modal.addEventListener("focusin", (e) => {
   e.target.blur();
   closeBtn?.focus({ preventScroll: true });
 }, true);
+
+const amountFake = document.getElementById("amountFake");
+const amountReal = document.getElementById("amount");
+
+// 가짜 박스 눌렀을 때
+if (amountFake && amountReal) {
+  amountFake.addEventListener("click", () => {
+    amountFake.classList.add("active");   // 가짜 숨김
+    amountReal.classList.remove("hidden"); // 진짜 보여줌
+    amountReal.focus();                    // ✅ 이때만 키보드
+  });
+}
+
+
