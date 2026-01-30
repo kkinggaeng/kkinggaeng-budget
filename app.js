@@ -6,8 +6,13 @@ const modal = document.getElementById("modal");
 const closeBtn = document.getElementById("close");
 
 function openModal() {
-  document.body.classList.add("modal-open");   // 배경 스크롤 방지
-  modal.classList.remove("hidden");            // 모달 표시
+  document.body.classList.add("modal-open");
+  modal.classList.remove("hidden");
+
+  setTimeout(() => {
+    if (document.activeElement) document.activeElement.blur();
+    closeBtn?.focus(); // 닫기 버튼에 포커스 (키보드 안 뜸)
+  }, 0);
 }
 
 function closeModal() {
