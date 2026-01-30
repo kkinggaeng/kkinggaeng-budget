@@ -7,17 +7,30 @@
   <title>낑갱 가계부</title>
   <style>
     :root{
-      --bg: #f7f7f8;
-      --panel: #ffffff;
-      --panel2: #f1f1f4;
-      --text: #111111;
-      --muted: #666666;
-      --line: rgba(0,0,0,.08);
-      --accent:#4da3ff;
-      --danger:#ff5b5b;
-      --ok:#5bffb1;
-      --radius:16px;
+    /* Cloud Dancer base (soft white) */
+    --bg: #f7f7f8;
+    --panel: #ffffff;
+    --panel2: #f1f1f4;
+
+    --text: #111111;
+    --muted: #666666;
+    --line: rgba(0,0,0,.08);
+
+    /* accents */
+    --accent:#4da3ff;
+    --danger:#ff5b5b;
+    --ok:#20c997;
+
+    --radius:16px;
+
+    /* NEW: surfaces used by header/tabbar/modal */
+    --surface: rgba(255,255,255,.78);
+    --surface-strong: rgba(255,255,255,.92);
+    --shadow: rgba(0,0,0,.12);
+    --overlay: rgba(0,0,0,.35);
     }
+
+    
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
@@ -30,14 +43,14 @@
     }
 
     /* 상단 헤더 */
-    .header{
-      position:sticky; top:0;
-      background:linear-gradient(to bottom, rgba(11,11,15,.95), rgba(11,11,15,.72));
-      backdrop-filter: blur(10px);
-      border-bottom:1px solid var(--line);
-      padding:18px 16px 12px;
-      z-index:5;
-    }
+  .header{
+    position:sticky; top:0;
+    background: linear-gradient(to bottom, var(--surface-strong), var(--surface));
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--line);
+    padding:18px 16px 12px;
+    z-index:5;
+  }
     .title{
       display:flex; align-items:center; justify-content:space-between;
       gap:12px;
@@ -86,15 +99,16 @@
 
     /* 하단 탭바 */
     .tabbar{
-      position:fixed; left:0; right:0; bottom:0;
-      height:66px;
-      background:rgba(18,18,26,.92);
-      backdrop-filter: blur(14px);
-      border-top:1px solid var(--line);
-      display:flex;
-      padding:8px 10px 10px;
-      z-index:10;
+     position:fixed; left:0; right:0; bottom:0;
+     height:66px;
+     background: var(--surface);
+     backdrop-filter: blur(14px);
+     border-top:1px solid var(--line);
+     display:flex;
+     padding:8px 10px 10px;
+     z-index:10;
     }
+    
     .tab{
       flex:1;
       border:none;
