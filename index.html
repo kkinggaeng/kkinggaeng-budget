@@ -126,15 +126,15 @@
       border:1px solid rgba(255,255,255,.10);
       background:linear-gradient(180deg, rgba(77,163,255,1), rgba(77,163,255,.82));
       color:#06101f;
-      font-size:28px;
+      font-size:32px;
       display:flex;
       align-items:center;
       justify-content:center;
       z-index:12;
       box-shadow: 0 10px 22px rgba(0,0,0,.35);
       cursor:pointer;
-      line-height: 0;
-      padding-bottom: 4px;
+      line-height: 1;
+      padding-bottom: 0;
     }
     .fab.hidden{ display:none; }
 
@@ -222,30 +222,8 @@
      font-size: 16px !important;
     }
     
-    body.modal-open {
-      overflow: hidden;
-      touch-action: none;
-    }
 
-    .fake-input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #ccc;
-  background: #111;
-  color: #999;
-  font-size: 16px;
-}
-
-.fake-input.active {
-  display: none;
-}
-
-input.hidden {
-  display: none;
-}
     .hidden { display: none !important; }
-
     
   </style>
 </head>
@@ -316,22 +294,13 @@ input.hidden {
       <input type="hidden" id="type" value="expense" />
     </div>
 
-   <div class="row">
-   <label>금액</label>
-
-      <!-- 가짜 입력 박스 -->
-   <div id="amountFake" class="fake-input">
-    금액 입력
-   </div>
-
-  <!-- 진짜 input (처음엔 숨김) -->
+<div class="row">
+  <label>금액</label>
   <input
     type="number"
     id="amount"
-    class="hidden"
     placeholder="금액 입력"
     inputmode="numeric"
-    autocomplete="off"
   />
 </div>
 
