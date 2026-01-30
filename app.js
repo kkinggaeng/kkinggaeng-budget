@@ -15,25 +15,34 @@ function openModal() {
   document.body.classList.add("modal-open");
   modal.classList.remove("hidden");
 
-  // ✅ iOS 자동 포커스/키보드 방지: 금액칸 잠깐 잠그기
   const amountEl = document.getElementById("amount");
-  amountEl?.setAttribute("readonly", "true");
 
+  // ✅ iOS 자동 포커스 복원 차단: 잠깐 disabled (포커스 불가)
+  if (amountEl) {
+    amountEl.disabled = true;
+  }
+
+  // 열리자마자 포커스 정리 + 닫기로 포커스
   setTimeout(() => {
     document.activeElement?.blur();
     closeBtn?.focus({ preventScroll: true });
   }, 0);
 
+  // 0.3초 뒤 정상 입력 가능하게 복구
   suppressTimer = setTimeout(() => {
     suppressFocus = false;
-    amountEl?.removeAttribute("readonly"); // ✅ 잠금 해제
+    if (amountEl) amountEl.disabled = false;
   }, 300);
 }
 
 
 function closeModal() {
-  document.body.classList.remove("modal-open");
+  document.activeElement?.blur();
   modal.classList.add("hidden");
+  document.body.classList.remove("modal-open");
+
+  // ✅ 마지막 포커스를 입력칸이 아니라 +버튼으로
+  fab?.focus({ preventScroll: true });
 }
 
 // + 버튼 누르면 열기
