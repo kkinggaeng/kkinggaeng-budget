@@ -1,33 +1,36 @@
 console.log('APPL Budget App Loaded');
 
-/* ===== 모달 열기 / 닫기 ===== */
-
-// + 버튼 클릭 → 모달 열기
-const openBtn = document.getElementById("open-modal");
-const closeBtn = document.getElementById("close-modal");
+// ===== Modal open/close (iOS 앱 느낌) =====
+const fab = document.getElementById("fab");
 const modal = document.getElementById("modal");
+const closeBtn = document.getElementById("close");
 
-// 안전장치 (요소 없으면 에러 안 나게)
-if (openBtn && modal) {
-  openBtn.addEventListener("click", () => {
-    document.body.classList.add("modal-open"); // 🔑 앱 느낌 핵심
-    modal.classList.remove("hidden");
-  });
+function openModal() {
+  document.body.classList.add("modal-open");   // 배경 스크롤 방지
+  modal.classList.remove("hidden");            // 모달 표시
 }
 
-if (closeBtn && modal) {
-  closeBtn.addEventListener("click", () => {
-    document.body.classList.remove("modal-open");
-    modal.classList.add("hidden");
-  });
+function closeModal() {
+  document.body.classList.remove("modal-open");
+  modal.classList.add("hidden");
 }
 
-// 모달 바깥 눌러도 닫히게
+// + 버튼 누르면 열기
+if (fab && modal) fab.addEventListener("click", openModal);
+
+// 닫기 버튼 누르면 닫기
+if (closeBtn && modal) closeBtn.addEventListener("click", closeModal);
+
+// 모달 바깥(검은 배경) 누르면 닫기
 if (modal) {
   modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      document.body.classList.remove("modal-open");
-      modal.classList.add("hidden");
-    }
+    if (e.target === modal) closeModal();
   });
 }
+
+// ESC로 닫기(PC용, 있어도 무해)
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && modal && !modal.classList.contains("hidden")) {
+    closeModal();
+  }
+});
