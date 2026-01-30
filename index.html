@@ -201,7 +201,7 @@
     }
     .actions .ghost{background:transparent; color:var(--muted)} 
 
-/* ===== 지출/수입 토글 ===== */
+/* Cloud Dancer – 지출/수입 토글 */
 .segmented{
   display:flex;
   gap:12px;
@@ -212,9 +212,9 @@
   flex:1;
   height:44px;
   border-radius:14px;
-  border:1px solid rgba(0,0,0,.10);
-  background: rgba(0,0,0,.04);
-  color:#111;
+  border:1px solid #D9DDE5;          /* Mist Line Gray */
+  background:#EFF1F5;                /* Soft Fog Gray */
+  color:#2E323A;                     /* Cloud Ink */
   font-size:14px;
   font-weight:700;
   letter-spacing:-0.2px;
@@ -224,11 +224,20 @@
 }
 
 .seg-btn.active{
-  background:#111;
-  color:#fff;
-  border-color:#111;
-  box-shadow:0 8px 18px rgba(0,0,0,.10);
+  background:
+    linear-gradient(
+      180deg,
+      #F7F8FA,
+      #EFF1F5
+    );                                /* Cloud Dancer White → Soft Fog */
+  color:#2E323A;                     /* Cloud Ink */
+  border-color:#6B8DFF;              /* Sky Accent Blue */
+  box-shadow:
+    0 6px 14px rgba(107,141,255,.25),
+    inset 0 1px 0 rgba(255,255,255,.9);
 }
+
+    
     .type-btn {
       font-size: 13px;   /* ← 여기서 조절 (13~15 추천) */
       padding: 8px 14px;
