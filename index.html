@@ -226,6 +226,24 @@
       overflow: hidden;
       touch-action: none;
     }
+
+    .fake-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  background: #111;
+  color: #999;
+  font-size: 16px;
+}
+
+.fake-input.active {
+  display: none;
+}
+
+input.hidden {
+  display: none;
+}
     
   </style>
 </head>
@@ -296,10 +314,24 @@
       <input type="hidden" id="type" value="expense" />
     </div>
 
-    <div class="row">
-      <label>금액</label>
-      <input type="number" id="amount" placeholder="금액 입력" inputmode="numeric" autocomplete="off" />
-    </div>
+   <div class="row">
+   <label>금액</label>
+
+      <!-- 가짜 입력 박스 -->
+   <div id="amountFake" class="fake-input">
+    금액 입력
+   </div>
+
+  <!-- 진짜 input (처음엔 숨김) -->
+  <input
+    type="number"
+    id="amount"
+    class="hidden"
+    placeholder="금액 입력"
+    inputmode="numeric"
+    autocomplete="off"
+  />
+</div>
 
     <div class="row">
       <label>카테고리</label>
