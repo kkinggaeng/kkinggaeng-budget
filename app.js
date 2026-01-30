@@ -80,12 +80,21 @@ const amountFake = document.getElementById("amountFake");
 const amountReal = document.getElementById("amount");
 
 // 가짜 박스 눌렀을 때
-if (amountFake && amountReal) {
-  amountFake.addEventListener("click", () => {
-    amountFake.classList.add("active");   // 가짜 숨김
-    amountReal.classList.remove("hidden"); // 진짜 보여줌
-    amountReal.focus();                    // ✅ 이때만 키보드
-  });
-}
+amountFake.addEventListener("click", () => {
+  // ✅ 사용자가 직접 눌렀으니 이제 포커스 차단 해제
+  suppressFocus = false;
+  clearTimeout(suppressTimer);
+
+  // 가짜 숨기고 진짜 보여주기
+  amountFake.classList.add("active");
+  amountReal.classList.remove("hidden");
+
+  // iOS는 화면에 나타난 직후에 focus가 더 잘 먹어서 한 박자 주기
+setTimeout(() => {
+  amountReal.disabled = false;
+  amountReal.removeAttribute("readonly");
+  amountReal.focus();
+}, 0);
+});
 
 
