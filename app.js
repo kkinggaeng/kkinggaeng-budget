@@ -1,19 +1,32 @@
 console.log('APPL Budget App Loaded');
 
+let suppressFocus = false;
+let suppressTimer = null;
+
 // ===== Modal open/close (iOS 앱 느낌) =====
 const fab = document.getElementById("fab");
 const modal = document.getElementById("modal");
 const closeBtn = document.getElementById("close");
 
 function openModal() {
+  suppressFocus = true;
+  clearTimeout(suppressTimer);
+
   document.body.classList.add("modal-open");
   modal.classList.remove("hidden");
 
+  // 열리는 순간 혹시 잡힌 포커스 제거 + 닫기에 포커스
   setTimeout(() => {
-    if (document.activeElement) document.activeElement.blur();
-    closeBtn?.focus(); // 닫기 버튼에 포커스 (키보드 안 뜸)
+    document.activeElement?.blur();
+    closeBtn?.focus({ preventScroll: true });
   }, 0);
+
+  // 0.3초 후부터는 정상적으로 입력 가능
+  suppressTimer = setTimeout(() => {
+    suppressFocus = false;
+  }, 300);
 }
+
 
 function closeModal() {
   document.body.classList.remove("modal-open");
@@ -39,3 +52,12 @@ document.addEventListener("keydown", (e) => {
     closeModal();
   }
 });
+
+
+modal.addEventListener("focusin", (e) => {
+  if (!suppressFocus) return;
+
+  // 입력칸으로 포커스 들어오면 즉시 뺏어서 키보드 못 뜨게
+  e.target.blur();
+  closeBtn?.focus({ preventScroll: true });
+}, true);
