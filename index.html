@@ -312,8 +312,13 @@
     .modal input, .modal select, .modal textarea {
      font-size: 16px !important;
     }
-    
 
+    /* 모달 textarea만 예쁘게 */
+    textarea{
+      resize:none;
+      line-height:1.4;
+    }
+    
     .hidden { display: none !important; }
 
 @supports (background: color-mix(in srgb, white, black)) {
@@ -410,6 +415,11 @@
       <input id="place" placeholder="이마트 / 쿠팡 / 컬리 / 네이버 / 편의점 / 마트 / 기타" />
     </div>
 
+    <div class="row">
+      <label>메모(비고)</label>
+      <textarea id="memo" rows="2" placeholder="왜 샀는지 / 목적 / 느낌 / 기타"></textarea>
+    </div>
+    
     <div class="row">
       <label>카드</label>
       <select id="card">
