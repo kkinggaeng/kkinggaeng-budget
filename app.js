@@ -25,6 +25,9 @@ modal?.addEventListener("click", (e) => {
 
 
 const amountEl = document.getElementById("amount");
+const categoryEl = document.getElementById("category");
+const placeEl = document.getElementById("place");
+const memoEl = document.getElementById("memo");
 
 function stripNonDigits(s) {
   return (s || "").replace(/[^\d]/g, "");
@@ -50,3 +53,37 @@ amountEl?.addEventListener("focus", () => {
   // 다시 눌러서 수정할 땐 콤마 제거해 숫자만 보이게
   amountEl.value = stripNonDigits(amountEl.value);
 });
+
+
+let records = JSON.parse(localStorage.getItem("records") || "[]");
+
+const saveBtn = document.getElementById("save");
+
+
+  // 저장 로직
+saveBtn?.addEventListener("click", () => {
+  const digits = stripNonDigits(amountEl.value);
+  if (!digits) return;
+
+  const record = {
+    amount: Number(digits),
+    category: categoryEl.value,
+    place: placeEl.value,
+    memo: memoEl.value.trim(),   // ✅ 여기!!!
+    date: Date.now()
+  };
+
+  records.push(record);
+  localStorage.setItem("records", JSON.stringify(records));
+
+  clearForm();
+  closeModal();
+});
+
+
+function clearForm() {
+  amountEl.value = "";
+  placeEl.value = "";
+  memoEl.value = "";   // ✅ 여기!!!
+}
+
