@@ -236,10 +236,21 @@
       padding:10px;
       border-radius:10px;
     }
-    .actions{display:flex; gap:10px; margin-top:6px}
+    .actions{
+      display: flex;
+      gap: 12px;        /* 지출/수입 gap이 10이면 10~12 */
+      margin-top: 12px;
+    }
     .actions button{
-      flex:1; padding:12px;
-      border-radius:12px; border:none;
+      flex: 1;
+      height: 40px;           /* ✅ 지출/수입과 동일 */
+      border-radius: 14px;    /* ✅ 지출/수입과 동일 */
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      cursor: pointer;
+      padding: 12px; 
     }
     .actions .ghost{background:transparent; color:var(--muted)} 
 
