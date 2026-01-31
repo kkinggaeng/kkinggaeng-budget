@@ -644,21 +644,24 @@ saveBtn.addEventListener('click', ()=>{
   }
 
   const item = {
-    type: typeEl.value,               // expense/income
+    type: typeEl.value,      // expense / income
     amount,
     category: categoryEl.value,
     place: placeEl.value.trim(),
     card: cardEl.value,
-    date: new Date().toISOString()
+    memo: memoEl?.value?.trim() || "",
+    spentDate: spentDateEl?.value || new Date().toISOString().slice(0,10),
+    createdAt: new Date().toISOString()
   };
 
-  const list = JSON.parse(localStorage.getItem('kk-budget') || '[]');
+  const list = JSON.parse(localStorage.getItem('records') || '[]');
   list.unshift(item);
-  localStorage.setItem('kk-budget', JSON.stringify(list));
+  localStorage.setItem('records', JSON.stringify(list));
 
   // 입력값 초기화(금액/사용처만)
   amountEl.value = '';
   placeEl.value = '';
+  memoEl.value = "";
 
   modal.classList.add('hidden');
   alert('저장됨 👍');
