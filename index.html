@@ -297,6 +297,11 @@
     inset 0 1px 0 rgba(255,255,255,.9);
 }
 
+    #memo{
+      min-height: 72px;      /* 메모 2줄, 줄바꿈 자연, 리사이즈 금지 */
+      resize: none;
+      line-height: 1.4;
+    }
     
     .type-btn {
       font-size: 13px;   /* ← 여기서 조절 (13~15 추천) */
@@ -371,6 +376,17 @@
       </div>
     </section>
 
+    <!-- BUDGET -->
+    <section class="page" id="page-budget">
+      <div class="card">
+        <h2>예산</h2>
+        <p class="hint">
+          총 생활비 / 식비 / 생필품 / 취미 예산을 설정하고<br/>
+          목표 대비 사용 현황을 확인할 수 있어요.
+        </p>
+      </div>
+    </section>
+
     <!-- MONTHLY -->
     <section class="page" id="page-monthly">
       <div class="card">
@@ -417,7 +433,7 @@
 
     <div class="row">
       <label>메모(비고)</label>
-      <textarea id="memo" rows="2" placeholder="왜 샀는지 / 목적 / 느낌 / 기타"></textarea>
+      <textarea id="memo" rows="2" placeholder="이유 / 목적 / 느낌 적어두기"></textarea>
     </div>
     
     <div class="row">
@@ -445,6 +461,10 @@
     <button class="tab" data-target="stats" role="tab" aria-selected="false">
       <div class="icon">📊</div>
       <div>통계</div>
+    </button>
+    <button class="tab" data-target="budget" role="tab" aria-selected="false">
+      <div class="icon">🎯</div>
+      <div>예산</div>
     </button>
     <button class="tab" data-target="monthly" role="tab" aria-selected="false">
       <div class="icon">🗓️</div>
