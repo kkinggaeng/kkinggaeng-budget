@@ -339,7 +339,14 @@
       line-height: 1.4;
       resize: none;                      /* ✅ 리사이즈 핸들 제거 */
     }
-    
+
+
+    input[type="date"]{
+     text-align: left;
+    }
+    input[type="date"]::-webkit-datetime-edit {
+     text-align: left;
+    }
     .hidden { display: none !important; }
 
 
