@@ -132,27 +132,18 @@
       filter: drop-shadow(0 0 10px rgba(77,163,255,.25));
     }
 
-    /* 플로팅 + 버튼 (홈에서만 보이게 할거임) */
+    /* Cloud Dancer – Sage Floating + 버튼 (정정 버전) */
     .fab{
-      position:fixed;
-      right:18px; bottom:86px;
-      width:54px; height:54px;
-      border-radius:18px;
-      background: linear-gradient(180deg, #8FBFB0, #7FAE9E);  /* Cloud Sage */
-      border:1px solid rgba(127,174,158,.55);
-      box-shadow: 0 12px 26px rgba(0,0,0,.12);
-      color:#2E323A;                                          /* Cloud Ink */
-      font-size:32px !important;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      z-index:12;
+      background: linear-gradient(
+      180deg,
+      #8FBFB0,
+      #7FAE9E
+      );                     /* 🌿 Sage only */
+      color:#2E323A;          /* Cloud Ink */
+      border:none;            /* ❗ 파랑/세이지 겹침 방지 */
       box-shadow:
         0 12px 26px rgba(127,174,158,.45),
         inset 0 1px 0 rgba(255,255,255,.75);
-      cursor:pointer;
-      line-height: 1;
-      padding-top: 2px;
     }
     .fab span{
       display:inline-block;
