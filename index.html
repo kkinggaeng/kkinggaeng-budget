@@ -132,25 +132,36 @@
       filter: drop-shadow(0 0 10px rgba(77,163,255,.25));
     }
 
-    /* Cloud Dancer – Sage Floating + 버튼 (정정 버전) */
+    
+    /* ✅ FAB: 원래 모양 유지 + Sage 컬러만 적용 (최종) */
     .fab{
-      background: linear-gradient(
-      180deg,
-      #8FBFB0,
-      #7FAE9E
-      );                     /* 🌿 Sage only */
-      color:#2E323A;          /* Cloud Ink */
-      border:none;            /* ❗ 파랑/세이지 겹침 방지 */
-      box-shadow:
-        0 12px 26px rgba(127,174,158,.45),
-        inset 0 1px 0 rgba(255,255,255,.75);
-    }
-    .fab span{
-      display:inline-block;
-      transform: translateY(-2px);
-    }
-    .fab.hidden{ display:none; }
+      position:fixed;
+      right:18px;
+      bottom:86px;
+      width:54px;
+      height:54px;
+      border-radius:18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:12;
+      cursor:pointer;
+      line-height:1;
 
+      /* ✅ 여기부터 Sage 톤 */
+      background: linear-gradient(180deg, #8FBFB0, #7FAE9E);
+      color:#2E323A; /* Cloud Ink */
+      border: 1px solid rgba(127,174,158,.28); /* 아주 얇게만 */
+      box-shadow:
+        0 12px 26px rgba(127,174,158,.35),
+        inset 0 1px 0 rgba(255,255,255,.75);
+      }
+
+/* + 기호가 살짝 내려가 보이면 이거(선택) */
+.fab{ padding-bottom:2px; }
+
+
+    
     /* 작은 배지 */
     .pill{
       display:inline-flex;
