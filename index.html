@@ -250,8 +250,14 @@
       font-weight: 700;
       letter-spacing: -0.2px;
       cursor: pointer;
-      padding: 12px; 
+      padding: 12px;
     }
+
+    /* 역할별 차이만 */
+    #save{ opacity: .9; }
+    #close{ opacity: .75; }
+    }
+   
     .actions .ghost{background:transparent; color:var(--muted)} 
 
 /* Cloud Dancer – Sage 지출/수입 토글 */
@@ -414,8 +420,8 @@
     </div>
 
     <div class="actions">
-      <button id="save" type="button">저장</button>
-      <button id="close" type="button">닫기</button>
+      <button class="action-btn" id="save">저장</button>
+      <button class="action-btn" id="close">닫기</button>
     </div>
   </div>
 </div>
