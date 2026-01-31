@@ -74,11 +74,15 @@ saveBtn?.addEventListener("click", () => {
   };
 
   records.push(record);
-  localStorage.setItem("records", JSON.stringify(records));
+  localStorage.setItem("kk-budget", JSON.stringify(records));
 
+  console.log("SAVED ITEM:", item);
+  console.log("ALL ITEMS:", JSON.parse(localStorage.getItem("kk-budget") || "[]"));
+  
   clearForm();
   closeModal();
 });
+
 
 
 function clearForm() {
