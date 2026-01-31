@@ -746,7 +746,9 @@ function renderRecent(){
           <div><b>${typeLabel}</b> · ${x.category || "기타"}</div>
           <div class="recent-meta">${x.card || ""}${place}</div>
         </div>
-        <div class="recent-amt">${fmtKRW(x.amount)}</div>
+        <div class="recent-amt ${x.type === 'income' ? 'income' : 'expense'}">
+          ${fmtKRW(x.amount)}
+        </div>
       </div>
     `;
   }).join("");
