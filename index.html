@@ -15,6 +15,8 @@
     --text: #111111;
     --muted: #666666;
     --line: rgba(0,0,0,.08);
+    --expense-red: #C85C5C;   /* 🌹 지출 (Muted Rose Red) 
+    --income-green: #20c997;  /* 이미 쓰고 있는 ok 컬러 */
 
     /* accents */
     --accent:#4da3ff;
@@ -367,6 +369,16 @@
     }
     .recent-amt{
       font-weight:800;
+    }
+
+    /* 지출 */
+    .recent-amt.expense{
+      color: var(--expense-red);
+    }
+
+    /* 수입 */
+    .recent-amt.income{
+      color: var(--income-green);
     }
 
     
