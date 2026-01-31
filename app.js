@@ -75,6 +75,8 @@ saveBtn?.addEventListener("click", () => {
 
   records.push(record);
   localStorage.setItem("records", JSON.stringify(records));
+  
+  renderRecent();
 
   console.log("SAVED ITEM:", item);
   console.log("ALL ITEMS:", JSON.parse(localStorage.getItem("records") || "[]"));
