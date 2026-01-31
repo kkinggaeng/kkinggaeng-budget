@@ -606,6 +606,7 @@ const categoryEl = document.getElementById('category');
 const placeEl = document.getElementById('place');
 const cardEl = document.getElementById('card');
 const spentDateEl = document.getElementById('spentDate');
+const memoEl = document.getElementById('memo'); // ✅ 추가!
     
 function renderCategories(){
   categoryEl.innerHTML = "";
@@ -662,6 +663,8 @@ saveBtn.addEventListener('click', ()=>{
   amountEl.value = '';
   placeEl.value = '';
   memoEl.value = "";
+  
+  renderRecent(); // ✅ 저장 후 홈 리스트 갱신
 
   modal.classList.add('hidden');
   alert('저장됨 👍');
