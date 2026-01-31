@@ -605,7 +605,8 @@ const amountEl = document.getElementById('amount');
 const categoryEl = document.getElementById('category');
 const placeEl = document.getElementById('place');
 const cardEl = document.getElementById('card');
-
+const spentDateEl = document.getElementById('spentDate');
+    
 function renderCategories(){
   categoryEl.innerHTML = "";
   CATEGORIES.forEach(name=>{
@@ -620,9 +621,15 @@ renderCategories();
 // + 버튼 → 모달 열기
 fab.addEventListener('click', ()=>{
   modal.classList.remove('hidden');
+
+  // ✅ 날짜 기본값 = 오늘
+  if (spentDateEl) {
+    spentDateEl.value = new Date().toISOString().slice(0,10);
+  }
+
   amountEl.focus();
 });
-
+    
 // 닫기
 closeBtn.addEventListener('click', ()=>{
   modal.classList.add('hidden');
