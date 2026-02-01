@@ -430,6 +430,23 @@
       display: inline-block;
       margin-left: 6px;
     }
+
+    .month-sep{
+      margin: 12px 2px 6px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .month-sep::after{
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: var(--line);
+      opacity: .9;
+    }
     
 
     
@@ -782,52 +799,80 @@ function renderRecent(){
   const wrap = document.getElementById("recentList");
   if(!wrap) return;
 
+  // ✅ 정렬: spentDate 내림차순, 같은 날짜면 createdAt 내림차순
   const list = loadRecords()
-    .sort((a, b) => (b.spentDate || "").localeCompare(a.spentDate || ""))
-    .slice(0, 10);
+    .slice()
+    .sort((a, b) => {
+      const ad = (a.spentDate || "0000-00-00");
+      const bd = (b.spentDate || "0000-00-00");
+      if (bd !== ad) return bd.localeCompare(ad);
+      return (b.createdAt || "").localeCompare(a.createdAt || "");
+    })
+    .slice(0, 30); // ✅ 10개면 월구분선 의미가 약해서 30 추천(원하면 10으로)
+
   if(list.length === 0){
     wrap.innerHTML = `<p class="hint">아직 기록이 없어. +로 추가해봐!</p>`;
     return;
   }
 
-  wrap.innerHTML = list.map(x => {
-    // 날짜 표시 (2026. 01. 29)
+  // ✅ 월 라벨: "2026년 02월"
+  const monthLabel = (iso) => {
+    const s = (iso || "").slice(0,7); // YYYY-MM
+    if(!s.includes("-")) return "날짜 없음";
+    const [y,m] = s.split("-");
+    return `${y}년 ${m}월`;
+  };
+
+  let html = "";
+  let prevMonth = "";
+
+  list.forEach(x => {
+    // ✅ 월 구분선 삽입
+    const ym = (x.spentDate || "").slice(0,7); // YYYY-MM
+    if(ym !== prevMonth){
+      html += `<div class="month-sep">${monthLabel(x.spentDate)}</div>`;
+      prevMonth = ym;
+    }
+
+    // 날짜 표시 (2026. 01. 29.)
     const d = (x.spentDate || "").replaceAll("-", ". ");
     const dateText = d ? (d + ".") : "";
 
-   // 오늘 입력한 건만 표시 (NEW 개념)
+    // 오늘 입력한 건만 표시 (NEW 개념)
     const isToday =
-     (x.createdAt || "").slice(0,10) === new Date().toISOString().slice(0,10);
+      (x.createdAt || "").slice(0,10) === new Date().toISOString().slice(0,10);
     const todayDot = isToday
-     ? `<span class="memo-dot" aria-label="오늘 입력"></span>`
-     : "";
-    
+      ? `<span class="memo-dot" aria-label="오늘 입력"></span>`
+      : "";
+
     // 아래줄: 카드 / 구매처만
     const card = x.card ? x.card : "";
     const place = x.place ? x.place : "";
     const sub = [card, place].filter(Boolean).join(" · ");
 
-    // 금액 색 (지출/수입)
-    const amtClass = x.type === "income" ? "amt income" : "amt expense";
+    // ✅ 금액 클래스: 너가 이미 쓰는 amt-expense / amt-income 그대로 살림
+    const amtSideClass = (x.type === "income") ? "amt-income" : "amt-expense";
 
-    return `
+    html += `
       <div class="recent-item">
         <div class="recent-left">
           <div class="recent-meta">${dateText}</div>
 
           <div class="recent-title">
-           ${x.category || "기타"}${todayDot}
+            ${x.category || "기타"}${todayDot}
           </div>
 
           <div class="recent-sub">${sub}</div>
         </div>
 
-        <div class="recent-amt ${x.type === 'expense' ? 'amt-expense' : 'amt-income'}">
+        <div class="recent-amt ${amtSideClass}">
           ${fmtKRW(x.amount)}
         </div>
       </div>
     `;
-  }).join("");
+  });
+
+  wrap.innerHTML = html;
 }
 
 // 페이지 처음 열릴 때 1번 실행
