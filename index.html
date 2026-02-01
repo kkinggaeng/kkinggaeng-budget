@@ -779,13 +779,18 @@ function renderRecent(){
     return;
   }
 
-  wrap.innerHTML = list.map(x => {
-    const typeLabel = x.type === "income" ? "수입" : "지출";
-    const place = x.place ? ` · ${x.place}` : "";
-    const isIncome = x.type === "income";
-const amountClass = isIncome ? "amount-income" : "amount-expense";
+ wrap.innerHTML = list.map(x => {
+  const place = x.place ? ` · ${x.place}` : "";
+  const metaLeft = [x.category, x.card].filter(Boolean).join(" · "); // 예: "상품매입비 · 신한"
+  const meta = `${metaLeft}${place}`; // 예: "상품매입비 · 신한 · 도매매"
 
-return `
+  // 날짜 표시: "2026. 01. 29" 형태
+  const d = (x.spentDate || "").replaceAll("-", ". ");
+  const dateText = d ? `${d}` : "";
+
+  const amtClass = x.type === "income" ? "amt-income" : "amt-expense";
+
+  return `
     <div class="recent-item">
       <div class="recent-left">
         <div class="recent-date">${dateText}</div>
@@ -801,7 +806,7 @@ return `
       <div class="recent-amt ${amtClass}">${fmtKRW(x.amount)}</div>
     </div>
   `;
-  }).join("");
+}).join("");
 }
 
 // 페이지 처음 열릴 때 1번 실행
