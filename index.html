@@ -341,13 +341,15 @@
     }
 
 
-    input[type="date"]{
-     text-align: left;
-     padding-left: 10px;
-    }
-    input[type="date"]::-webkit-datetime-edit {
-     text-align: left;
-    }
+    /* iOS Safari date input text-align fix */
+input[type="date"]{
+  text-align: left;
+  padding-left: 10px; /* 왼쪽으로 ‘붙어 보이게’ */
+}
+
+input[type="date"]::-webkit-date-and-time-value{
+  text-align: left;
+}
     .hidden { display: none !important; }
 
 
