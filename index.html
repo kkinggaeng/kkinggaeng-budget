@@ -786,21 +786,21 @@ function renderRecent(){
 const amountClass = isIncome ? "amount-income" : "amount-expense";
 
 return `
-  <div class="recent-item">
-    <div class="recent-left">
-      <div class="recent-meta">
-        ${x.spentDate ? x.spentDate.replace(/-/g, '. ') : ''}
+    <div class="recent-item">
+      <div class="recent-left">
+        <div class="recent-date">${dateText}</div>
+
+        <div class="recent-title">
+          ${x.category || "기타"}
+          ${x.memo ? `<span class="memo-dot"></span>` : ""}
+        </div>
+
+        <div class="recent-meta">${meta}</div>
       </div>
-      <div>
-        <b>${x.category || "기타"}</b>
-        ${x.memo ? `<span class="memo-dot"></span>` : ""}
-      </div>
+
+      <div class="recent-amt ${amtClass}">${fmtKRW(x.amount)}</div>
     </div>
-    <div class="recent-amt ${x.type === 'income' ? 'amount-income' : 'amount-expense'}">
-        ${fmtKRW(x.amount)}
-    </div>
-  </div>
-`;
+  `;
   }).join("");
 }
 
