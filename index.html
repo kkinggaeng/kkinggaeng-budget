@@ -872,25 +872,6 @@ function resetForm(){
 
 
 
-// ✅ 최근내역 클릭 → 수정모드로 열기 (이벤트 위임)
-document.getElementById("recentList")?.addEventListener("click", (e)=>{
-  const itemEl = e.target.closest(".recent-item");
-  if(!itemEl) return;
-
-  const id = itemEl.dataset.id;
-  if(!id) return;
-
-  const list = loadRecords();
-  const item = list.find(x => x.id === id);
-  if(!item){
-    alert("항목을 찾지 못했어 😵");
-    return;
-  }
-
-  // ✅ 수정 모드 진입
-  fillFormForEdit(item);
-  modal.classList.remove("hidden");
-});
     
     
     
@@ -1034,20 +1015,30 @@ function renderRecent(){
 
   const all = loadRecords().slice();
 
-  // ✅ 월별 합계(지출/수입) 미리 계산
-  const monthAgg = {}; // { "YYYY-MM": {expense:0, income:0} }
+  // ✅ (선택) 예전 데이터에 id 없으면 보강
+  let changed = false;
+  all.forEach(x=>{
+    if(!x.id){
+      x.id = (crypto?.randomUUID?.() || ("id_" + Date.now() + "_" + Math.random().toString(16).slice(2)));
+      changed = true;
+    }
+  });
+  if(changed){
+    localStorage.setItem("records", JSON.stringify(all));
+  }
+
+  // ✅ 월별 합계
+  const monthAgg = {};
   all.forEach(x=>{
     const ym = (x.spentDate || "").slice(0,7);
     if(!ym || !ym.includes("-")) return;
-
     if(!monthAgg[ym]) monthAgg[ym] = { expense: 0, income: 0 };
     const amt = Number(x.amount || 0);
-
     if(x.type === "income") monthAgg[ym].income += amt;
     else monthAgg[ym].expense += amt;
   });
 
-  // ✅ 정렬: spentDate 내림차순, 같은 날짜면 createdAt 내림차순
+  // ✅ 정렬
   const list = all
     .sort((a, b) => {
       const ad = (a.spentDate || "0000-00-00");
@@ -1055,22 +1046,20 @@ function renderRecent(){
       if (bd !== ad) return bd.localeCompare(ad);
       return (b.createdAt || "").localeCompare(a.createdAt || "");
     })
-    .slice(0, 30); // ✅ 월구분선 의미 살리려면 30 추천
+    .slice(0, 30);
 
   if(list.length === 0){
     wrap.innerHTML = `<p class="hint">아직 기록이 없어. +로 추가해봐!</p>`;
     return;
   }
 
-  // ✅ 월 라벨: "2026년 02월"
   const monthLabel = (iso) => {
-    const s = (iso || "").slice(0,7); // YYYY-MM
+    const s = (iso || "").slice(0,7);
     if(!s.includes("-")) return "날짜 없음";
     const [y,m] = s.split("-");
     return `${y}년 ${m}월`;
   };
 
-  // ✅ 월 합계 텍스트: "지출 123,000 · 수입 45,000"
   const monthSumText = (ym) => {
     const agg = monthAgg[ym] || { expense: 0, income: 0 };
     const exp = Number(agg.expense || 0).toLocaleString("ko-KR");
@@ -1082,74 +1071,52 @@ function renderRecent(){
   let prevMonth = "";
 
   list.forEach(x => {
-    const ym = (x.spentDate || "").slice(0,7); // YYYY-MM
+  const ym = (x.spentDate || "").slice(0,7);
 
-    // ✅ 월 구분선(=헤더) 삽입 + 합계 표시
-    if(ym !== prevMonth){
-      const label = monthLabel(x.spentDate);
-      const sum = (ym && ym.includes("-")) ? monthSumText(ym) : "";
-
-      html += `
-  <div class="recent-item" data-id="${x.id}">
-    <div class="recent-left">
-      <div class="recent-meta">${dateText}</div>
-
-      <div class="recent-title">
-        ${x.category || "기타"}${todayDot}
-      </div>
-
-      <div class="recent-sub">${sub}</div>
-    </div>
-
-    <div class="recent-right">
-      <div class="recent-amt ${amtSideClass}">
-        ${fmtKRW(x.amount)}
-      </div>
-
-      <button class="edit-btn" type="button" data-id="${x.id || ""}" aria-label="수정">✏️</button>
-    </div>
-  </div>
-`;
-      prevMonth = ym;
-    }
-
-    // 날짜 표시 (2026. 01. 29.)
-    const d = (x.spentDate || "").replaceAll("-", ". ");
-    const dateText = d ? (d + ".") : "";
-
-    // 오늘 입력한 건만 표시 (NEW 개념)
-    const isToday =
-      (x.createdAt || "").slice(0,10) === new Date().toISOString().slice(0,10);
-    const todayDot = isToday
-      ? `<span class="memo-dot" aria-label="오늘 입력"></span>`
-      : "";
-
-    // 아래줄: 카드 / 구매처만
-    const card = x.card ? x.card : "";
-    const place = x.place ? x.place : "";
-    const sub = [card, place].filter(Boolean).join(" · ");
-
-    // ✅ 금액 클래스: 너가 이미 쓰는 amt-expense / amt-income 그대로
-    const amtSideClass = (x.type === "income") ? "amt-income" : "amt-expense";
-
+  // 월 헤더
+  if(ym !== prevMonth){
     html += `
-      <div class="recent-item">
-        <div class="recent-left">
-          <div class="recent-meta">${dateText}</div>
+      <div class="month-header">
+        <div class="month-title">${monthLabel(x.spentDate)}</div>
+        <div class="month-sum">${monthSumText(ym)}</div>
+      </div>
+    `;
+    prevMonth = ym;
+  }
 
-          <div class="recent-title">
-            ${x.category || "기타"}${todayDot}
-          </div>
+  // 날짜
+  const d = (x.spentDate || "").replaceAll("-", ". ");
+  const dateText = d ? (d + ".") : "";
 
-          <div class="recent-sub">${sub}</div>
+  // 오늘 표시
+  const isToday =
+    (x.createdAt || "").slice(0,10) === new Date().toISOString().slice(0,10);
+  const todayDot = isToday ? `<span class="memo-dot"></span>` : "";
+
+  // 아래줄
+  const sub = [x.card, x.place].filter(Boolean).join(" · ");
+  const amtSideClass = x.type === "income" ? "amt-income" : "amt-expense";
+
+  html += `
+    <div class="recent-item" data-id="${x.id}">
+      <div class="recent-left">
+        <div class="recent-meta">${dateText}</div>
+        <div class="recent-title">
+          ${x.category || "기타"}${todayDot}
         </div>
+        <div class="recent-sub">${sub}</div>
+      </div>
 
+      <div class="recent-right">
         <div class="recent-amt ${amtSideClass}">
           ${fmtKRW(x.amount)}
         </div>
+        <button class="edit-btn" type="button" data-id="${x.id}" aria-label="수정">✏️</button>
       </div>
-    `;
-  });
+    </div>
+  `;
+});
+
 
   wrap.innerHTML = html;
 }
@@ -1160,7 +1127,7 @@ renderRecent();
 /* =========================
    C-5: ✏️ 수정 버튼 클릭 처리
    ========================= */
-document.addEventListener("click", (e) => {
+document.getElementById("recentList")?.addEventListener("click", (e) => {
   const btn = e.target.closest(".edit-btn");
   if(!btn) return;
 
@@ -1174,7 +1141,6 @@ document.addEventListener("click", (e) => {
   fillFormForEdit(item);
   openModal();
 });
-    
     
 
   </script>
