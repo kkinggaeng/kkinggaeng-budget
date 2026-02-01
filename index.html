@@ -373,6 +373,17 @@
       flex-direction:column;
       gap:4px;
     }
+    .recent-date{
+      font-size: 13px;
+      color: var(--muted);
+    }
+    /* 최근내역 - 카테고리/카드/사용처를 보조 텍스트로 */
+    .recent-title{
+      font-size: 13px;          /* 날짜랑 같은 급 */
+      color: var(--muted);      /* 회색 톤 */
+      font-weight: 400;
+      letter-spacing: -0.2px;
+    }     
     .recent-meta{
       font-size: 12px;        /* 그대로 */
       font-weight: 400;       /* 🔥 이게 핵심 */
@@ -772,7 +783,7 @@ return `
       <div class="recent-meta">
         ${x.spentDate ? x.spentDate.replace(/-/g, '. ') : ''}
       </div>
-      <div>
+      <div class="recent-title">
         ${x.category || "기타"} · ${x.card || ""}${place}
       </div>
     </div>
