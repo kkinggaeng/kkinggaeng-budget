@@ -405,6 +405,33 @@
       font-weight: 600;
     }
 
+
+    .recent-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.edit-btn{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,.65);
+  color: var(--muted);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.edit-btn:active{
+  transform: scale(.98);
+  opacity: .9;
+}
+
+    
+
     /* ===== 월 구분선(Sticky) ===== */
     .month-header{
       position: sticky;
@@ -760,6 +787,7 @@ saveBtn.addEventListener('click', ()=>{
   }
 
   const item = {
+    id: (crypto?.randomUUID?.() || ("id_" + Date.now() + "_" + Math.random().toString(16).slice(2))),
     type: typeEl.value,      // expense / income
     amount,
     category: categoryEl.value,
@@ -892,11 +920,26 @@ function renderRecent(){
       const sum = (ym && ym.includes("-")) ? monthSumText(ym) : "";
 
       html += `
-        <div class="month-header">
-          <div class="month-title">${label}</div>
-          <div class="month-sum">${sum}</div>
-        </div>
-      `;
+  <div class="recent-item">
+    <div class="recent-left">
+      <div class="recent-meta">${dateText}</div>
+
+      <div class="recent-title">
+        ${x.category || "기타"}${todayDot}
+      </div>
+
+      <div class="recent-sub">${sub}</div>
+    </div>
+
+    <div class="recent-right">
+      <div class="recent-amt ${amtSideClass}">
+        ${fmtKRW(x.amount)}
+      </div>
+
+      <button class="edit-btn" type="button" data-id="${x.id || ""}" aria-label="수정">✏️</button>
+    </div>
+  </div>
+`;
       prevMonth = ym;
     }
 
