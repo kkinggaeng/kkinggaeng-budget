@@ -836,6 +836,7 @@ fab.addEventListener('click', ()=>{
     
 // 닫기
 closeBtn.addEventListener('click', ()=>{
+  editingId = null; // ✅ 수정 취소
   closeModal();
 });
 
@@ -870,6 +871,28 @@ function resetForm(){
 }
 
 
+
+// ✅ 최근내역 클릭 → 수정모드로 열기 (이벤트 위임)
+document.getElementById("recentList")?.addEventListener("click", (e)=>{
+  const itemEl = e.target.closest(".recent-item");
+  if(!itemEl) return;
+
+  const id = itemEl.dataset.id;
+  if(!id) return;
+
+  const list = loadRecords();
+  const item = list.find(x => x.id === id);
+  if(!item){
+    alert("항목을 찾지 못했어 😵");
+    return;
+  }
+
+  // ✅ 수정 모드 진입
+  fillFormForEdit(item);
+  modal.classList.remove("hidden");
+});
+    
+    
     
 // ✅ 저장(추가/수정 겸용) — 최종본
 saveBtn.addEventListener('click', ()=>{
@@ -928,6 +951,35 @@ saveBtn.addEventListener('click', ()=>{
   closeModal();
   alert('저장됨 👍');
 });
+
+
+
+function fillFormForEdit(item){
+  editingId = item.id;
+
+  // 구분
+  typeEl.value = item.type || "expense";
+  const seg = document.getElementById('typeSegment');
+  if(seg){
+    seg.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    seg.querySelector(`.seg-btn[data-value="${typeEl.value}"]`)?.classList.add('active');
+  }
+
+  // 날짜
+  spentDateEl.value = item.spentDate || new Date().toISOString().slice(0,10);
+
+  // 금액(raw + 표시값)
+  const raw = String(item.amount || "0").replace(/[^0-9]/g, "");
+  amountEl.dataset.raw = raw;
+  amountEl.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  // 나머지
+  categoryEl.value = item.category || "기타";
+  placeEl.value = item.place || "";
+  cardEl.value = item.card || "현금/계좌";
+  memoEl.value = item.memo || "";
+}
+
 
     
 
@@ -1038,7 +1090,7 @@ function renderRecent(){
       const sum = (ym && ym.includes("-")) ? monthSumText(ym) : "";
 
       html += `
-  <div class="recent-item">
+  <div class="recent-item" data-id="${x.id}">
     <div class="recent-left">
       <div class="recent-meta">${dateText}</div>
 
