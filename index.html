@@ -431,6 +431,10 @@
   opacity: .9;
 }
 
+/* ✅ 편집모드일 때만 연필 보이기 */
+body.edit-mode .edit-btn{
+  display:flex;
+}
     
 
     /* ===== 월 구분선(Sticky) ===== */
@@ -528,9 +532,12 @@
 <body>
   <header class="header">
     <div class="title">
-      <h1>낑갱 가계부</h1>
-      <span class="pill">로컬저장(내 폰에만)</span>
-    </div>
+  <h1>낑갱 가계부</h1>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <span class="pill">로컬저장(내 폰에만)</span>
+    <button id="toggleEdit" type="button" class="pill" style="cursor:pointer;">편집</button>
+  </div>
+</div>
     <div class="subtitle">하단 탭으로 이동 · 홈에서 +로 입력(다음 단계에서 붙임)</div>
   </header>
 
@@ -717,6 +724,18 @@
       t.addEventListener('click', ()=> setActiveTab(t.dataset.target));
     });
 
+
+    
+// ✅ 편집모드 토글
+const toggleEditBtn = document.getElementById("toggleEdit");
+toggleEditBtn?.addEventListener("click", () => {
+  document.body.classList.toggle("edit-mode");
+  const on = document.body.classList.contains("edit-mode");
+  toggleEditBtn.textContent = on ? "완료" : "편집";
+});
+
+    
+    
 // ===== 카테고리(초기값: 나중에 언제든 추가 가능) =====
 const CATEGORIES = [
   "식비",
