@@ -782,7 +782,9 @@ function renderRecent(){
   const wrap = document.getElementById("recentList");
   if(!wrap) return;
 
-  const list = loadRecords().slice(0, 10);
+  const list = loadRecords()
+    .sort((a, b) => (b.spentDate || "").localeCompare(a.spentDate || ""))
+    .slice(0, 10);
   if(list.length === 0){
     wrap.innerHTML = `<p class="hint">아직 기록이 없어. +로 추가해봐!</p>`;
     return;
