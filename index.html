@@ -818,7 +818,9 @@ function renderRecent(){
           <div class="recent-sub">${sub}</div>
         </div>
 
-        <div class="recent-amt ${amtClass}">${fmtKRW(x.amount)}</div>
+        <div class="recent-amt ${x.type === 'expense' ? 'amt-expense' : 'amt-income'}">
+          ${fmtKRW(x.amount)}
+        </div>
       </div>
     `;
   }).join("");
