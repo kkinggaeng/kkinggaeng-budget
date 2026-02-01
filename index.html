@@ -1151,6 +1151,8 @@ document.getElementById("recentList")?.addEventListener("click", (e) => {
   const btn = e.target.closest(".edit-btn");
   if(!btn) return;
 
+  e.stopPropagation(); // ✅ 혹시 다른 클릭 이벤트가 생겨도 연필만 독립 반응
+
   const id = btn.dataset.id;
   if(!id) return;
 
