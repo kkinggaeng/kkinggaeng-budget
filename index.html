@@ -750,17 +750,24 @@ function renderRecent(){
   wrap.innerHTML = list.map(x => {
     const typeLabel = x.type === "income" ? "수입" : "지출";
     const place = x.place ? ` · ${x.place}` : "";
-    return `
-      <div class="recent-item">
-        <div class="recent-left">
-          <div><b>${typeLabel}</b> · ${x.category || "기타"}</div>
-          <div class="recent-meta">${x.card || ""}${place}</div>
-        </div>
-        <div class="recent-amt ${x.type === 'income' ? 'income' : 'expense'}">
-          ${fmtKRW(x.amount)}
-        </div>
+    const isIncome = x.type === "income";
+const amountClass = isIncome ? "amount-income" : "amount-expense";
+
+return `
+  <div class="recent-item">
+    <div class="recent-left">
+      <div class="recent-meta">
+        ${x.spentDate ? x.spentDate.replace(/-/g, '. ') : ''}
       </div>
-    `;
+      <div>
+        ${x.category || "기타"} · ${x.card || ""}${place}
+      </div>
+    </div>
+    <div class="recent-amt ${amountClass}">
+      ${fmtKRW(x.amount)}
+    </div>
+  </div>
+`;
   }).join("");
 }
 
