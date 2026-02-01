@@ -431,6 +431,25 @@
   opacity: .9;
 }
 
+.delete-btn{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,.65);
+  color: #C94A4A; /* 지출 레드 계열 */
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.delete-btn:active{
+  transform: scale(.98);
+  opacity: .9;
+}
+    
+
 /* ✅ 편집모드일 때만 연필 보이기 */
 body.edit-mode .edit-btn{
   display:flex;
@@ -1132,6 +1151,7 @@ function renderRecent(){
           ${fmtKRW(x.amount)}
         </div>
         <button class="edit-btn" type="button" data-id="${x.id}" aria-label="수정">✏️</button>
+        <button class="delete-btn" type="button" data-id="${x.id}" aria-label="삭제">🗑️</button>
       </div>
     </div>
   `;
@@ -1145,7 +1165,7 @@ function renderRecent(){
 renderRecent();
 
 /* =========================
-   C-5: ✏️ 수정 버튼 클릭 처리
+   ✏️ 수정 버튼 클릭 처리
    ========================= */
 document.getElementById("recentList")?.addEventListener("click", (e) => {
   const btn = e.target.closest(".edit-btn");
@@ -1163,6 +1183,28 @@ document.getElementById("recentList")?.addEventListener("click", (e) => {
   fillFormForEdit(item);
   openModal();
 });
+
+/* =========================
+   🗑️ 삭제 버튼 클릭 처리
+   ========================= */
+document.getElementById("recentList")?.addEventListener("click", (e) => {
+  const btn = e.target.closest(".delete-btn");
+  if(!btn) return;
+
+  e.stopPropagation(); // 다른 클릭 이벤트 차단
+
+  const id = btn.dataset.id;
+  if(!id) return;
+
+  const ok = confirm("이 항목을 삭제할까?\n(되돌릴 수 없어)");
+  if(!ok) return;
+
+  const list = loadRecords().filter(x => x.id !== id);
+  localStorage.setItem("records", JSON.stringify(list));
+
+  renderRecent();
+});
+    
     
 
   </script>
