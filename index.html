@@ -741,6 +741,8 @@ const CATEGORIES = [
 const modal = document.getElementById('modal');
 const closeBtn = document.getElementById('close');
 const saveBtn = document.getElementById('save');
+let editId = null;        // 지금 수정 중인 record id
+let isEditMode = false;   // 수정모드인지 여부
 
 const typeEl = document.getElementById('type');
 const amountEl = document.getElementById('amount');
@@ -761,24 +763,115 @@ function renderCategories(){
 }
 renderCategories();
 
-// + 버튼 → 모달 열기
-fab.addEventListener('click', ()=>{
+function openModal(){
   modal.classList.remove('hidden');
+}
 
-  // ✅ 날짜 기본값 = 오늘
-  if (spentDateEl) {
-    spentDateEl.value = new Date().toISOString().slice(0,10);
+function closeModal(){
+  modal.classList.add('hidden');
+}
+
+function resetFormToNew(){
+  isEditMode = false;
+  editId = null;
+  saveBtn.textContent = "저장"; // 기본 라벨
+
+  // 기본값: 지출
+  typeEl.value = "expense";
+  const seg = document.getElementById('typeSegment');
+  if(seg){
+    seg.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    const first = seg.querySelector('.seg-btn[data-value="expense"]');
+    if(first) first.classList.add('active');
   }
 
+  // 날짜 기본값 오늘
+  if(spentDateEl) spentDateEl.value = new Date().toISOString().slice(0,10);
+
+  // 입력값 초기화
+  amountEl.value = "";
+  amountEl.dataset.raw = "";
+  categoryEl.value = CATEGORIES[0] || "기타";
+  placeEl.value = "";
+  memoEl.value = "";
+  cardEl.value = "삼성";
+}
+
+function fillFormForEdit(item){
+  isEditMode = true;
+  editId = item.id;
+  saveBtn.textContent = "수정 저장";
+
+  // 타입 세팅 + 토글 버튼 UI도 맞추기
+  typeEl.value = item.type || "expense";
+  const seg = document.getElementById('typeSegment');
+  if(seg){
+    seg.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    const btn = seg.querySelector(`.seg-btn[data-value="${typeEl.value}"]`);
+    if(btn) btn.classList.add('active');
+  }
+
+  // 날짜
+  spentDateEl.value = (item.spentDate || new Date().toISOString().slice(0,10));
+
+  // 금액: raw + 콤마 표시
+  const raw = String(item.amount || 0);
+  amountEl.dataset.raw = raw;
+  amountEl.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  // 나머지
+  categoryEl.value = item.category || "기타";
+  placeEl.value = item.place || "";
+  memoEl.value = item.memo || "";
+  cardEl.value = item.card || "삼성";
+}
+    
+    
+// + 버튼 → 모달 열기
+fab.addEventListener('click', ()=>{
+  resetFormToNew();
+  openModal();
   amountEl.focus();
 });
     
 // 닫기
 closeBtn.addEventListener('click', ()=>{
-  modal.classList.add('hidden');
+  closeModal();
 });
 
+
+
+    
 // 저장(일단 로컬 저장만)
+// ✅ 전역 상태: 수정 중인 record id (없으면 신규 추가)
+let editingId = null;
+
+function closeModal(){
+  modal.classList.add('hidden');
+}
+
+function resetForm(){
+  // 구분 기본값: 지출
+  typeEl.value = "expense";
+  const seg = document.getElementById('typeSegment');
+  if(seg){
+    seg.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    seg.querySelector(`.seg-btn[data-value="expense"]`)?.classList.add('active');
+  }
+
+  // 날짜 기본값: 오늘
+  spentDateEl.value = new Date().toISOString().slice(0,10);
+
+  // 입력값 초기화
+  amountEl.value = "";
+  amountEl.dataset.raw = "";
+  placeEl.value = "";
+  memoEl.value = "";
+}
+
+
+    
+// ✅ 저장(추가/수정 겸용) — 최종본
 saveBtn.addEventListener('click', ()=>{
   const amount = Number(amountEl.dataset.raw || 0);
   if(!amount || amount <= 0){
@@ -786,32 +879,57 @@ saveBtn.addEventListener('click', ()=>{
     return;
   }
 
-  const item = {
-    id: (crypto?.randomUUID?.() || ("id_" + Date.now() + "_" + Math.random().toString(16).slice(2))),
-    type: typeEl.value,      // expense / income
+  const list = loadRecords(); // ✅ 너가 이미 만든 함수 사용
+
+  // ✅ 공통 payload (id/createdAt 제외)
+  const payload = {
+    type: typeEl.value,
     amount,
     category: categoryEl.value,
     place: placeEl.value.trim(),
     card: cardEl.value,
-    memo: memoEl?.value?.trim() || "",
-    spentDate: spentDateEl?.value || new Date().toISOString().slice(0,10),
+    memo: (memoEl.value || "").trim(),
+    spentDate: spentDateEl.value || new Date().toISOString().slice(0,10),
+  };
+
+  if(editingId){
+    // ✅ 수정 모드
+    const idx = list.findIndex(x => x.id === editingId);
+    if(idx < 0){
+      alert("수정할 항목을 찾지 못했어 😵");
+      return;
+    }
+
+    list[idx] = {
+      ...list[idx],     // id, createdAt 유지
+      ...payload,
+      updatedAt: new Date().toISOString()
+    };
+
+    editingId = null; // ✅ 수정 끝났으니 초기화
+    localStorage.setItem('records', JSON.stringify(list));
+    renderRecent();
+    closeModal();
+    alert('수정됨 ✨');
+    return;
+  }
+
+  // ✅ 신규 추가
+  const item = {
+    id: (crypto?.randomUUID?.() || ("id_" + Date.now() + "_" + Math.random().toString(16).slice(2))),
+    ...payload,
     createdAt: new Date().toISOString()
   };
 
-  const list = JSON.parse(localStorage.getItem('records') || '[]');
   list.unshift(item);
   localStorage.setItem('records', JSON.stringify(list));
-
-  // 입력값 초기화(금액/사용처만)
-  amountEl.value = '';
-  placeEl.value = '';
-  memoEl.value = "";
-  
-  renderRecent(); // ✅ 저장 후 홈 리스트 갱신
-
-  modal.classList.add('hidden');
+  renderRecent();
+  resetForm();
+  closeModal();
   alert('저장됨 👍');
 });
+
+    
 
   // 지출/수입 버튼 토글
 (function(){
@@ -986,6 +1104,24 @@ function renderRecent(){
 
 // 페이지 처음 열릴 때 1번 실행
 renderRecent();
+
+/* =========================
+   C-5: ✏️ 수정 버튼 클릭 처리
+   ========================= */
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".edit-btn");
+  if(!btn) return;
+
+  const id = btn.dataset.id;
+  if(!id) return;
+
+  const all = loadRecords();
+  const item = all.find(r => r.id === id);
+  if(!item) return;
+
+  fillFormForEdit(item);
+  openModal();
+});
     
     
 
