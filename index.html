@@ -793,10 +793,13 @@ function renderRecent(){
     const d = (x.spentDate || "").replaceAll("-", ". ");
     const dateText = d ? (d + ".") : "";
 
-    // 메모 불릿(메모 있으면 표시)
-    const hasMemo = !!(x.memo && x.memo.trim());
-    const memoDot = hasMemo ? `<span class="memo-dot" aria-label="메모 있음"></span>` : "";
-
+   // 오늘 입력한 건만 표시 (NEW 개념)
+    const isToday =
+     (x.createdAt || "").slice(0,10) === new Date().toISOString().slice(0,10);
+    const todayDot = isToday
+     ? `<span class="memo-dot" aria-label="오늘 입력"></span>`
+     : "";
+    
     // 아래줄: 카드 / 구매처만
     const card = x.card ? x.card : "";
     const place = x.place ? x.place : "";
@@ -811,8 +814,7 @@ function renderRecent(){
           <div class="recent-meta">${dateText}</div>
 
           <div class="recent-title">
-            ${x.category || "기타"}
-            ${memoDot}
+           ${x.category || "기타"}${todayDot}
           </div>
 
           <div class="recent-sub">${sub}</div>
