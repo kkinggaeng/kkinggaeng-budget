@@ -413,6 +413,16 @@
       color: #3E8E7E;   /* 세이지와 같은 계열 */
     }
 
+    .memo-dot{
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #7FAE9E; /* 세이지 */
+      display: inline-block;
+      margin-left: 6px;
+    }
+    
+
     
 
 @supports (background: color-mix(in srgb, white, black)) {
@@ -781,8 +791,9 @@ return `
       <div class="recent-meta">
         ${x.spentDate ? x.spentDate.replace(/-/g, '. ') : ''}
       </div>
-      <div class="recent-title">
-        ${x.category || "기타"} · ${x.card || ""}${place}
+      <div>
+        <b>${x.category || "기타"}</b>
+        ${x.memo ? `<span class="memo-dot"></span>` : ""}
       </div>
     </div>
     <div class="recent-amt ${x.type === 'income' ? 'amount-income' : 'amount-expense'}">
