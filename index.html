@@ -380,7 +380,7 @@
     /* 최근내역 - 카테고리/카드/사용처를 보조 텍스트로 */
     .recent-title{
       font-size: 13px;          /* 날짜랑 같은 급 */
-      color: var(--muted);      /* 회색 톤 */
+      color: #444;
       font-weight: 400;
       letter-spacing: -0.2px;
     }     
@@ -395,14 +395,12 @@
       font-weight: 600;
     }
 
-    /* 지출 */
-    .recent-amt.expense{
-      color: var(--expense-red);
+    /* 금액 색상 */
+    .amount-expense {
+      color: var(--expense-red);   /* 지출 */
     }
-
-    /* 수입 */
-    .recent-amt.income{
-      color: var(--income-green);
+    .amount-income {
+      color: var(--income-green);  /* 수입 */
     }
 
     /* 지출: 세이지와 어울리는 muted red */
@@ -787,8 +785,8 @@ return `
         ${x.category || "기타"} · ${x.card || ""}${place}
       </div>
     </div>
-    <div class="recent-amt ${amountClass}">
-      ${fmtKRW(x.amount)}
+    <div class="recent-amt ${x.type === 'income' ? 'amount-income' : 'amount-expense'}">
+        ${fmtKRW(x.amount)}
     </div>
   </div>
 `;
