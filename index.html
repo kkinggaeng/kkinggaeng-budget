@@ -405,6 +405,38 @@
       font-weight: 600;
     }
 
+    /* ===== 월 구분선(Sticky) ===== */
+    .month-header{
+      position: sticky;
+      top: 76px; /* ✅ 상단 헤더 아래에 붙게(필요하면 68~90 사이로 조절) */
+      z-index: 6;
+
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+
+      padding:10px 12px;
+      margin-top:12px;
+
+      border:1px solid var(--line);
+      border-radius:14px;
+
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 18px rgba(0,0,0,.06);
+    }
+
+    .month-title{
+      font-weight:800;
+      letter-spacing:-0.2px;
+    }
+
+    .month-sum{
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:-0.2px;
+    }
+
     /* 금액 색상 */
     .amount-expense {
       color: var(--expense-red);   /* 지출 */
@@ -800,16 +832,30 @@ function renderRecent(){
   const wrap = document.getElementById("recentList");
   if(!wrap) return;
 
+  const all = loadRecords().slice();
+
+  // ✅ 월별 합계(지출/수입) 미리 계산
+  const monthAgg = {}; // { "YYYY-MM": {expense:0, income:0} }
+  all.forEach(x=>{
+    const ym = (x.spentDate || "").slice(0,7);
+    if(!ym || !ym.includes("-")) return;
+
+    if(!monthAgg[ym]) monthAgg[ym] = { expense: 0, income: 0 };
+    const amt = Number(x.amount || 0);
+
+    if(x.type === "income") monthAgg[ym].income += amt;
+    else monthAgg[ym].expense += amt;
+  });
+
   // ✅ 정렬: spentDate 내림차순, 같은 날짜면 createdAt 내림차순
-  const list = loadRecords()
-    .slice()
+  const list = all
     .sort((a, b) => {
       const ad = (a.spentDate || "0000-00-00");
       const bd = (b.spentDate || "0000-00-00");
       if (bd !== ad) return bd.localeCompare(ad);
       return (b.createdAt || "").localeCompare(a.createdAt || "");
     })
-    .slice(0, 30); // ✅ 10개면 월구분선 의미가 약해서 30 추천(원하면 10으로)
+    .slice(0, 30); // ✅ 월구분선 의미 살리려면 30 추천
 
   if(list.length === 0){
     wrap.innerHTML = `<p class="hint">아직 기록이 없어. +로 추가해봐!</p>`;
@@ -824,14 +870,31 @@ function renderRecent(){
     return `${y}년 ${m}월`;
   };
 
+  // ✅ 월 합계 텍스트: "지출 123,000 · 수입 45,000"
+  const monthSumText = (ym) => {
+    const agg = monthAgg[ym] || { expense: 0, income: 0 };
+    const exp = Number(agg.expense || 0).toLocaleString("ko-KR");
+    const inc = Number(agg.income || 0).toLocaleString("ko-KR");
+    return `지출 ${exp} · 수입 ${inc}`;
+  };
+
   let html = "";
   let prevMonth = "";
 
   list.forEach(x => {
-    // ✅ 월 구분선 삽입
     const ym = (x.spentDate || "").slice(0,7); // YYYY-MM
+
+    // ✅ 월 구분선(=헤더) 삽입 + 합계 표시
     if(ym !== prevMonth){
-      html += `<div class="month-sep">${monthLabel(x.spentDate)}</div>`;
+      const label = monthLabel(x.spentDate);
+      const sum = (ym && ym.includes("-")) ? monthSumText(ym) : "";
+
+      html += `
+        <div class="month-header">
+          <div class="month-title">${label}</div>
+          <div class="month-sum">${sum}</div>
+        </div>
+      `;
       prevMonth = ym;
     }
 
@@ -851,7 +914,7 @@ function renderRecent(){
     const place = x.place ? x.place : "";
     const sub = [card, place].filter(Boolean).join(" · ");
 
-    // ✅ 금액 클래스: 너가 이미 쓰는 amt-expense / amt-income 그대로 살림
+    // ✅ 금액 클래스: 너가 이미 쓰는 amt-expense / amt-income 그대로
     const amtSideClass = (x.type === "income") ? "amt-income" : "amt-expense";
 
     html += `
