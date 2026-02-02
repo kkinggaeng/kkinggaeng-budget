@@ -1110,79 +1110,73 @@ saveBtn.addEventListener('click', ()=>{
 
 
 
-function renderTodaySpend(){
-  const el = document.getElementById("todaySpendValue");
-  if(!el) return;
-
-  const today = new Date(Date.now() - new Date().getTimezoneOffset()*60000)
-  .toISOString().slice(0,10);
-  const list = loadRecords();
-
-  const sum = list.reduce((acc, x) => {
-    const isToday = (x.spentDate || "").slice(0,10) === today;
-    const isExpense = (x.type || "expense") !== "income";
-    if(isToday && isExpense){
-      acc += Number(x.amount || 0);
-    }
-    return acc;
-  }, 0);
-
-  el.textContent = fmtKRW(sum);
+// ✅ (중요) 로컬 날짜(내 폰 기준)로 YYYY-MM-DD 만들기
+function localISODate(d = new Date()){
+  const tz = d.getTimezoneOffset() * 60000;
+  return new Date(d.getTime() - tz).toISOString().slice(0,10);
 }
 
+// ✅ 오늘 지출 + 어제 대비/무지출 문구까지 한 방에 처리
+function renderTodaySpend(){
+  const valueEl = document.getElementById("todaySpendValue");
+  const diffEl  = document.getElementById("todayDiff");
+  if(!valueEl) return;
 
-
-// ✅ 여기부터 새로 추가
-function renderTodaySummary(){
-  const diffEl = document.getElementById("todayDiff");
-  if(!diffEl) return;
+  const today = localISODate(new Date());
+  const ydayDate = new Date();
+  ydayDate.setDate(ydayDate.getDate() - 1);
+  const yday = localISODate(ydayDate);
 
   const list = loadRecords();
 
-  const today = new Date();
-  const todayKey = new Date().toISOString().slice(0,10);
-  
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
-  const yKey = yesterday.toISOString().slice(0,10);
-
-  const sumByDate = (dateKey) => {
+  const sumExpenseByDate = (dateStr) => {
     return list.reduce((acc, x) => {
+      const d = (x.spentDate || "").slice(0,10);
       const isExpense = (x.type || "expense") !== "income";
-      if(isExpense && (x.spentDate || "").slice(0,10) === dateKey){
-        acc += Number(x.amount || 0);
-      }
+      if(d === dateStr && isExpense) acc += Number(x.amount || 0);
       return acc;
     }, 0);
   };
 
-  const todaySum = sumByDate(todayKey);
-  const yesterdaySum = sumByDate(yKey);
+  const todaySum = sumExpenseByDate(today);
+  const ydaySum  = sumExpenseByDate(yday);
 
+  // 1) 오늘 지출 값
+  valueEl.textContent = fmtKRW(todaySum);
+
+  // 2) 어제 대비 문구(옆에)
+  if(!diffEl) return;
+
+  diffEl.classList.remove("up", "down");
   diffEl.textContent = "";
-  diffEl.className = "today-diff";
 
+  // ✅ 무지출 성공
   if(todaySum === 0){
     diffEl.textContent = "무지출 성공! 🎉";
-    diffEl.style.color = "var(--ok)";
+    // 색은 중립/초록 느낌으로 하고 싶으면 down 클래스 줘도 됨
+    diffEl.classList.add("down");
     return;
   }
 
-  const diff = todaySum - yesterdaySum;
-  if(diff === 0) return;
+  const diff = todaySum - ydaySum;
 
-  const arrow = diff > 0 ? "▲" : "▼";
-  const abs = Math.abs(diff).toLocaleString("ko-KR");
+  if(diff > 0){
+    diffEl.classList.add("up");
+    diffEl.textContent = `▲ ${Number(diff).toLocaleString("ko-KR")}`;
+    return;
+  }
 
-  diffEl.textContent = `${arrow} ${abs}`;
-  diffEl.classList.add(diff > 0 ? "up" : "down");
+  if(diff < 0){
+    diffEl.classList.add("down");
+    diffEl.textContent = `▼ ${Number(Math.abs(diff)).toLocaleString("ko-KR")}`;
+    return;
+  }
+
+  // diff === 0 (오늘 지출이 0이 아닌 상태)
+  diffEl.textContent = "어제와 같음";
 }
 
     
-    
-function renderTodaySummary(){
-  // TODO: 나중에 구현. 지금은 에러 방지용.
-}    
     
 
 function fillFormForEdit(item){
@@ -1375,7 +1369,6 @@ function renderRecent(){
 
   wrap.innerHTML = html;
   renderTodaySpend();
-  renderTodaySummary();
 }
 
 
@@ -1384,7 +1377,7 @@ function renderRecent(){
 // 페이지 처음 열릴 때 1번 실행
 renderRecent();
 renderTodaySpend();
-renderTodaySummary();
+
 
 
 /* =========================
