@@ -460,8 +460,9 @@ body.edit-mode .delete-btn{
 
  /* ✅ 홈 - 오늘의 지출 한 줄 */
 .today-spend{
-  margin-top: 10px;                 /* 명언과 한 줄 공기 */
+  margin-top: 10px;      /* 명언과 한 줄 공기 */
   display: inline-flex;
+  font-size: 13px;
   justify-content: space-between;
   align-items: center;
   gap: 4px;
@@ -480,6 +481,30 @@ body.edit-mode .delete-btn{
   font-size: 13px;               /* 본문과 동일 */
   font-weight: 400;              /* ⭐ 굵기 통일 */
 }
+
+.today-amount{
+  color: #C94A4A; /* muted red */
+  margin-left: 4px;
+}
+
+/* 대비 정보 */
+.today-diff {
+  margin-left: 8px;
+  font-size: 13px;
+  letter-spacing: -0.2px;
+}
+
+/* 어제보다 더 씀 */
+.today-diff.up {
+  color: rgba(201, 74, 74, 0.6); /* 연한 로즈 */
+}
+
+/* 어제보다 덜 씀 */
+.today-diff.down {
+  color: rgba(62, 142, 126, 0.7); /* 세이지 그린 */
+}
+    
+    
 
     /* ===== 월 구분선(Sticky) ===== */
     .month-header{
@@ -655,6 +680,7 @@ body.edit-mode .delete-btn{
         <div class="today-spend" id="todaySpendRow" aria-live="polite">
           <span class="label">오늘의 지출 :</span>
           <span class="value amt-expense" id="todaySpendValue">0원</span>
+          <span class="today-diff" id="todayDiff"></span>
         </div>
       </div>
 
@@ -1084,6 +1110,27 @@ saveBtn.addEventListener('click', ()=>{
 
 
 
+function renderTodaySpend(){
+  const el = document.getElementById("todaySpendValue");
+  if(!el) return;
+
+  const today = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+  const list = loadRecords();
+
+  const sum = list.reduce((acc, x) => {
+    const isToday = (x.spentDate || "").slice(0,10) === today;
+    const isExpense = (x.type || "expense") !== "income";
+    if(isToday && isExpense){
+      acc += Number(x.amount || 0);
+    }
+    return acc;
+  }, 0);
+
+  el.textContent = fmtKRW(sum);
+}
+    
+    
+
 function fillFormForEdit(item){
   editingId = item.id;
 
@@ -1189,31 +1236,6 @@ function renderRecent(){
 
 
 
-
-  function renderTodaySpend(){
-  const el = document.getElementById("todaySpendValue");
-  if(!el) return;
-
-  const today = new Date().toISOString().slice(0,10); // YYYY-MM-DD
-  const list = loadRecords();
-
-  const sum = list.reduce((acc, x) => {
-    const isToday = (x.spentDate || "").slice(0,10) === today;
-    const isExpense = (x.type || "expense") !== "income";
-    if(isToday && isExpense){
-      acc += Number(x.amount || 0);
-    }
-    return acc;
-  }, 0);
-
-  el.textContent = fmtKRW(sum);
-}
-
-
-  
-
-
-
   // ✅ 정렬
   const list = all
     .sort((a, b) => {
@@ -1300,9 +1322,12 @@ function renderRecent(){
 }
 
 
+
     
 // 페이지 처음 열릴 때 1번 실행
 renderRecent();
+
+    renderTodaySummary();
 
 /* =========================
    ✏️ 수정 버튼 클릭 처리
