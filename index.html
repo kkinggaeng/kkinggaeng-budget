@@ -768,6 +768,15 @@ body.edit-mode .delete-btn{
     </button>
   </nav>
 
+  <!-- ✅ Toast (script 위로 이동) -->
+  <div id="toast" class="toast hidden" role="status" aria-live="polite">
+    <span id="toastText"></span>
+    <button id="toastUndo" type="button" class="toast-undo" style="display:none;">
+    되돌리기
+    </button>
+  </div>
+
+
   <script>
     // 탭 전환
     const tabs = document.querySelectorAll('.tab');
@@ -1372,12 +1381,6 @@ toastUndoBtn?.addEventListener("click", () => {
 });
     
   </script>
-
-  <!-- ✅ Toast (1개만) -->
-  <div id="toast" class="toast hidden" role="status" aria-live="polite">
-    <span id="toastText"></span>
-    <button id="toastUndo" type="button" class="toast-undo" style="display:none;">되돌리기</button>
-  </div>
 
   
 </body>
