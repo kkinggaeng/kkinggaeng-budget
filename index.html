@@ -1246,8 +1246,11 @@ function renderRecent(){
     })
     .slice(0, 30);
 
+  
   if(list.length === 0){
     wrap.innerHTML = `<p class="hint">아직 기록이 없어. +로 추가해봐!</p>`;
+    renderTodaySpend();   // ✅ 기록 없어도 0원으로 갱신
+    renderTodaySummary();
     return;
   }
 
@@ -1319,6 +1322,7 @@ function renderRecent(){
 
   wrap.innerHTML = html;
   renderTodaySpend();
+  renderTodaySummary();
 }
 
 
@@ -1326,8 +1330,8 @@ function renderRecent(){
     
 // 페이지 처음 열릴 때 1번 실행
 renderRecent();
-
-    renderTodaySummary();
+renderTodaySpend();
+renderTodaySummary();
 
 /* =========================
    ✏️ 수정 버튼 클릭 처리
