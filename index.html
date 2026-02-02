@@ -456,6 +456,28 @@ body.edit-mode .edit-btn,
 body.edit-mode .delete-btn{
   display:flex;
 }
+
+
+    /* ✅ 홈 - 오늘의 지출 한 줄 */
+.today-spend{
+  margin-top: 12px;                 /* 명언과 한 줄 공기 */
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.today-spend .label{
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: -0.2px;
+}
+
+.today-spend .value{
+  font-size: 14px;
+  font-weight: 700;                 /* 과하지 않게, 딱 인지용 */
+  letter-spacing: -0.2px;
+}
     
 
     /* ===== 월 구분선(Sticky) ===== */
@@ -629,6 +651,10 @@ body.edit-mode .delete-btn{
           오늘 쓴 돈을 아는 것만으로 충분하다.<br/>
           작심삼일이면, 1년에 120번이다.
         </p>
+        <div class="today-spend" id="todaySpendRow" aria-live="polite">
+          <span class="label">오늘의 지출 :</span>
+          <span class="value amt-expense" id="todaySpendValue">0원</span>
+        </div>
       </div>
 
       <div class="card">
@@ -1160,6 +1186,33 @@ function renderRecent(){
     else monthAgg[ym].expense += amt;
   });
 
+
+
+
+  function renderTodaySpend(){
+  const el = document.getElementById("todaySpendValue");
+  if(!el) return;
+
+  const today = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+  const list = loadRecords();
+
+  const sum = list.reduce((acc, x) => {
+    const isToday = (x.spentDate || "").slice(0,10) === today;
+    const isExpense = (x.type || "expense") !== "income";
+    if(isToday && isExpense){
+      acc += Number(x.amount || 0);
+    }
+    return acc;
+  }, 0);
+
+  el.textContent = fmtKRW(sum);
+}
+
+
+  
+
+
+
   // ✅ 정렬
   const list = all
     .sort((a, b) => {
@@ -1242,8 +1295,11 @@ function renderRecent(){
 
 
   wrap.innerHTML = html;
+  renderTodaySpend();
 }
 
+
+    
 // 페이지 처음 열릴 때 1번 실행
 renderRecent();
 
