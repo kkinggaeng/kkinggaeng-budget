@@ -1140,8 +1140,8 @@ function renderTodaySummary(){
   const list = loadRecords();
 
   const today = new Date();
-  const todayKey = today.toISOString().slice(0,10);
-
+  const todayKey = new Date().toISOString().slice(0,10);
+  
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
   const yKey = yesterday.toISOString().slice(0,10);
