@@ -1255,27 +1255,6 @@ document.getElementById("recentList")?.addEventListener("click", (e) => {
   openModal();
 });
 
-/* =========================
-   🗑️ 삭제 버튼 클릭 처리
-   ========================= */
-document.getElementById("recentList")?.addEventListener("click", (e) => {
-  const btn = e.target.closest(".delete-btn");
-  if(!btn) return;
-
-  e.stopPropagation(); // 다른 클릭 이벤트 차단
-
-  const id = btn.dataset.id;
-  if(!id) return;
-
-  const ok = confirm("이 항목을 삭제할까?\n(되돌릴 수 없어)");
-  if(!ok) return;
-
-  const list = loadRecords().filter(x => x.id !== id);
-  localStorage.setItem("records", JSON.stringify(list));
-
-  renderRecent();
-});
-
 
     
   // ✅ Toast helper (하나로 재사용)
