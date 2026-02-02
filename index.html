@@ -555,7 +555,7 @@ body.edit-mode .delete-btn{
   gap: 8px;
 
   opacity: 0;
-  pointer-events: none;
+  pointer-events: none; /* 토스트 자체는 클릭 무시 */
 }
 
 /* 나타날 때 */
@@ -579,8 +579,11 @@ body.edit-mode .delete-btn{
   border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
+  pointer-events: auto; /* ✅ 버튼만 클릭 가능 */
 }
 
+
+    
 
 @keyframes toastIn{
   from { transform: translateX(-50%) translateY(8px); opacity: 0; }
