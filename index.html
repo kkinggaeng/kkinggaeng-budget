@@ -442,6 +442,7 @@
   display:flex;
   align-items:center;
   justify-content:center;
+  display: none;
 }
 
 .delete-btn:active{
@@ -451,7 +452,8 @@
     
 
 /* ✅ 편집모드일 때만 연필 보이기 */
-body.edit-mode .edit-btn{
+body.edit-mode .edit-btn,
+body.edit-mode .delete-btn{
   display:flex;
 }
     
@@ -747,12 +749,26 @@ body.edit-mode .edit-btn{
     
 // ✅ 편집모드 토글
 const toggleEditBtn = document.getElementById("toggleEdit");
-toggleEditBtn?.addEventListener("click", () => {
-  document.body.classList.toggle("edit-mode");
-  const on = document.body.classList.contains("edit-mode");
-  toggleEditBtn.textContent = on ? "완료" : "편집";
-});
 
+toggleEditBtn?.addEventListener("click", () => {
+  const on = document.body.classList.toggle("edit-mode");
+  toggleEditBtn.textContent = on ? "완료" : "편집";
+
+  // ✅ 편집모드 OFF로 돌아갈 때: 열려있는 모달/수정상태 정리(선택이지만 강추)
+  if (!on) {
+    // 모달 닫기
+    modal?.classList.add("hidden");
+
+    // 수정중 상태 초기화 (네가 쓰는 변수명에 맞게 유지)
+    editingId = null;
+    isEditMode = false;
+    editId = null;
+
+    // 폼도 초기화(원하면)
+    // resetFormToNew?.();
+    // resetForm?.();
+  }
+});
     
     
 // ===== 카테고리(초기값: 나중에 언제든 추가 가능) =====
