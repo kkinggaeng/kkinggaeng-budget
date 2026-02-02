@@ -458,27 +458,28 @@ body.edit-mode .delete-btn{
 }
 
 
-    /* ✅ 홈 - 오늘의 지출 한 줄 */
+ /* ✅ 홈 - 오늘의 지출 한 줄 */
 .today-spend{
-  margin-top: 12px;                 /* 명언과 한 줄 공기 */
-  display: flex;
+  margin-top: 10px;                 /* 명언과 한 줄 공기 */
+  display: inline-flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 10px;
+  gap: 6px;
 }
 
 .today-spend .label{
-  font-size: 13px;
-  color: var(--muted);
   letter-spacing: -0.2px;
+  font-size: 14px;               /* 본문과 동일 */
+  color: var(--muted);
+  font-weight: 400;
 }
 
 .today-spend .value{
-  font-size: 14px;
-  font-weight: 700;                 /* 과하지 않게, 딱 인지용 */
+  display: inline-flex;                 /* 과하지 않게, 딱 인지용 */
   letter-spacing: -0.2px;
+  font-size: 14px;               /* 본문과 동일 */
+  font-weight: 400;              /* ⭐ 굵기 통일 */
 }
-    
 
     /* ===== 월 구분선(Sticky) ===== */
     .month-header{
