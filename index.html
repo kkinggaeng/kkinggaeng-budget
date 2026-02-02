@@ -1148,7 +1148,7 @@ function renderTodaySpend(){
   if(!diffEl) return;
 
   diffEl.classList.remove("up", "down");
-  diffEl.textContent = `${arrow}${abs}`;
+  diffEl.textContent = "";
 
   // ✅ 무지출 성공
   if(todaySum === 0){
@@ -1162,13 +1162,13 @@ function renderTodaySpend(){
 
   if(diff > 0){
     diffEl.classList.add("up");
-    diffEl.textContent = `▲ ${Number(diff).toLocaleString("ko-KR")}`;
+    diffEl.textContent = `▲${Number(diff).toLocaleString("ko-KR")}`;
     return;
   }
 
   if(diff < 0){
     diffEl.classList.add("down");
-    diffEl.textContent = `▼ ${Number(Math.abs(diff)).toLocaleString("ko-KR")}`;
+    diffEl.textContent = `▼${Number(Math.abs(diff)).toLocaleString("ko-KR")}`;
     return;
   }
 
