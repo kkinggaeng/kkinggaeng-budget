@@ -1131,6 +1131,54 @@ function renderTodaySpend(){
 }
 
 
+
+// ✅ 여기부터 새로 추가
+function renderTodaySummary(){
+  const diffEl = document.getElementById("todayDiff");
+  if(!diffEl) return;
+
+  const list = loadRecords();
+
+  const today = new Date();
+  const todayKey = today.toISOString().slice(0,10);
+
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  const yKey = yesterday.toISOString().slice(0,10);
+
+  const sumByDate = (dateKey) => {
+    return list.reduce((acc, x) => {
+      const isExpense = (x.type || "expense") !== "income";
+      if(isExpense && (x.spentDate || "").slice(0,10) === dateKey){
+        acc += Number(x.amount || 0);
+      }
+      return acc;
+    }, 0);
+  };
+
+  const todaySum = sumByDate(todayKey);
+  const yesterdaySum = sumByDate(yKey);
+
+  diffEl.textContent = "";
+  diffEl.className = "today-diff";
+
+  if(todaySum === 0){
+    diffEl.textContent = "무지출 성공! 🎉";
+    diffEl.style.color = "var(--ok)";
+    return;
+  }
+
+  const diff = todaySum - yesterdaySum;
+  if(diff === 0) return;
+
+  const arrow = diff > 0 ? "▲" : "▼";
+  const abs = Math.abs(diff).toLocaleString("ko-KR");
+
+  diffEl.textContent = `${arrow} ${abs}`;
+  diffEl.classList.add(diff > 0 ? "up" : "down");
+}
+
+    
     
 function renderTodaySummary(){
   // TODO: 나중에 구현. 지금은 에러 방지용.
