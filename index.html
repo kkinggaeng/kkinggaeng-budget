@@ -677,7 +677,7 @@ body.edit-mode .delete-btn{
           오늘 쓴 돈을 아는 것만으로 충분하다.<br/>
           작심삼일이면, 1년에 120번이다.
         </p>
-        <div class="today-spend" id="todaySpendRow" aria-live="polite">
+        <div class="today-spend" id="todaySpendRow">
           <span class="label">오늘의 지출 :</span>
           <span class="value amt-expense" id="todaySpendValue">0원</span>
           <span class="today-diff" id="todayDiff"></span>
@@ -1375,6 +1375,7 @@ function renderRecent(){
 
   wrap.innerHTML = html;
   renderTodaySpend();
+  renderTodaySummary();
 }
 
 
@@ -1383,6 +1384,7 @@ function renderRecent(){
 // 페이지 처음 열릴 때 1번 실행
 renderRecent();
 renderTodaySpend();
+renderTodaySummary();
 
 
 /* =========================
