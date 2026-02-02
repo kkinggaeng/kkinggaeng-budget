@@ -1114,7 +1114,8 @@ function renderTodaySpend(){
   const el = document.getElementById("todaySpendValue");
   if(!el) return;
 
-  const today = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+  const today = new Date(Date.now() - new Date().getTimezoneOffset()*60000)
+  .toISOString().slice(0,10);
   const list = loadRecords();
 
   const sum = list.reduce((acc, x) => {
@@ -1128,7 +1129,12 @@ function renderTodaySpend(){
 
   el.textContent = fmtKRW(sum);
 }
+
+
     
+function renderTodaySummary(){
+  // TODO: 나중에 구현. 지금은 에러 방지용.
+}    
     
 
 function fillFormForEdit(item){
@@ -1250,7 +1256,6 @@ function renderRecent(){
   if(list.length === 0){
     wrap.innerHTML = `<p class="hint">아직 기록이 없어. +로 추가해봐!</p>`;
     renderTodaySpend();   // ✅ 기록 없어도 0원으로 갱신
-    renderTodaySummary();
     return;
   }
 
@@ -1322,7 +1327,6 @@ function renderRecent(){
 
   wrap.innerHTML = html;
   renderTodaySpend();
-  renderTodaySummary();
 }
 
 
@@ -1331,7 +1335,7 @@ function renderRecent(){
 // 페이지 처음 열릴 때 1번 실행
 renderRecent();
 renderTodaySpend();
-renderTodaySummary();
+
 
 /* =========================
    ✏️ 수정 버튼 클릭 처리
