@@ -15,7 +15,7 @@
     --text: #111111;
     --muted: #666666;
     --line: rgba(0,0,0,.08);
-    --expense-red: #C85C5C;   /* 🌹 지출 (Muted Rose Red) 
+    --expense-red: #C85C5C;   /* 🌹 지출 (Muted Rose Red) */
     --income-green: #20c997;  /* 이미 쓰고 있는 ok 컬러 */
 
     /* accents */
@@ -1257,73 +1257,76 @@ document.getElementById("recentList")?.addEventListener("click", (e) => {
 
 
     
-  // ✅ Toast helper (하나로 재사용)
-let toastTimer = null;
-
-function showToast(message, ms = 1400){
-  const el = document.getElementById("toast");
-  if(!el) return;
-
-  // 기존 타이머/상태 정리
-  if(toastTimer) clearTimeout(toastTimer);
-
-  el.textContent = message;
-  el.classList.remove("hidden", "hide");
-  el.classList.add("show");
-
-  toastTimer = setTimeout(() => {
-    el.classList.remove("show");
-    el.classList.add("hide");
-
-    // 애니메이션 끝나면 숨김 처리
-    setTimeout(() => {
-      el.classList.add("hidden");
-      el.classList.remove("hide");
-    }, 220);
-  }, ms);
-}
 
 
-   /* =========================
-   Undo 삭제 (5초)
+
+  /* =========================
+   ✅ Toast (단일)
    ========================= */
-const UNDO_DURATION = 5000;
-
 const toastEl = document.getElementById("toast");
 const toastTextEl = document.getElementById("toastText");
 const toastUndoBtn = document.getElementById("toastUndo");
 
-// 삭제 대기 상태(한 번에 1개만 심플하게)
+let toastTimer = null;
 let pendingDelete = null; // { item, index, timerId }
+const UNDO_DURATION = 5000;
 
-// 토스트 열기/닫기
-function showToast(text, withUndo=true){
-  if(!toastEl) return;
+function showToast(text, { undo=false, duration=1400 } = {}){
+  if(!toastEl || !toastTextEl) return;
+
+  // 타이머 정리
+  if(toastTimer) clearTimeout(toastTimer);
+  if(pendingDelete?.timerId && !undo){
+    clearTimeout(pendingDelete.timerId);
+    pendingDelete = null;
+  }
+
   toastTextEl.textContent = text;
-  toastUndoBtn.style.display = withUndo ? "inline-flex" : "none";
-  toastEl.classList.remove("hidden");
+
+  if(toastUndoBtn){
+    toastUndoBtn.style.display = undo ? "inline-flex" : "none";
+  }
+
+  toastEl.classList.remove("hidden", "hide");
+  toastEl.classList.add("show");
+
+  // undo 토스트는 5초 후 자동 닫기 (undo 가능 시간)
+  const ms = undo ? UNDO_DURATION : duration;
+
+  toastTimer = setTimeout(() => {
+    toastEl.classList.remove("show");
+    toastEl.classList.add("hide");
+
+    setTimeout(() => {
+      toastEl.classList.add("hidden");
+      toastEl.classList.remove("hide");
+    }, 220);
+  }, ms);
 }
+
 function hideToast(){
   if(!toastEl) return;
   toastEl.classList.add("hidden");
+  toastEl.classList.remove("show", "hide");
 }
 
-// ✅ 쓰레기통 클릭 처리 (이벤트 위임)
+/* =========================
+   🗑️ 삭제 + Undo (5초)
+   ========================= */
 document.getElementById("recentList")?.addEventListener("click", (e) => {
-  const del = e.target.closest(".del-btn");
+  const del = e.target.closest(".delete-btn"); // ✅ 클래스 맞춤
   if(!del) return;
+
+  e.stopPropagation();
 
   const id = del.dataset.id;
   if(!id) return;
-
-  // 수정 모달이 떠있는 중이면 닫는 게 안전(원하면 제거 가능)
-  // closeModal();
 
   const list = loadRecords();
   const idx = list.findIndex(r => r.id === id);
   if(idx < 0) return;
 
-  // 이미 다른 삭제 대기 중이면: 먼저 확정 삭제 처리하고 새로 진행(심플 정책)
+  // 기존 pendingDelete 있으면 타이머 정리
   if(pendingDelete?.timerId){
     clearTimeout(pendingDelete.timerId);
     pendingDelete = null;
@@ -1331,22 +1334,20 @@ document.getElementById("recentList")?.addEventListener("click", (e) => {
 
   const removed = list[idx];
 
-  // 1) 화면에서 즉시 제거(체감 빠름)
+  // 1) 즉시 제거
   list.splice(idx, 1);
   localStorage.setItem("records", JSON.stringify(list));
   renderRecent();
 
-  // 2) 삭제 대기 상태 저장
+  // 2) pending 저장
   pendingDelete = { item: removed, index: idx, timerId: null };
 
-  // 3) 토스트 + 5초 타이머(5초 지나면 "확정 삭제"로 끝)
-  showToast("삭제됨", true);
+  // 3) 토스트 띄우기(undo 버튼 포함, 5초 유지)
+  showToast("삭제됨", { undo: true });
 
   pendingDelete.timerId = setTimeout(() => {
     pendingDelete = null;
-    hideToast();
-    // 여기서는 이미 storage에서 지워진 상태라 "확정" 할 게 없음
-    // 즉, 타이머는 Undo 가능 시간만 제공하는 역할!
+    // 시간 지나면 그냥 닫힘(이미 저장소에서 삭제됨)
   }, UNDO_DURATION);
 });
 
@@ -1354,12 +1355,11 @@ document.getElementById("recentList")?.addEventListener("click", (e) => {
 toastUndoBtn?.addEventListener("click", () => {
   if(!pendingDelete) return;
 
-  const { item, index, timerId } = pendingDelete;
-  clearTimeout(timerId);
+  clearTimeout(pendingDelete.timerId);
 
+  const { item, index } = pendingDelete;
   const list = loadRecords();
 
-  // index 위치에 다시 넣되, 범위 벗어나면 맨 앞에 넣기
   const safeIndex = (index >= 0 && index <= list.length) ? index : 0;
   list.splice(safeIndex, 0, item);
 
@@ -1367,22 +1367,18 @@ toastUndoBtn?.addEventListener("click", () => {
   renderRecent();
 
   pendingDelete = null;
-  hideToast();
 
-  // 원하면 복구 토스트도 잠깐 띄우기(Undo 버튼 없이)
-  showToast("복구됨 ✓", false);
-  setTimeout(hideToast, 1200);
+  showToast("복구됨 ✓", { undo: false, duration: 1200 });
 });
-
+    
   </script>
 
   <!-- ✅ Toast (1개만) -->
-  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
-
-  <!-- Toast / 삭제 undo 기능 -->
   <div id="toast" class="toast hidden" role="status" aria-live="polite">
-    <span id="toastText">삭제됨</span>
-    <button id="toastUndo" type="button" class="toast-undo">되돌리기</button>
+    <span id="toastText"></span>
+    <button id="toastUndo" type="button" class="toast-undo" style="display:none;">되돌리기</button>
   </div>
+
+  
 </body>
 </html>
