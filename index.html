@@ -465,7 +465,7 @@ body.edit-mode .delete-btn{
   font-size: 13px;
   justify-content: space-between;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
 .today-spend .label{
@@ -1148,7 +1148,7 @@ function renderTodaySpend(){
   if(!diffEl) return;
 
   diffEl.classList.remove("up", "down");
-  diffEl.textContent = "";
+  diffEl.textContent = `${arrow}${abs}`;
 
   // ✅ 무지출 성공
   if(todaySum === 0){
