@@ -1238,12 +1238,44 @@ function renderMonthSelect(){
     `<option value="${m}">${m.replace("-", "년 ")}월</option>`
   ).join("");
 
-  if(months.length){
-    select.value = months[0];
-    renderMonthly(months[0]);
-  }
+ if(months.length){
+  select.value = months[0];
+  renderMonthlySummary(months[0]);
+ }
 }
 
+
+/* =========================
+   📅 월별 합계(지출/수입) 표시
+   ========================= */
+function renderMonthlySummary(ym){
+  const titleEl = document.getElementById("monthlyTitle");
+  const summaryEl = document.getElementById("monthlySummary");
+  if(!titleEl || !summaryEl) return;
+
+  const list = loadRecords().filter(r => (r.spentDate || "").startsWith(ym));
+
+  let expense = 0;
+  let income = 0;
+
+  list.forEach(r => {
+    const amt = Number(r.amount || 0);
+    if(r.type === "income") income += amt;
+    else expense += amt;
+  });
+
+  const [y,m] = ym.split("-");
+  titleEl.textContent = `${y}년 ${m}월`;
+  summaryEl.textContent =
+    `지출 ${expense.toLocaleString("ko-KR")}원 · 수입 ${income.toLocaleString("ko-KR")}원`;
+
+  if(list.length === 0){
+    summaryEl.textContent = "이 달엔 기록이 없어 🫧";
+  }
+  
+}
+    
+    
     
 function renderRecent(){
  
@@ -1392,6 +1424,10 @@ function renderRecent(){
 renderRecent();
 renderTodaySpend();
 renderMonthSelect(); // ✅ 추가
+
+document.getElementById("monthSelect")?.addEventListener("change", (e)=>{
+renderMonthlySummary(e.target.value);
+});
 
 
 /* =========================
