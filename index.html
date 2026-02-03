@@ -655,6 +655,29 @@ body.edit-mode .delete-btn{
   height:140px;
 }
 
+/* ✅ 도넛 중앙 라벨(고정 크기: 2,000,000원도 들어가게) */
+.donut-center{
+  font-family: inherit;
+  fill: rgba(17,17,17,.9);
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.donut-center .ym{
+  font-size: 10px;            /* 월은 더 작게 */
+  fill: rgba(17,17,17,.55);
+  letter-spacing: -0.2px;
+}
+
+.donut-center .total{
+  font-size: 12px;            /* 금액은 고정 12px */
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+    
+
+    
 .bar-row{
   display:flex;
   align-items:center;
@@ -1531,17 +1554,18 @@ function renderDonutSVG(items, total){
   const C = 2 * Math.PI * r;
 
   if(!items.length || total <= 0){
-  return `
-    <svg class="donut" viewBox="0 0 ${size} ${size}">
-      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${PANEL}" stroke-width="${stroke}" />
-      <circle cx="${cx}" cy="${cy}" r="${r-18}" fill="${PANEL}" />
-      <text x="${cx}" y="${cy+2}" text-anchor="middle" dominant-baseline="middle"
-            font-size="12" fill="rgba(17,17,17,.55)">
-        데이터 없음
-      </text>
-    </svg>
-  `;
-}
+    const ymDot = currentYM().replace("-", "."); // ✅ 2026.02
+    return `
+      <svg class="donut" viewBox="0 0 ${size} ${size}">
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${PANEL}" stroke-width="${stroke}" />
+        <circle cx="${cx}" cy="${cy}" r="${r-18}" fill="${PANEL}" />
+        <g class="donut-center">
+          <text x="${cx}" y="${cy-6}" class="ym">${ymDot}</text>
+          <text x="${cx}" y="${cy+10}" class="total">0원</text>
+        </g>
+      </svg>
+    `;
+  }
 
   let offset = 0;
   const segments = items.map(([name, value], i)=>{
@@ -1571,19 +1595,18 @@ function renderDonutSVG(items, total){
   }).join("");
 
   // ✅ 도넛 렌더
+  const ymDot = currentYM().replace("-", "."); // ✅ 2026.02
+
   return `
     <svg class="donut" viewBox="0 0 ${size} ${size}">
       <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${PANEL}" stroke-width="${stroke}" />
       ${segments}
       <circle cx="${cx}" cy="${cy}" r="${r-18}" fill="${PANEL}" />
-      <text x="${cx}" y="${cy-6}" text-anchor="middle" dominant-baseline="middle"
-            font-size="12" fill="rgba(17,17,17,.55)">
-        ${currentYM().replace("-", "년 ")}월
-      </text>
-      <text x="${cx}" y="${cy+14}" text-anchor="middle" dominant-baseline="middle"
-            font-size="14" font-weight="800" fill="rgba(17,17,17,.9)">
-        ${fmtKRW(total)}
-      </text>
+
+      <g class="donut-center">
+        <text x="${cx}" y="${cy-6}" class="ym">${ymDot}</text>
+        <text x="${cx}" y="${cy+10}" class="total">${fmtKRW(total)}</text>
+      </g>
     </svg>
   `;
 }
@@ -1609,7 +1632,7 @@ function renderStats(){
       const pct  = total ? Math.round((val/total)*100) : 0;
 
       if(top1El){
-        top1El.innerHTML = `선택: <b>${name}</b> · ${fmtKRW(val)} (${pct}%)`;
+        top1El.innerHTML = `<b>${name}</b> · ${fmtKRW(val)} (${pct}%)`;
       }
     };
   }
