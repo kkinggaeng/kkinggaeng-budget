@@ -54,7 +54,7 @@
   }
     .title{
       display:flex; align-items:center; justify-content:space-between;
-      gap:12px;
+      :12px;
     }
     .title h1{
       margin:0;
@@ -1519,6 +1519,7 @@ const DONUT_COLORS = [
 
 // ✅ SVG 도넛 생성 (stroke-dasharray로 조각 만들기)
 function renderDonutSVG(items, total){
+  const PANEL = getComputedStyle(document.documentElement).getPropertyValue('--panel').trim() || '#ffffff';
   const size = 140;
   const cx = size/2;
   const cy = size/2;
@@ -1529,10 +1530,9 @@ function renderDonutSVG(items, total){
   if(!items.length || total <= 0){
     return `
       <svg class="donut" viewBox="0 0 ${size} ${size}">
-        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="${stroke}" />
-        <circle cx="${cx}" cy="${cy}" r="${r-18}" fill="white" />
-        <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle"
-              font-size="12" fill="#666">데이터 없음</text>
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${PANEL}" stroke-width="${stroke}" />
+        ${segments}
+        <circle cx="${cx}" cy="${cy}" r="${r-18}" fill="${PANEL}" />
       </svg>
     `;
   }
@@ -1540,7 +1540,7 @@ function renderDonutSVG(items, total){
   let offset = 0;
   const segments = items.map(([name, value], i)=>{
     const frac = value / total;
-    const GAP = 3; // ✅ 조각 사이 틈(픽셀) - 2~5 추천
+    const GAP = 2; // ✅ 조각 사이 틈(픽셀) - 2~5 추천
     const dash = Math.max(1, (frac * C) - GAP); // 조각 길이에서 GAP만큼 빼기
     const gap  = C - dash;
 
@@ -1560,11 +1560,12 @@ function renderDonutSVG(items, total){
     return seg;
   }).join("");
 
+  // ✅ 도넛 렌더
   return `
     <svg class="donut" viewBox="0 0 ${size} ${size}">
-      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="${stroke}" />
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${PANEL}" stroke-width="${stroke}" />
       ${segments}
-      <circle cx="${cx}" cy="${cy}" r="${r-18}" fill="white" />
+      <circle cx="${cx}" cy="${cy}" r="${r-18}" fill="${PANEL}" />
     </svg>
   `;
 }
