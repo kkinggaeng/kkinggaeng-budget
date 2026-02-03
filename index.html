@@ -1514,7 +1514,7 @@ const DONUT_COLORS = [
   "rgba(201,74,74,.88)",   // muted red
   "rgba(227,176,75,.88)",  // mustard
   "rgba(138,124,168,.88)", // purple
-  "rgba(154,163,175,.9)"   // gray (기타)
+  "rgba(176,184,196,.9)"   // gray (기타)
 ];
 
 // ✅ SVG 도넛 생성 (stroke-dasharray로 조각 만들기)
@@ -1540,8 +1540,9 @@ function renderDonutSVG(items, total){
   let offset = 0;
   const segments = items.map(([name, value], i)=>{
     const frac = value / total;
-    const dash = frac * C;
-    const gap = C - dash;
+    const GAP = 3; // ✅ 조각 사이 틈(픽셀) - 2~5 추천
+    const dash = Math.max(1, (frac * C) - GAP); // 조각 길이에서 GAP만큼 빼기
+    const gap  = C - dash;
 
     const seg = `
       <circle
@@ -1555,7 +1556,7 @@ function renderDonutSVG(items, total){
         transform="rotate(-90 ${cx} ${cy})"
       />
     `;
-    offset += dash;
+    offset += (dash + GAP);
     return seg;
   }).join("");
 
