@@ -717,17 +717,17 @@ body.edit-mode .delete-btn{
   color:var(--text);
 }
 
-/* ✅ 통계 탭 진입 미세 애니메이션 */
+/* ✅ 통계 탭: 페이드 + 2px 미세 이동 */
 #statsDonutWrap.anim-in,
 #statsTop5.anim-in{
-  animation: statsIn .16s ease-out both;
+  animation: statsPop .18s ease-out both;
+  will-change: opacity, transform;
 }
 
-@keyframes statsIn{
-  from { transform: translateY(6px); opacity: 0; }
-  to   { transform: translateY(0); opacity: 1; }
+@keyframes statsPop{
+  from { opacity: 0; transform: translateY(2px); }
+  to   { opacity: 1; transform: translateY(0); }
 }    
-    
 
 @keyframes toastIn{
   from { transform: translateX(-50%) translateY(8px); opacity: 0; }
