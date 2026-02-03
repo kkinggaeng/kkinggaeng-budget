@@ -1583,6 +1583,9 @@ renderRecent();
 renderTodaySpend();
 renderMonthSelect(); // ✅ 추가
 
+// 페이지 최초 로딩 시 스크롤 위치 초기화
+window.scrollTo(0, 0);
+
 document.getElementById("monthSelect")?.addEventListener("change", (e)=>{
   renderMonthly(e.target.value);
 });
