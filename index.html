@@ -1362,8 +1362,8 @@ function renderMonthly(ym){ // ym: "YYYY-MM"
     const dateText = d ? (d + ".") : "";
     const sub = [x.card, x.place].filter(Boolean).join(" · ");
     const amtSideClass = x.type === "income" ? "amt-income" : "amt-expense";
-    const sign = x.type === "income" ? "+" : "-";
-
+    const amtText = fmtKRW(x.amount);    // 마이너스 없는 금액 텍스트
+    
     return `
       <div class="recent-item" style="margin-top:10px;">
         <div class="recent-left">
@@ -1373,7 +1373,7 @@ function renderMonthly(ym){ // ym: "YYYY-MM"
         </div>
         <div class="recent-right">
           <div class="recent-amt ${amtSideClass}">
-            ${sign}${fmtKRW(x.amount)}
+            ${fmtKRW(x.amount)}
           </div>
         </div>
       </div>
