@@ -733,7 +733,22 @@ body.edit-mode .delete-btn{
           월 선택 → 해당 월 지출/수입 리스트 + 합계 자리.
         </p>
       </div>
-    </section>
+
+    <!-- ✅ 월 선택 카드 -->
+    <div class="card">
+      <h2>월 선택</h2>
+      <div class="row">
+        <select id="monthSelect"></select>
+      </div>
+    </div>
+
+    <!-- ✅ 합계 + 리스트 카드 -->
+    <div class="card">
+      <h2 id="monthlyTitle">이번 달</h2>
+      <p class="hint" id="monthlySummary"></p>
+      <div id="monthlyList"></div>
+    </div>
+  </section>
   </main>
 
   <!-- Floating + button (Home only) -->
@@ -1204,6 +1219,32 @@ function loadRecords(){
   return JSON.parse(localStorage.getItem("records") || "[]");
 }
 
+/* =========================
+   📅 월 선택 셀렉트 채우기
+   ========================= */
+function renderMonthSelect(){
+  const select = document.getElementById("monthSelect");
+  if(!select) return;
+
+  const records = loadRecords();
+
+  const months = [...new Set(
+    records
+      .map(r => (r.spentDate || "").slice(0,7))
+      .filter(Boolean)
+  )].sort().reverse();
+
+  select.innerHTML = months.map(m =>
+    `<option value="${m}">${m.replace("-", "년 ")}월</option>`
+  ).join("");
+
+  if(months.length){
+    select.value = months[0];
+    renderMonthly(months[0]);
+  }
+}
+
+    
 function renderRecent(){
  
   const todayKey = localISODate(new Date());
@@ -1350,7 +1391,7 @@ function renderRecent(){
 // 페이지 처음 열릴 때 1번 실행
 renderRecent();
 renderTodaySpend();
-
+renderMonthSelect(); // ✅ 추가
 
 
 /* =========================
