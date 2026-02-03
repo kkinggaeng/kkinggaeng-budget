@@ -746,8 +746,13 @@ body.edit-mode .delete-btn{
     <div class="card">
       <h2 id="monthlyTitle">이번 달</h2>
       <p class="hint" id="monthlySummary"></p>
+
+      <!-- ✅ TOP3 텍스트 영역 추가 -->
+      <div id="monthlyTop3" class="hint" style="margin-top:10px;"></div>
+
       <div id="monthlyList"></div>
     </div>
+      
   </section>
   </main>
 
@@ -1242,8 +1247,134 @@ function renderMonthSelect(){
   select.value = months[0];
   renderMonthlySummary(months[0]);
  }
+
+  // ✅ 사용자가 월 선택 바꾸면 월별 렌더 갱신
+  select.onchange = () => {
+    renderMonthly(select.value);
+  };
 }
 
+   /* =========================
+   🗓️ 월별 렌더링 (지출/수입/평균/무지출 + TOP3)
+   ========================= */
+function renderMonthly(ym){ // ym: "YYYY-MM"
+  const titleEl = document.getElementById("monthlyTitle");
+  const summaryEl = document.getElementById("monthlySummary");
+  const top3El = document.getElementById("monthlyTop3");
+  const listEl = document.getElementById("monthlyList");
+  if(!titleEl || !summaryEl || !listEl) return;
+
+  const records = loadRecords();
+
+  // 1) 해당 월 데이터만
+  const monthItems = records
+    .filter(r => (r.spentDate || "").slice(0,7) === ym)
+    .slice()
+    .sort((a,b) => {
+      const ad = (a.spentDate || "0000-00-00");
+      const bd = (b.spentDate || "0000-00-00");
+      if(bd !== ad) return bd.localeCompare(ad);
+      return (b.createdAt || "").localeCompare(a.createdAt || "");
+    });
+
+  // 2) 요약 계산
+  let expSum = 0;
+  let incSum = 0;
+
+  // 카테고리 합(지출만)
+  const catAgg = {}; // {카테고리: 금액}
+
+  // 무지출 일수 계산용(해당 월의 지출이 있는 날짜 Set)
+  const expenseDates = new Set();
+
+  monthItems.forEach(x=>{
+    const amt = Number(x.amount || 0);
+    const isIncome = x.type === "income";
+
+    if(isIncome){
+      incSum += amt;
+    }else{
+      expSum += amt;
+
+      const cat = x.category || "기타";
+      catAgg[cat] = (catAgg[cat] || 0) + amt;
+
+      const dKey = (x.spentDate || "").slice(0,10);
+      if(dKey) expenseDates.add(dKey);
+    }
+  });
+
+  // 3) “하루 평균” 계산: 이번 달 경과 일수 기준
+  const now = new Date();
+  const [Y, M] = ym.split("-").map(n => parseInt(n,10));
+  const isThisMonth = (now.getFullYear() === Y) && ((now.getMonth()+1) === M);
+
+  // 이번 달 경과 일수: 이번 달이면 오늘 날짜, 아니면 그 달의 총 일수
+  const daysElapsed = isThisMonth
+    ? now.getDate()
+    : new Date(Y, M, 0).getDate(); // M은 1~12, day 0 => 전달 마지막날 => 해당월 총일수
+
+  const avgPerDay = daysElapsed > 0 ? Math.round(expSum / daysElapsed) : 0;
+
+  // 4) 무지출 일수: 경과 일수 - (지출이 있었던 날짜 수)
+  const noSpendDays = Math.max(0, daysElapsed - expenseDates.size);
+
+  // 5) 제목/요약 텍스트
+  titleEl.textContent = `${Y}년 ${String(M).padStart(2,"0")}월`;
+
+  // 줄바꿈 살리기 위해 <br> 사용
+  summaryEl.innerHTML = `
+    이번달 지출: <b class="amt-expense">${fmtKRW(expSum)}</b> · 수입: <b class="amt-income">${fmtKRW(incSum)}</b><br>
+    하루 평균 지출: <b class="amt-expense">${fmtKRW(avgPerDay)}</b> (총 ${daysElapsed}일 기준)<br>
+    무지출: <b>${noSpendDays}일</b>
+  `;
+
+  // 6) TOP3(지출 카테고리)
+  if(top3El){
+    const top3 = Object.entries(catAgg)
+      .sort((a,b)=> b[1] - a[1])
+      .slice(0,3);
+
+    if(top3.length === 0){
+      top3El.innerHTML = `TOP3: 아직 지출 기록이 없어 🙂`;
+    }else{
+      top3El.innerHTML = `
+        <span style="font-weight:800; letter-spacing:-0.2px;">TOP3</span><br>
+        ${top3.map(([cat,amt], i) => `${i+1}. ${cat} · ${fmtKRW(amt)}`).join("<br>")}
+      `;
+    }
+  }
+
+  // 7) 리스트(간단 버전) — 필요하면 기존 recent-item 스타일 재사용
+  if(monthItems.length === 0){
+    listEl.innerHTML = `<p class="hint">이 달 기록이 없어. +로 추가해봐!</p>`;
+    return;
+  }
+
+  listEl.innerHTML = monthItems.map(x=>{
+    const d = (x.spentDate || "").replaceAll("-", ". ");
+    const dateText = d ? (d + ".") : "";
+    const sub = [x.card, x.place].filter(Boolean).join(" · ");
+    const amtSideClass = x.type === "income" ? "amt-income" : "amt-expense";
+    const sign = x.type === "income" ? "+" : "-";
+
+    return `
+      <div class="recent-item" style="margin-top:10px;">
+        <div class="recent-left">
+          <div class="recent-meta">${dateText}</div>
+          <div class="recent-title">${x.category || "기타"}</div>
+          <div class="recent-sub">${sub}</div>
+        </div>
+        <div class="recent-right">
+          <div class="recent-amt ${amtSideClass}">
+            ${sign}${fmtKRW(x.amount)}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+    
 
 /* =========================
    📅 월별 합계(지출/수입) 표시
