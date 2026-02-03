@@ -645,6 +645,55 @@ body.edit-mode .delete-btn{
       overflow: hidden;
       touch-action: none;
     }
+
+
+
+
+/* ===== 통계(도넛/막대) ===== */
+.donut{
+  width:140px;
+  height:140px;
+}
+
+.bar-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:10px 0;
+}
+
+.bar-name{
+  width:72px;
+  font-size:13px;
+  color:var(--muted);
+  letter-spacing:-0.2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.bar-track{
+  flex:1;
+  height:10px;
+  border-radius:999px;
+  background: rgba(0,0,0,.06);
+  overflow:hidden;
+}
+
+.bar-fill{
+  height:100%;
+  border-radius:999px;
+  width:0%;
+}
+
+.bar-amt{
+  width:90px;
+  text-align:right;
+  font-size:13px;
+  color:var(--text);
+}
+
+    
     
 
 @keyframes toastIn{
@@ -698,13 +747,27 @@ body.edit-mode .delete-btn{
     <section class="page" id="page-stats">
       <div class="card">
         <h2>통계</h2>
-        <p class="hint">
-          원형 그래프(카테고리 비율) + 전월 대비 막대그래프 자리.<br/>
-          (차트는 다음 단계에서 붙일게)
-        </p>
+        <p class="hint">이번 달 카테고리 비중</p>
+
+        <!-- ✅ 도넛 + 요약 -->
+        <div id="statsDonutWrap" style="display:flex; gap:14px; align-items:center; margin-top:12px;">
+          <div id="statsDonut"></div>
+
+          <div style="flex:1;">
+            <div class="hint" style="margin-bottom:8px;">총 지출</div>
+            <div id="statsTotalExpense" style="font-size:18px; font-weight:700;">0원</div>
+            <div id="statsTop1" class="hint" style="margin-top:10px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>TOP5</h2>
+        <div id="statsTop5"></div>
       </div>
     </section>
-
+    
+    
     <!-- BUDGET -->
     <section class="page" id="page-budget">
       <div class="card">
@@ -1404,6 +1467,160 @@ function renderMonthly(ym){ // ym: "YYYY-MM"
     
 
 /* =========================
+   📊 통계: 이번달 도넛 + Top5
+   ========================= */
+
+// ✅ 이번달 YYYY-MM 구하기 (로컬)
+function currentYM(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  return `${y}-${m}`;
+}
+
+// ✅ 카테고리 합계(지출만) 집계 → Top5 + 기타로 묶기
+function aggMonthCategories(ym){
+  const records = loadRecords();
+  const catAgg = {}; // {cat: sum}
+
+  records.forEach(r=>{
+    if((r.spentDate || "").slice(0,7) !== ym) return;
+    const isIncome = (r.type === "income");
+    if(isIncome) return;
+
+    const cat = r.category || "기타";
+    catAgg[cat] = (catAgg[cat] || 0) + Number(r.amount || 0);
+  });
+
+  const entries = Object.entries(catAgg).sort((a,b)=> b[1]-a[1]);
+  const total = entries.reduce((acc, [,v])=> acc+v, 0);
+
+  const top5 = entries.slice(0,5);
+  const rest = entries.slice(5);
+  const etcSum = rest.reduce((acc, [,v])=> acc+v, 0);
+
+  const finalList = etcSum > 0
+    ? [...top5, ["기타", etcSum]]
+    : top5;
+
+  return { total, list: finalList };
+}
+
+// ✅ 색 팔레트(지금 UI랑 잘 어울리는 톤)
+const DONUT_COLORS = [
+  "#7FAE9E", // sage
+  "#6B8DFF", // accent blue
+  "#C94A4A", // muted red
+  "#E3B04B", // warm mustard
+  "#8A7CA8", // soft purple
+  "#9AA3AF"  // gray (기타)
+];
+
+// ✅ SVG 도넛 생성 (stroke-dasharray로 조각 만들기)
+function renderDonutSVG(items, total){
+  const size = 140;
+  const cx = size/2;
+  const cy = size/2;
+  const r = 52;
+  const stroke = 16;
+  const C = 2 * Math.PI * r;
+
+  if(!items.length || total <= 0){
+    return `
+      <svg class="donut" viewBox="0 0 ${size} ${size}">
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="${stroke}" />
+        <circle cx="${cx}" cy="${cy}" r="${r-18}" fill="white" />
+        <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle"
+              font-size="12" fill="#666">데이터 없음</text>
+      </svg>
+    `;
+  }
+
+  let offset = 0;
+  const segments = items.map(([name, value], i)=>{
+    const frac = value / total;
+    const dash = frac * C;
+    const gap = C - dash;
+
+    const seg = `
+      <circle
+        cx="${cx}" cy="${cy}" r="${r}"
+        fill="none"
+        stroke="${DONUT_COLORS[i] || DONUT_COLORS[DONUT_COLORS.length-1]}"
+        stroke-width="${stroke}"
+        stroke-linecap="butt"
+        stroke-dasharray="${dash} ${gap}"
+        stroke-dashoffset="${-offset}"
+        transform="rotate(-90 ${cx} ${cy})"
+      />
+    `;
+    offset += dash;
+    return seg;
+  }).join("");
+
+  return `
+    <svg class="donut" viewBox="0 0 ${size} ${size}">
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="${stroke}" />
+      ${segments}
+      <circle cx="${cx}" cy="${cy}" r="${r-18}" fill="white" />
+    </svg>
+  `;
+}
+
+// ✅ 통계 탭 렌더(이번달 기준)
+function renderStats(){
+  const ym = currentYM();
+  const { total, list } = aggMonthCategories(ym);
+
+  const donutEl = document.getElementById("statsDonut");
+  const totalEl = document.getElementById("statsTotalExpense");
+  const top1El  = document.getElementById("statsTop1");
+  const top5El  = document.getElementById("statsTop5");
+
+  if(donutEl) donutEl.innerHTML = renderDonutSVG(list, total);
+  if(totalEl) totalEl.textContent = fmtKRW(total);
+
+  if(top1El){
+    if(list.length && total > 0){
+      const [name, val] = list[0];
+      const pct = Math.round((val/total)*100);
+      top1El.innerHTML = `1위: <b>${name}</b> · ${fmtKRW(val)} (${pct}%)`;
+    }else{
+      top1El.textContent = "이번 달 지출 기록이 없어 🙂";
+    }
+  }
+
+  if(top5El){
+    if(!list.length || total <= 0){
+      top5El.innerHTML = `<p class="hint">아직 데이터가 없어. 지출을 추가해봐!</p>`;
+      return;
+    }
+
+    // ✅ TOP5만 막대로 (기타는 막대에서 빼고 싶으면 여기서 필터)
+    const onlyTop5 = list.filter(([n]) => n !== "기타").slice(0,5);
+    const maxVal = Math.max(...onlyTop5.map(([,v])=> v), 1);
+
+    top5El.innerHTML = onlyTop5.map(([name, val], i)=>{
+      const pct = Math.round((val / total) * 100);
+      const w = Math.round((val / maxVal) * 100);
+
+      return `
+        <div class="bar-row">
+          <div class="bar-name">${name}</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${w}%; background:${DONUT_COLORS[i] || "#9AA3AF"};"></div>
+          </div>
+          <div class="bar-amt">${fmtKRW(val)}<span class="hint" style="margin-left:6px;">${pct}%</span></div>
+        </div>
+      `;
+    }).join("");
+  }
+}
+
+
+
+    
+/* =========================
    📅 월별 합계(지출/수입) 표시
    ========================= */
 function renderMonthlySummary(ym){
@@ -1582,7 +1799,8 @@ function renderRecent(){
 renderRecent();
 renderTodaySpend();
 renderMonthSelect(); // ✅ 추가
-
+renderStats();
+    
 // 페이지 최초 로딩 시 스크롤 위치 초기화
 window.scrollTo(0, 0);
 
