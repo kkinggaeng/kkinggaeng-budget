@@ -135,71 +135,37 @@
     }
 
     
-    /* ✅ FAB: 원래 모양 유지 + Sage 컬러만 적용 (최종) */
-    .fab{
-      position:fixed;
-      right:18px;
-      bottom:86px;
-      width:54px;
-      height:54px;
-      border-radius:18px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      z-index:12;
-      cursor:pointer;
-      line-height:1;
+    /* ✅ FAB (최종 정리본) */
+  .fab{
+    position: fixed;
+    right: 18px;
+    bottom: 86px;
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
 
-      /* ✅ 여기부터 Sage 톤 */
-      background: linear-gradient(180deg, #8FBFB0, #7FAE9E);
-      color: #F7F8FA; /* Cloud Dancer White */
-      text-shadow: 0 1px 0 rgba(46,50,58,.12);
-      border: 1px solid rgba(127,174,158,.28); /* 아주 얇게만 */
-      box-shadow:
-        0 12px 26px rgba(127,174,158,.35),
-        inset 0 1px 0 rgba(255,255,255,.75);
-      }
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-/* + 기호가 살짝 내려가 보이면 이거(선택) */
-.fab{ padding-bottom:2px; }
+    font-size: 30px;
+    line-height: 1;
+    padding-bottom: 2px;
 
+    cursor: pointer;
+    z-index: 12;
 
+    /* Sage 톤 */
+    background: linear-gradient(180deg, #8FBFB0, #7FAE9E);
+    color: #F7F8FA;
+    text-shadow: 0 1px 0 rgba(46,50,58,.12);
 
-/* ===== FAB 최종 강제(파랑/유격/작은 + 전부 해결) ===== */
-.fab{
-  /* 모양/위치 고정 */
-  position:fixed !important;
-  right:18px !important;
-  bottom:86px !important;
-  width:54px !important;
-  height:54px !important;
-  border-radius:18px !important;
-
-  /* 정렬 */
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-
-  /* + 크기/위치 */
-  font-size:30px !important;
-  line-height:1 !important;
-  padding-bottom:2px !important;
-
-  /* ✅ Sage 배경 강제 */
-  background: linear-gradient(180deg, #8FBFB0, #7FAE9E) !important;
-  color: #F7F8FA !important;         /* Cloud Dancer White */
-  text-shadow: 0 1px 0 rgba(46,50,58,.12) !important;
-  
-  /* ✅ 유격(테두리) 제거 */
-  border:none !important;
-
-  /* 그림자 */
-  box-shadow:
-    0 12px 26px rgba(127,174,158,.35),
-    inset 0 1px 0 rgba(255,255,255,.75) !important;
-
-  z-index:12 !important;
-}
+    /* 테두리 & 그림자 */
+    border: none;
+    box-shadow:
+      0 12px 26px rgba(127,174,158,.35),
+      inset 0 1px 0 rgba(255,255,255,.75);
+    }
     
     
     /* 작은 배지 */
@@ -886,9 +852,7 @@ toggleEditBtn?.addEventListener("click", () => {
 
     // 수정중 상태 초기화 (네가 쓰는 변수명에 맞게 유지)
     editingId = null;
-    isEditMode = false;
-    editId = null;
-
+    
     // 폼도 초기화(원하면)
     // resetFormToNew?.();
     // resetForm?.();
@@ -1027,10 +991,6 @@ closeBtn.addEventListener('click', ()=>{
 // ✅ 전역 상태: 수정 중인 record id (없으면 신규 추가)
 let editingId = null;
 
-function closeModal(){
-  modal.classList.add('hidden');
-}
-
 function resetForm(){
   // 구분 기본값: 지출
   typeEl.value = "expense";
@@ -1041,7 +1001,7 @@ function resetForm(){
   }
 
   // 날짜 기본값: 오늘
-  spentDateEl.value = new Date().toISOString().slice(0,10);
+  spentDateEl.value = localISODate(new Date());
 
   // 입력값 초기화
   amountEl.value = "";
@@ -1182,34 +1142,6 @@ function renderTodaySpend(){
 }
 
     
-    
-
-function fillFormForEdit(item){
-  editingId = item.id;
-
-  // 구분
-  typeEl.value = item.type || "expense";
-  const seg = document.getElementById('typeSegment');
-  if(seg){
-    seg.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
-    seg.querySelector(`.seg-btn[data-value="${typeEl.value}"]`)?.classList.add('active');
-  }
-
-  // 날짜
-  spentDateEl.value = item.spentDate || new Date().toISOString().slice(0,10);
-
-  // 금액(raw + 표시값)
-  const raw = String(item.amount || "0").replace(/[^0-9]/g, "");
-  amountEl.dataset.raw = raw;
-  amountEl.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-  // 나머지
-  categoryEl.value = item.category || "기타";
-  placeEl.value = item.place || "";
-  cardEl.value = item.card || "현금/계좌";
-  memoEl.value = item.memo || "";
-}
-
 
     
 
@@ -1260,11 +1192,11 @@ function loadRecords(){
 
 function renderRecent(){
  
-  const todayKey = new Date().toISOString().slice(0, 10);
+  const todayKey = localISODate(new Date());
 
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayKey = yesterday.toISOString().slice(0, 10);
+  const y = new Date();
+  y.setDate(y.getDate() - 1);
+  const yesterdayKey = localISODate(y);
 
   let todayLabelShown = false;
   let yesterdayLabelShown = false;
