@@ -684,6 +684,7 @@ body.edit-mode .delete-btn{
   height:100%;
   border-radius:999px;
   width:0%;
+  filter: saturate(.9) brightness(1.02);
 }
 
 .bar-amt{
@@ -1508,12 +1509,12 @@ function aggMonthCategories(ym){
 
 // ✅ 색 팔레트(지금 UI랑 잘 어울리는 톤)
 const DONUT_COLORS = [
-  "#7FAE9E", // sage
-  "#6B8DFF", // accent blue
-  "#C94A4A", // muted red
-  "#E3B04B", // warm mustard
-  "#8A7CA8", // soft purple
-  "#9AA3AF"  // gray (기타)
+  "rgba(127,174,158,.9)",  // sage
+  "rgba(107,141,255,.9)",  // blue
+  "rgba(201,74,74,.88)",   // muted red
+  "rgba(227,176,75,.88)",  // mustard
+  "rgba(138,124,168,.88)", // purple
+  "rgba(154,163,175,.9)"   // gray (기타)
 ];
 
 // ✅ SVG 도넛 생성 (stroke-dasharray로 조각 만들기)
