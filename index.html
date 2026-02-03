@@ -11,7 +11,6 @@
     --bg: #f7f7f8;
     --panel: #ffffff;
     --panel2: #f1f1f4;
-    --shadow: rgba(0,0,0,.10);
     --text: #111111;
     --muted: #666666;
     --line: rgba(0,0,0,.08);
@@ -225,9 +224,11 @@
     /* 역할별 차이만 */
     #save{ opacity: .9; }
     #close{ opacity: .75; }
-    }
    
-    .actions .ghost{background:transparent; color:var(--muted)} 
+    .actions .ghost{
+      background: transparent; 
+      color: var(--muted);
+    } 
 
 /* Cloud Dancer – Sage 지출/수입 토글 */
 .segmented{
@@ -613,16 +614,6 @@ body.edit-mode .delete-btn{
   to   { transform: translateX(-50%) translateY(8px); opacity: 0; }
 }
     
-
-@supports (background: color-mix(in srgb, white, black)) {
-  .fab{
-    background: linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--accent) 78%, white),
-      var(--accent)
-    );
-  }
-}
     
   </style>
 </head>
@@ -885,8 +876,6 @@ const CATEGORIES = [
 const modal = document.getElementById('modal');
 const closeBtn = document.getElementById('close');
 const saveBtn = document.getElementById('save');
-let editId = null;        // 지금 수정 중인 record id
-let isEditMode = false;   // 수정모드인지 여부
 
 const typeEl = document.getElementById('type');
 const amountEl = document.getElementById('amount');
@@ -916,23 +905,18 @@ function closeModal(){
 }
 
 function resetFormToNew(){
-  isEditMode = false;
-  editId = null;
-  saveBtn.textContent = "저장"; // 기본 라벨
+  editingId = null;
+  saveBtn.textContent = "저장";
 
-  // 기본값: 지출
   typeEl.value = "expense";
   const seg = document.getElementById('typeSegment');
   if(seg){
     seg.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
-    const first = seg.querySelector('.seg-btn[data-value="expense"]');
-    if(first) first.classList.add('active');
+    seg.querySelector('.seg-btn[data-value="expense"]')?.classList.add('active');
   }
 
-  // 날짜 기본값 오늘
-  if(spentDateEl) spentDateEl.value = new Date().toISOString().slice(0,10);
+  spentDateEl.value = localISODate(new Date());
 
-  // 입력값 초기화
   amountEl.value = "";
   amountEl.dataset.raw = "";
   categoryEl.value = CATEGORIES[0] || "기타";
@@ -941,29 +925,24 @@ function resetFormToNew(){
   cardEl.value = "삼성";
 }
 
+    
 function fillFormForEdit(item){
-  isEditMode = true;
-  editId = item.id;
+  editingId = item.id;
   saveBtn.textContent = "수정 저장";
 
-  // 타입 세팅 + 토글 버튼 UI도 맞추기
   typeEl.value = item.type || "expense";
   const seg = document.getElementById('typeSegment');
   if(seg){
     seg.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
-    const btn = seg.querySelector(`.seg-btn[data-value="${typeEl.value}"]`);
-    if(btn) btn.classList.add('active');
+    seg.querySelector(`.seg-btn[data-value="${typeEl.value}"]`)?.classList.add('active');
   }
 
-  // 날짜
-  spentDateEl.value = (item.spentDate || new Date().toISOString().slice(0,10));
+  spentDateEl.value = item.spentDate || localISODate(new Date());
 
-  // 금액: raw + 콤마 표시
-  const raw = String(item.amount || 0);
+  const raw = String(item.amount || 0).replace(/[^0-9]/g,"");
   amountEl.dataset.raw = raw;
-  amountEl.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  amountEl.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-  // 나머지
   categoryEl.value = item.category || "기타";
   placeEl.value = item.place || "";
   memoEl.value = item.memo || "";
