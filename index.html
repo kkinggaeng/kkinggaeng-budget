@@ -948,6 +948,9 @@ body.edit-mode .delete-btn{
   // + 버튼은 홈에서만 보이기
   fab.classList.toggle('hidden', target !== 'home');
 
+  // ✅ 통계 탭 들어갈 때마다 최신 반영
+  if(target === "stats") renderStats();
+
   // ✅ 월별 탭 처음 눌렀을 때도 리스트+TOP3까지 바로 렌더
   if(target === "monthly"){
     const select = document.getElementById("monthSelect");
@@ -1528,14 +1531,17 @@ function renderDonutSVG(items, total){
   const C = 2 * Math.PI * r;
 
   if(!items.length || total <= 0){
-    return `
-      <svg class="donut" viewBox="0 0 ${size} ${size}">
-        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${PANEL}" stroke-width="${stroke}" />
-        ${segments}
-        <circle cx="${cx}" cy="${cy}" r="${r-18}" fill="${PANEL}" />
-      </svg>
-    `;
-  }
+  return `
+    <svg class="donut" viewBox="0 0 ${size} ${size}">
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${PANEL}" stroke-width="${stroke}" />
+      <circle cx="${cx}" cy="${cy}" r="${r-18}" fill="${PANEL}" />
+      <text x="${cx}" y="${cy+2}" text-anchor="middle" dominant-baseline="middle"
+            font-size="12" fill="rgba(17,17,17,.55)">
+        데이터 없음
+      </text>
+    </svg>
+  `;
+}
 
   let offset = 0;
   const segments = items.map(([name, value], i)=>{
@@ -1554,6 +1560,10 @@ function renderDonutSVG(items, total){
         stroke-dasharray="${dash} ${gap}"
         stroke-dashoffset="${-offset}"
         transform="rotate(-90 ${cx} ${cy})"
+        class="donut-seg"
+        data-name="${name}"
+        data-val="${value}"
+        style="cursor:pointer;"
       />
     `;
     offset += (dash + GAP);
@@ -1566,6 +1576,14 @@ function renderDonutSVG(items, total){
       <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${PANEL}" stroke-width="${stroke}" />
       ${segments}
       <circle cx="${cx}" cy="${cy}" r="${r-18}" fill="${PANEL}" />
+      <text x="${cx}" y="${cy-6}" text-anchor="middle" dominant-baseline="middle"
+            font-size="12" fill="rgba(17,17,17,.55)">
+        ${currentYM().replace("-", "년 ")}월
+      </text>
+      <text x="${cx}" y="${cy+14}" text-anchor="middle" dominant-baseline="middle"
+            font-size="14" font-weight="800" fill="rgba(17,17,17,.9)">
+        ${fmtKRW(total)}
+      </text>
     </svg>
   `;
 }
@@ -1581,6 +1599,21 @@ function renderStats(){
   const top5El  = document.getElementById("statsTop5");
 
   if(donutEl) donutEl.innerHTML = renderDonutSVG(list, total);
+  if(donutEl){
+    donutEl.onclick = (e) => {
+      const seg = e.target.closest(".donut-seg");
+      if(!seg) return;
+
+      const name = seg.dataset.name;
+      const val  = Number(seg.dataset.val || 0);
+      const pct  = total ? Math.round((val/total)*100) : 0;
+
+      if(top1El){
+        top1El.innerHTML = `선택: <b>${name}</b> · ${fmtKRW(val)} (${pct}%)`;
+      }
+    };
+  }
+  
   if(totalEl) totalEl.textContent = fmtKRW(total);
 
   if(top1El){
