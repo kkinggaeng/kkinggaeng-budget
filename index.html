@@ -1259,6 +1259,16 @@ function loadRecords(){
 }
 
 function renderRecent(){
+ 
+  const todayKey = new Date().toISOString().slice(0, 10);
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayKey = yesterday.toISOString().slice(0, 10);
+
+  let todayLabelShown = false;
+  let yesterdayLabelShown = false;
+  
   const wrap = document.getElementById("recentList");
   if(!wrap) return;
 
@@ -1337,13 +1347,25 @@ function renderRecent(){
     prevMonth = ym;
   }
 
+  // ✅ 오늘/어제 구분선 (spentDate 기준)
+  const dKey = (x.spentDate || "").slice(0,10);
+
+  if(dKey === todayKey && !todayLabelShown){
+    html += `<div class="month-sep">오늘</div>`;
+    todayLabelShown = true;
+  }
+
+  if(dKey === yesterdayKey && !yesterdayLabelShown){
+    html += `<div class="month-sep">어제</div>`;
+    yesterdayLabelShown = true;
+  }
+    
   // 날짜
   const d = (x.spentDate || "").replaceAll("-", ". ");
   const dateText = d ? (d + ".") : "";
 
   // 오늘 표시
-  const isToday =
-    (x.createdAt || "").slice(0,10) === new Date().toISOString().slice(0,10);
+  const isToday = (x.spentDate || "").slice(0,10) === todayKey;
   const todayDot = isToday ? `<span class="memo-dot"></span>` : "";
 
   // 아래줄
