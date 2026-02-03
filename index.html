@@ -230,6 +230,30 @@
       color: var(--muted);
     } 
 
+    /* 저장/닫기 버튼 기본 스타일 */
+    .action-btn{
+      background: linear-gradient(180deg, #F7F8FA, #EFF1F5);
+      color: #2E323A;
+      border: 1px solid var(--line);
+      box-shadow: 0 6px 14px rgba(0,0,0,.06), inset 0 1px 0 rgba(255,255,255,.9);
+    }
+
+    /* 저장 버튼만 포인트(세이지) */
+    #save{
+      background: linear-gradient(180deg, #8FBFB0, #7FAE9E);
+      color: #F7F8FA;
+      border: none;
+      box-shadow: 0 10px 22px rgba(127,174,158,.28), inset 0 1px 0 rgba(255,255,255,.65);
+    }
+
+    /* 닫기 버튼은 고스트 느낌 */
+    #close{
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      box-shadow: none;
+    }
+
 /* Cloud Dancer – Sage 지출/수입 토글 */
 .segmented{
   display:flex;
@@ -603,6 +627,11 @@ body.edit-mode .delete-btn{
 }
 
 
+
+    body.modal-open{
+      overflow: hidden;
+      touch-action: none;
+    }
     
 
 @keyframes toastIn{
@@ -838,11 +867,11 @@ toggleEditBtn?.addEventListener("click", () => {
 
   // ✅ 편집모드 OFF로 돌아갈 때: 열려있는 모달/수정상태 정리(선택이지만 강추)
   if (!on) {
-    // 모달 닫기
     modal?.classList.add("hidden");
+    document.body.classList.remove("modal-open"); // 혹시 열린 상태였다면 안전빵
 
-    // 수정중 상태 초기화 (네가 쓰는 변수명에 맞게 유지)
     editingId = null;
+    saveBtn.textContent = "저장"; // ✅ 라벨 원복
     
     // 폼도 초기화(원하면)
     // resetFormToNew?.();
@@ -877,6 +906,15 @@ const modal = document.getElementById('modal');
 const closeBtn = document.getElementById('close');
 const saveBtn = document.getElementById('save');
 
+/* 모달 배경 클릭 시 닫기 */
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    editingId = null;    // 수정 중이면 초기화
+    closeModal();
+  }
+});
+
+    
 const typeEl = document.getElementById('type');
 const amountEl = document.getElementById('amount');
 const categoryEl = document.getElementById('category');
@@ -898,12 +936,15 @@ renderCategories();
 
 function openModal(){
   modal.classList.remove('hidden');
+  document.body.classList.add('modal-open');
 }
 
 function closeModal(){
   modal.classList.add('hidden');
+  document.body.classList.remove('modal-open');
 }
 
+    
 function resetFormToNew(){
   editingId = null;
   saveBtn.textContent = "저장";
@@ -1145,12 +1186,6 @@ function renderTodaySpend(){
   const amountInput = document.getElementById('amount');
   if(!amountInput) return;
 
-  const formatComma = (numStr) => {
-    if(numStr === '') return '';
-    const n = Number(numStr);
-    if(Number.isNaN(n)) return '';
-    return n.toLocaleString('ko-KR');
-  };
 
   amountEl.addEventListener('input', () => {
   const digits = amountEl.value.replace(/[^0-9]/g, '');
