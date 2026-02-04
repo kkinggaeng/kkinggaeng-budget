@@ -838,6 +838,46 @@ body.edit-mode .delete-btn{
       transform: scale(.96);
       opacity: .85;
     }
+
+    /* ✅ 월별 필터 UI */
+.filter-row{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+  align-items:center;
+}
+
+.filter-chip-group{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.chip{
+  border:1px solid var(--line);
+  background: var(--panel2);
+  color: var(--muted);
+  padding:8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor:pointer;
+}
+
+.chip.active{
+  background: rgba(127,174,158,.18);
+  border-color: rgba(127,174,158,.55);
+  color: var(--text);
+}
+
+#monthlyFilterCard select{
+  flex:1;
+  min-width: 0;
+}
+
+    #page-monthly{
+  padding-bottom: 90px;
+}
     
   </style>
 </head>
@@ -1553,7 +1593,7 @@ function renderMonthSelect(){
 
  if(months.length){
   select.value = months[0];
-  renderMonthlySummary(months[0]);
+  renderMonthly(months[0]);
  }
 
 }
