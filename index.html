@@ -740,6 +740,56 @@ body.edit-mode .delete-btn{
   to   { transform: translateX(-50%) translateY(8px); opacity: 0; }
 }
     
+
+
+    .memo-slide{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.25);
+  z-index: 30;
+  display: flex;
+  align-items: flex-end;
+}
+
+.memo-slide.hidden{
+  display: none;
+}
+
+.memo-sheet{
+  width: 100%;
+  background: var(--panel);
+  border-radius: 20px 20px 0 0;
+  padding: 16px;
+  animation: memoUp .22s ease-out;
+}
+
+@keyframes memoUp{
+  from{ transform: translateY(100%); }
+  to{ transform: translateY(0); }
+}
+
+.memo-header{
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  font-size:14px;
+  font-weight:700;
+}
+
+.memo-meta{
+  margin-top:6px;
+  font-size:12px;
+  color: var(--muted);
+}
+
+.memo-content{
+  margin-top:14px;
+  font-size:15px;
+  line-height:1.5;
+  white-space: pre-wrap;
+}
+    
+
     
   </style>
 </head>
@@ -954,6 +1004,22 @@ body.edit-mode .delete-btn{
     </button>
   </div>
 
+  <!-- 📝 메모 슬라이드 -->
+  <div id="memoSlide" class="memo-slide hidden">
+    <div class="memo-sheet">
+      <div class="memo-header">
+        <span id="memoSlideTitle"></span>
+        <button id="memoSlideClose">닫기</button>
+      </div>
+
+      <div class="memo-meta" id="memoSlideMeta"></div>
+
+      <div class="memo-content" id="memoSlideContent">
+        메모 내용
+      </div>
+    </div>
+  </div>
+  
 
   <script>
     // 탭 전환
@@ -1348,6 +1414,41 @@ function loadRecords(){
   return JSON.parse(localStorage.getItem("records") || "[]");
 }
 
+/* =========================
+   📝 메모 슬라이드
+   ========================= */
+
+const memoSlide = document.getElementById("memoSlide");
+const memoTitle = document.getElementById("memoSlideTitle");
+const memoMeta  = document.getElementById("memoSlideMeta");
+const memoBody  = document.getElementById("memoSlideContent");
+
+function openMemoSlide(item){
+  memoTitle.textContent = item.category || "메모";
+  memoMeta.textContent =
+    `${item.spentDate} · ${item.card || ""} ${item.place || ""}`;
+
+  memoBody.textContent =
+    item.memo?.trim() || "메모가 없어요.";
+
+  memoSlide.classList.remove("hidden");
+}
+    
+// ❌ 닫기 버튼
+document.getElementById("memoSlideClose")?.addEventListener("click", ()=>{
+  memoSlide.classList.add("hidden");
+});
+
+// ❌ 배경 눌러서 닫기
+memoSlide?.addEventListener("click", (e)=>{
+  if(e.target === memoSlide){
+    memoSlide.classList.add("hidden");
+  }
+});
+    
+    
+    
+    
 /* =========================
    📅 월 선택 셀렉트 채우기
    ========================= */
@@ -1892,6 +1993,25 @@ document.getElementById("recentList")?.addEventListener("click", (e) => {
 });
 
 
+    /* =========================
+   📝 메모 슬라이드 열기 (항목 클릭)
+   ========================= */
+document.getElementById("recentList")?.addEventListener("click", (e)=>{
+  // ✏️ 수정 / 🗑️ 삭제 버튼 클릭은 무시
+  if(e.target.closest(".edit-btn")) return;
+  if(e.target.closest(".delete-btn")) return;
+
+  const itemEl = e.target.closest(".recent-item");
+  if(!itemEl) return;
+
+  const id = itemEl.dataset.id;
+  if(!id) return;
+
+  const item = loadRecords().find(r => r.id === id);
+  if(!item) return;
+
+  openMemoSlide(item);
+});
     
 
 
