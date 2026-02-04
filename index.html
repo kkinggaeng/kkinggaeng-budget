@@ -755,11 +755,17 @@ body.edit-mode .delete-btn{
   display: none;
 }
 
+    #memoSlideTitle{
+      font-size: 16px;        /* ⬅ 지금보다 줄이기 */
+      font-weight: 600;       /* ⬅ bold 말고 semi-bold */
+      line-height: 1.4;
+    }
+    
 .memo-sheet{
   width: 100%;
   background: var(--panel);
   border-radius: 20px 20px 0 0;
-  padding: 16px;
+  padding: 20px 20px 28px; 
   animation: memoUp .22s ease-out;
 }
 
@@ -769,16 +775,16 @@ body.edit-mode .delete-btn{
 }
 
 .memo-header{
-  display:flex;
+  display: flex;
   justify-content: space-between;
-  align-items: baseline;     /* ✅ 텍스트 흐름 느낌 */
+  align-items: center;
   gap: 10px;
 
   /* ✅ 박스감 제거 */
   border: none;
   background: transparent;
   border-radius: 0;
-  padding: 0;
+  padding-bottom: 12px;
 
   /* ✅ 타이포그래피만 남기기 */
   color: var(--text);
@@ -790,15 +796,17 @@ body.edit-mode .delete-btn{
 
 .memo-meta{
   margin-top: 8px;
+  margin-bottom: 14px;
   font-size: 13px;
-  color: var(--muted);
+  color: #6b7280;    /* muted gray */
   letter-spacing: -0.2px;
 }
 
 .memo-content{
   margin-top: 14px;
-  font-size: 16px;
-  line-height: 1.55;
+  padding-bottom: 8px;
+  font-size: 15px;
+  line-height: 1.6;
   white-space: pre-wrap;
 }
 
@@ -806,12 +814,12 @@ body.edit-mode .delete-btn{
     #memoSlideClose{
   border: none;
   background: transparent;
-  padding: 6px 0;
+  padding: 6px 10px;
   margin: 0;
 
   color: var(--muted);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 500;
   letter-spacing: -0.2px;
 
   cursor: pointer;
