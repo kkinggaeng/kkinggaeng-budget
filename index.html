@@ -784,7 +784,7 @@ body.edit-mode .delete-btn{
   border: none;
   background: transparent;
   border-radius: 0;
-  padding-bottom: 12px;
+  padding-bottom: 6px;
 
   /* ✅ 타이포그래피만 남기기 */
   color: var(--text);
@@ -795,7 +795,7 @@ body.edit-mode .delete-btn{
     
 
 .memo-meta{
-  margin-top: 8px;
+  margin-top: 4px;
   margin-bottom: 14px;
   font-size: 13px;
   color: #6b7280;    /* muted gray */
@@ -812,24 +812,32 @@ body.edit-mode .delete-btn{
 
     
     #memoSlideClose{
-  border: none;
-  background: transparent;
-  padding: 4px 8px;
-  margin: 0;
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 999px;
+      background: rgba(127,174,158,.35); /* ✅ 연한 세이지 */
+      color: #F7F8FA;                    /* ✅ X 흰색 */
+      
+      padding: 4px 8px;
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
 
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: -0.2px;
-
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-}
-#memoSlideClose:active{
-  opacity: .7;
-}
-
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1;
+      
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    
+    #memoSlideClose:active{
+      transform: scale(.96);
+      opacity: .85;
+    }
     
   </style>
 </head>
@@ -1049,7 +1057,7 @@ body.edit-mode .delete-btn{
     <div class="memo-sheet">
       <div class="memo-header">
         <span id="memoSlideTitle"></span>
-        <button id="memoSlideClose">닫기</button>
+        <button id="memoSlideClose" aria-label="닫기">×</button>
       </div>
 
       <div class="memo-meta" id="memoSlideMeta"></div>
@@ -1472,7 +1480,7 @@ function closeMemoSlide(){
 function openMemoSlide(item){
   memoTitle.textContent = item.category || "메모";
   memoMeta.textContent =
-    `${item.spentDate} · ${item.card || ""} ${item.place || ""}`;
+    `${item.spentDate} · ${item.card || ""} · ${item.place || ""}`;
 
   memoBody.textContent = item.memo?.trim() || "메모 없음 🫧";
 
