@@ -1126,32 +1126,27 @@ body.edit-mode .delete-btn{
   // ✅ 통계 탭 들어갈 때마다 최신 반영
   if(target === "stats") renderStats();
 
-  // ✅ 통계 탭 진입 시 미세 애니메이션 (0.16s)
+  // ✅ 통계 탭 진입 애니메이션
   if(target === "stats"){
     const a = document.getElementById("statsDonutWrap");
     const b = document.getElementById("statsTop5");
 
     [a,b].forEach(el=>{
       if(!el) return;
-      el.classList.remove("anim-in"); // 리셋
-      void el.offsetWidth;            // reflow 트릭 (다시 애니메이션 실행)
+      el.classList.remove("anim-in");
+      void el.offsetWidth;
       el.classList.add("anim-in");
     });
   }
 
-if(target === "monthly"){
-  renderMonthlyFilterSelects(); // ✅ 필터 UI 동기화
-  ...
-}
-      
-      
-  // ✅ 월별 탭 처음 눌렀을 때도 리스트+TOP3까지 바로 렌더
+  // ✅ 월별 탭 들어갈 때: 필터 UI 동기화 + 월 렌더
   if(target === "monthly"){
+    renderMonthlyFilterSelects(); // 필터 UI 채우기/동기화
+
     const select = document.getElementById("monthSelect");
     if(select && select.value){
       renderMonthly(select.value);
     }else{
-      // select가 비었거나 아직 채워지기 전이면: 다시 채우고 렌더
       renderMonthSelect();
       const select2 = document.getElementById("monthSelect");
       if(select2 && select2.value){
@@ -1161,6 +1156,7 @@ if(target === "monthly"){
   }
 }
 
+    
 tabs.forEach(t=>{
   t.addEventListener('click', ()=> setActiveTab(t.dataset.target));
 });
