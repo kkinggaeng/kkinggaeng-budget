@@ -951,6 +951,33 @@ body.edit-mode .delete-btn{
       </div>
     </div>
 
+  
+  <div class="card" id="monthlyFilterCard">
+  <h2 style="display:flex; align-items:center; justify-content:space-between;">
+    필터
+    <button id="mFilterReset" type="button" class="pill" style="cursor:pointer;">초기화</button>
+  </h2>
+
+  <div class="filter-row">
+    <div class="filter-chip-group" id="mFilterType">
+      <button type="button" class="chip active" data-value="all">전체</button>
+      <button type="button" class="chip" data-value="expense">지출</button>
+      <button type="button" class="chip" data-value="income">수입</button>
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <select id="mFilterCategory"></select>
+    <select id="mFilterCardSel"></select>
+  </div>
+
+  <div class="filter-row">
+    <input id="mFilterQuery" type="text" placeholder="사용처/메모 검색" autocomplete="off" />
+  </div>
+</div>
+
+      
+
     <!-- ✅ 합계 + 리스트 카드 -->
     <div class="card">
       <h2 id="monthlyTitle">이번 달</h2>
@@ -1112,6 +1139,12 @@ body.edit-mode .delete-btn{
     });
   }
 
+if(target === "monthly"){
+  renderMonthlyFilterSelects(); // ✅ 필터 UI 동기화
+  ...
+}
+      
+      
   // ✅ 월별 탭 처음 눌렀을 때도 리스트+TOP3까지 바로 렌더
   if(target === "monthly"){
     const select = document.getElementById("monthSelect");
@@ -2017,6 +2050,7 @@ renderRecent();
 renderTodaySpend();
 renderMonthSelect(); // ✅ 추가
 renderStats();
+renderMonthlyFilterSelects();
     
 // 페이지 최초 로딩 시 스크롤 위치 초기화
 window.scrollTo(0, 0);
@@ -2069,6 +2103,71 @@ document.getElementById("recentList")?.addEventListener("click", (e)=>{
     
 
 
+// ===== 월별 탭 전용 필터 상태 =====
+const mFilter = {
+  type: "all",        // all | expense | income
+  category: "all",
+  card: "all",
+  q: ""
+};
+
+
+
+    /* =========================
+   📎 월별 필터 셀렉트 채우기
+   ========================= */
+function renderMonthlyFilterSelects(){
+  const catSel = document.getElementById("mFilterCategory");
+  const cardSel = document.getElementById("mFilterCardSel");
+
+  if(catSel){
+    const cats = ["all", ...CATEGORIES];
+    catSel.innerHTML = cats.map(c =>
+      `<option value="${c}">
+        ${c === "all" ? "카테고리: 전체" : c}
+      </option>`
+    ).join("");
+    catSel.value = mFilter.category;
+  }
+
+  if(cardSel){
+    const cards = ["all", "삼성", "신한", "국민", "현금/계좌"];
+    cardSel.innerHTML = cards.map(c =>
+      `<option value="${c}">
+        ${c === "all" ? "카드: 전체" : c}
+      </option>`
+    ).join("");
+    cardSel.value = mFilter.card;
+  }
+
+  const qEl = document.getElementById("mFilterQuery");
+  if(qEl) qEl.value = mFilter.q || "";
+}
+    
+
+function applyMonthlyFilters(records){
+  const q = (mFilter.q || "").trim().toLowerCase();
+
+  return records.filter(r=>{
+    if(mFilter.type !== "all"){
+      if((r.type || "expense") !== mFilter.type) return false;
+    }
+    if(mFilter.category !== "all"){
+      if((r.category || "기타") !== mFilter.category) return false;
+    }
+    if(mFilter.card !== "all"){
+      if((r.card || "") !== mFilter.card) return false;
+    }
+    if(q){
+      const place = (r.place || "").toLowerCase();
+      const memo  = (r.memo  || "").toLowerCase();
+      if(!place.includes(q) && !memo.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+    
 
   /* =========================
    ✅ Toast (단일)
