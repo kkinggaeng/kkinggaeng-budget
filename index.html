@@ -771,29 +771,56 @@ body.edit-mode .delete-btn{
 .memo-header{
   display:flex;
   justify-content: space-between;
-  align-items:center;
-  font-size:14px;
-  border:1px solid var(--line);
-  background: rgba(255,255,255,.65);
-  color: var(--muted);
-  border-radius: 12px;
-  padding: 8px 10px;
-  font-weight:700;
+  align-items: baseline;     /* ✅ 텍스트 흐름 느낌 */
+  gap: 10px;
+
+  /* ✅ 박스감 제거 */
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+
+  /* ✅ 타이포그래피만 남기기 */
+  color: var(--text);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.2px;
 }
+    
 
 .memo-meta{
-  margin-top:6px;
-  font-size:12px;
+  margin-top: 8px;
+  font-size: 13px;
   color: var(--muted);
+  letter-spacing: -0.2px;
 }
 
 .memo-content{
-  margin-top:14px;
-  font-size:15px;
-  line-height:1.5;
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.55;
   white-space: pre-wrap;
 }
+
     
+    #memoSlideClose{
+  border: none;
+  background: transparent;
+  padding: 6px 0;
+  margin: 0;
+
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+#memoSlideClose:active{
+  opacity: .7;
+}
 
     
   </style>
