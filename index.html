@@ -719,15 +719,15 @@ body.edit-mode .delete-btn{
   color:var(--text);
 }
 
-/* ✅ 통계 탭: 페이드 + 2px 미세 이동 */
+/* ✅ 통계 탭: 페이드 + 4px 미세 이동 */
 #statsDonutWrap.anim-in,
 #statsTop5.anim-in{
-  animation: statsPop .18s ease-out both;
+  animation: statsPop .36s ease-out both;
   will-change: opacity, transform;
 }
 
 @keyframes statsPop{
-  from { opacity: 0; transform: translateY(2px); }
+  from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
 }    
 
