@@ -1793,17 +1793,97 @@ function renderMonthly(ym){ // ym: "YYYY-MM"
 
   
 if(filteredItems.length === 0){
-  listEl.innerHTML = `<p class="hint">조건에 맞는 기록이 없어 🫧</p>`;
-  return;
-}
+function renderMonthly(ym){ // ym: "YYYY-MM"
+  const titleEl = document.getElementById("monthlyTitle");
+  const summaryEl = document.getElementById("monthlySummary");
+  const top3El = document.getElementById("monthlyTop3");
+  const listEl = document.getElementById("monthlyList");
+  if(!titleEl || !summaryEl || !listEl) return;
 
-  listEl.innerHTML = monthItems.map(x=>{
+  const records = loadRecords();
+
+  // 1) 해당 월 데이터만
+  const monthItems = records
+    .filter(r => (r.spentDate || "").slice(0,7) === ym)
+    .slice()
+    .sort((a,b) => {
+      const ad = (a.spentDate || "0000-00-00");
+      const bd = (b.spentDate || "0000-00-00");
+      if(bd !== ad) return bd.localeCompare(ad);
+      return (b.createdAt || "").localeCompare(a.createdAt || "");
+    });
+
+  // 2) 요약 계산
+  let expSum = 0;
+  let incSum = 0;
+
+  const catAgg = {};
+  const expenseDates = new Set();
+
+  monthItems.forEach(x=>{
+    const amt = Number(x.amount || 0);
+    const isIncome = x.type === "income";
+
+    if(isIncome){
+      incSum += amt;
+    }else{
+      expSum += amt;
+
+      const cat = x.category || "기타";
+      catAgg[cat] = (catAgg[cat] || 0) + amt;
+
+      const dKey = (x.spentDate || "").slice(0,10);
+      if(dKey) expenseDates.add(dKey);
+    }
+  });
+
+  // 3) 하루 평균/무지출 계산
+  const now = new Date();
+  const [Y, M] = ym.split("-").map(n => parseInt(n,10));
+  const isThisMonth = (now.getFullYear() === Y) && ((now.getMonth()+1) === M);
+  const daysElapsed = isThisMonth ? now.getDate() : new Date(Y, M, 0).getDate();
+  const avgPerDay = daysElapsed > 0 ? Math.round(expSum / daysElapsed) : 0;
+  const noSpendDays = Math.max(0, daysElapsed - expenseDates.size);
+
+  // 4) 제목/요약
+  titleEl.textContent = `${Y}년 ${String(M).padStart(2,"0")}월`;
+
+  summaryEl.innerHTML = `
+    이번달 지출: <b class="amt-expense">${fmtKRW(expSum)}</b> ·
+    수입: <b class="amt-income">${fmtKRW(incSum)}</b><br><br>
+    하루 평균 지출: <b class="amt-expense">${fmtKRW(avgPerDay)}</b> (총 ${daysElapsed}일 기준)<br><br>
+    무지출: <b>${noSpendDays}일</b>
+  `;
+
+  // 5) TOP3
+  if(top3El){
+    const top3 = Object.entries(catAgg).sort((a,b)=> b[1]-a[1]).slice(0,3);
+    top3El.innerHTML = top3.length
+      ? `<span style="font-weight:800; letter-spacing:-0.2px;">TOP3</span><br><br>
+         ${top3.map(([cat,amt], i)=>`${i+1}. ${cat} · ${fmtKRW(amt)}`).join("<br>")}`
+      : `TOP3: 아직 지출 기록이 없어 🙂`;
+  }
+
+  // ✅ 6) 필터 적용 (여기가 핵심)
+  const filteredItems = applyMonthlyFilters(monthItems);
+
+  // 7) 리스트 렌더 (✅ monthItems 말고 filteredItems)
+  if(monthItems.length === 0){
+    listEl.innerHTML = `<p class="hint">이 달 기록이 없어. +로 추가해봐!</p>`;
+    return;
+  }
+
+  if(filteredItems.length === 0){
+    listEl.innerHTML = `<p class="hint">필터 조건에 맞는 내역이 없어 🫧 (초기화 눌러봐)</p>`;
+    return;
+  }
+
+  listEl.innerHTML = filteredItems.map(x=>{
     const d = (x.spentDate || "").replaceAll("-", ". ");
     const dateText = d ? (d + ".") : "";
     const sub = [x.card, x.place].filter(Boolean).join(" · ");
     const amtSideClass = x.type === "income" ? "amt-income" : "amt-expense";
-    const amtText = fmtKRW(x.amount);    // 마이너스 없는 금액 텍스트
-    
+
     return `
       <div class="recent-item" style="margin-top:10px;">
         <div class="recent-left">
