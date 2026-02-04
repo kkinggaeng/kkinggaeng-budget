@@ -53,8 +53,10 @@
     z-index: 10;
   }
     .title{
-      display:flex; align-items:center; justify-content:space-between;
-      :12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap :12px;
     }
     .title h1{
       margin:0;
@@ -1170,24 +1172,6 @@ closeBtn.addEventListener('click', ()=>{
 // ✅ 전역 상태: 수정 중인 record id (없으면 신규 추가)
 let editingId = null;
 
-function resetForm(){
-  // 구분 기본값: 지출
-  typeEl.value = "expense";
-  const seg = document.getElementById('typeSegment');
-  if(seg){
-    seg.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
-    seg.querySelector(`.seg-btn[data-value="expense"]`)?.classList.add('active');
-  }
-
-  // 날짜 기본값: 오늘
-  spentDateEl.value = localISODate(new Date());
-
-  // 입력값 초기화
-  amountEl.value = "";
-  amountEl.dataset.raw = "";
-  placeEl.value = "";
-  memoEl.value = "";
-}
 
 
 
@@ -1232,6 +1216,7 @@ saveBtn.addEventListener('click', ()=>{
     editingId = null; // ✅ 수정 끝났으니 초기화
     localStorage.setItem('records', JSON.stringify(list));
     renderRecent();
+    resetFormToNew(); // 선택: 다음 오픈 대비
     closeModal();
     showToast("수정됨 ✓");
     return;
@@ -1247,7 +1232,7 @@ saveBtn.addEventListener('click', ()=>{
   list.unshift(item);
   localStorage.setItem('records', JSON.stringify(list));
   renderRecent();
-  resetForm();
+  resetFormToNew(); // 통일
   closeModal();
   showToast("저장됨 ✓");
 });
@@ -1387,10 +1372,6 @@ function renderMonthSelect(){
   renderMonthlySummary(months[0]);
  }
 
-  // ✅ 사용자가 월 선택 바꾸면 월별 렌더 갱신
-  select.onchange = () => {
-    renderMonthly(select.value);
-  };
 }
 
    /* =========================
