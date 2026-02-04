@@ -773,6 +773,11 @@ body.edit-mode .delete-btn{
   justify-content: space-between;
   align-items:center;
   font-size:14px;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,.65);
+  color: var(--muted);
+  border-radius: 12px;
+  padding: 8px 10px;
   font-weight:700;
 }
 
@@ -1423,29 +1428,34 @@ const memoTitle = document.getElementById("memoSlideTitle");
 const memoMeta  = document.getElementById("memoSlideMeta");
 const memoBody  = document.getElementById("memoSlideContent");
 
+function closeMemoSlide(){
+  memoSlide.classList.add("hidden");
+  document.body.classList.remove("modal-open"); // ✅ 뒤 스크롤 막았던 거 해제
+}
+    
 function openMemoSlide(item){
   memoTitle.textContent = item.category || "메모";
   memoMeta.textContent =
     `${item.spentDate} · ${item.card || ""} ${item.place || ""}`;
 
-  memoBody.textContent =
-    item.memo?.trim() || "메모가 없어요.";
+  memoBody.textContent = item.memo?.trim() || "메모 없음 🫧";
 
+  document.body.classList.add("modal-open"); // ✅ 뒤 스크롤 차단
   memoSlide.classList.remove("hidden");
 }
+
     
-// ❌ 닫기 버튼
+// ✅ 닫기 버튼
 document.getElementById("memoSlideClose")?.addEventListener("click", ()=>{
-  memoSlide.classList.add("hidden");
+  closeMemoSlide();
 });
 
-// ❌ 배경 눌러서 닫기
+// ✅ 배경 눌러서 닫기
 memoSlide?.addEventListener("click", (e)=>{
   if(e.target === memoSlide){
-    memoSlide.classList.add("hidden");
+    closeMemoSlide();
   }
-});
-    
+});    
     
     
     
