@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="ko">
 <head>
@@ -1487,6 +1488,32 @@ function localISODate(d = new Date()){
   return new Date(d.getTime() - tz).toISOString().slice(0,10);
 }
 
+// ✅ 어떤 포맷이 와도 YYYY-MM-DD로 최대한 정규화
+function normalizeISODate(input){
+  const s = String(input || "").trim();
+  if(!s) return "";
+
+  // 이미 ISO면 그대로
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+  // 2026.02.03 / 2026. 02. 03. / 2026/02/03 같은 것들 처리
+  const m = s.match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+  if(m){
+    const y = m[1];
+    const mo = String(m[2]).padStart(2,"0");
+    const d  = String(m[3]).padStart(2,"0");
+    return `${y}-${mo}-${d}`;
+  }
+
+  return ""; // 못 고치면 빈값
+}
+
+function ymFromDateStr(dateStr){
+  const iso = normalizeISODate(dateStr);
+  return iso ? iso.slice(0,7) : "";
+}
+
+    
 // ✅ 오늘 지출 + 어제 대비/무지출 문구까지 한 방에 처리
 function renderTodaySpend(){
   const valueEl = document.getElementById("todaySpendValue");
@@ -1587,9 +1614,25 @@ function fmtKRW(n){
 }
 
 function loadRecords(){
-  return JSON.parse(localStorage.getItem("records") || "[]");
+  const list = JSON.parse(localStorage.getItem("records") || "[]");
+
+  // ✅ spentDate 정규화 + 저장소에도 반영(한 번만)
+  let changed = false;
+  list.forEach(r=>{
+    const fixed = normalizeISODate(r.spentDate);
+    if(fixed && fixed !== r.spentDate){
+      r.spentDate = fixed;
+      changed = true;
+    }
+  });
+  if(changed){
+    localStorage.setItem("records", JSON.stringify(list));
+  }
+
+  return list;
 }
 
+    
 /* =========================
    📝 메모 슬라이드
    ========================= */
@@ -1640,11 +1683,10 @@ function renderMonthSelect(){
   const records = loadRecords();
 
   const months = [...new Set(
-    records
-      .map(r => (r.spentDate || "").slice(0,7))
-      .filter(Boolean)
-  )].sort().reverse();
+  records.map(r => ymFromDateStr(r.spentDate)).filter(Boolean)
+)].sort().reverse();
 
+  
   select.innerHTML = months.map(m =>
     `<option value="${m}">${m.replace("-", "년 ")}월</option>`
   ).join("");
@@ -1670,11 +1712,11 @@ function renderMonthly(ym){ // ym: "YYYY-MM"
 
   // 1) 해당 월 데이터만
   const monthItems = records
-    .filter(r => (r.spentDate || "").slice(0,7) === ym)
+  .filter(r => ymFromDateStr(r.spentDate) === ym)
     .slice()
     .sort((a,b) => {
-      const ad = (a.spentDate || "0000-00-00");
-      const bd = (b.spentDate || "0000-00-00");
+      const ad = normalizeISODate(a.spentDate) || "0000-00-00";
+      const bd = normalizeISODate(b.spentDate) || "0000-00-00";
       if(bd !== ad) return bd.localeCompare(ad);
       return (b.createdAt || "").localeCompare(a.createdAt || "");
     });
@@ -1750,11 +1792,10 @@ function renderMonthly(ym){ // ym: "YYYY-MM"
   const filteredItems = applyMonthlyFilters(monthItems);
 
   
-  // 7) 리스트(간단 버전) — 필요하면 기존 recent-item 스타일 재사용
-  if(monthItems.length === 0){
-    listEl.innerHTML = `<p class="hint">이 달 기록이 없어. +로 추가해봐!</p>`;
-    return;
-  }
+if(filteredItems.length === 0){
+  listEl.innerHTML = `<p class="hint">조건에 맞는 기록이 없어 🫧</p>`;
+  return;
+}
 
   listEl.innerHTML = monthItems.map(x=>{
     const d = (x.spentDate || "").replaceAll("-", ". ");
