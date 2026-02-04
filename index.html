@@ -878,6 +878,66 @@ body.edit-mode .delete-btn{
     #page-monthly{
   padding-bottom: 90px;
 }
+
+
+    /* ✅ 카드 안에 들어간 필터바 버전 */
+.mbar.in-card{
+  position: static;         /* sticky 제거 */
+  top: auto;
+  z-index: auto;
+
+  margin: 10px 0 8px;       /* TOP3 아래 공기 */
+  padding: 10px 12px;
+
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255,255,255,.88);
+  backdrop-filter: blur(10px);
+
+  display:flex;
+  gap:10px;
+  align-items:center;
+
+  overflow-x:auto;
+  -webkit-overflow-scrolling: touch;
+}
+.mbar.in-card::-webkit-scrollbar{ display:none; }
+
+.mbar-panel.in-card{
+  margin: 6px 0 12px;
+}
+
+
+    /* ✅ 월별 mbar 칩 */
+.mchip{
+  border:1px solid var(--line);
+  background: var(--panel2);
+  color: var(--muted);
+  padding:8px 12px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+  white-space:nowrap;
+  flex: 0 0 auto;
+}
+
+.mchip.active{
+  background: rgba(127,174,158,.18);
+  border-color: rgba(127,174,158,.55);
+  color: var(--text);
+}
+
+.mchip.ghost{
+  background: transparent;
+}
+
+.mchip .caret{
+  margin-left: 4px;
+  opacity: .7;
+}
+
+    
     
   </style>
 </head>
@@ -992,42 +1052,40 @@ body.edit-mode .delete-btn{
     </div>
 
   
-  <div class="card" id="monthlyFilterCard">
-  <h2 style="display:flex; align-items:center; justify-content:space-between;">
-    필터
-    <button id="mFilterReset" type="button" class="pill" style="cursor:pointer;">초기화</button>
-  </h2>
-
-  <div class="filter-row">
-    <div class="filter-chip-group" id="mFilterType">
-      <button type="button" class="chip active" data-value="all">전체</button>
-      <button type="button" class="chip" data-value="expense">지출</button>
-      <button type="button" class="chip" data-value="income">수입</button>
-    </div>
-  </div>
-
-  <div class="filter-row">
-    <select id="mFilterCategory"></select>
-    <select id="mFilterCardSel"></select>
-  </div>
-
-  <div class="filter-row">
-    <input id="mFilterQuery" type="text" placeholder="사용처/메모 검색" autocomplete="off" />
-  </div>
-</div>
 
       
+<div class="card">
+  <h2 id="monthlyTitle">이번 달</h2>
+  <p class="hint" id="monthlySummary"></p>
 
-    <!-- ✅ 합계 + 리스트 카드 -->
-    <div class="card">
-      <h2 id="monthlyTitle">이번 달</h2>
-      <p class="hint" id="monthlySummary"></p>
+  <!-- TOP3 -->
+  <div id="monthlyTop3" class="hint" style="margin-top:10px;"></div>
 
-      <!-- ✅ TOP3 텍스트 영역 추가 -->
-      <div id="monthlyTop3" class="hint" style="margin-top:10px;"></div>
+  <!-- ✅ 여기! TOP3 아래에 필터바 (카드 안) -->
+  <div class="mbar in-card" id="monthlyBar">
+    <button type="button" class="mchip active" data-type="all">전체</button>
+    <button type="button" class="mchip" data-type="expense">지출</button>
+    <button type="button" class="mchip" data-type="income">수입</button>
 
-      <div id="monthlyList"></div>
-    </div>
+    <button type="button" class="mchip mchip-dd" id="mbarCategoryBtn">
+      카테고리 <span class="caret">▾</span>
+    </button>
+    <button type="button" class="mchip mchip-dd" id="mbarCardBtn">
+      카드 <span class="caret">▾</span>
+    </button>
+    <button type="button" class="mchip mchip-dd" id="mbarSearchBtn">
+      검색 <span class="caret">▾</span>
+    </button>
+
+    <button type="button" class="mchip ghost" id="mbarReset">초기화</button>
+  </div>
+
+  <!-- ✅ 필터 누르면 여기 작은 패널이 카드 안에서 열림 -->
+  <div class="mbar-panel hidden in-card" id="mbarPanel"></div>
+
+  <!-- 내역 리스트 -->
+  <div id="monthlyList"></div>
+</div>
       
   </section>
   </main>
@@ -1181,8 +1239,8 @@ body.edit-mode .delete-btn{
 
   // ✅ 월별 탭 들어갈 때: 필터 UI 동기화 + 월 렌더
   if(target === "monthly"){
-    renderMonthlyFilterSelects(); // 필터 UI 채우기/동기화
-
+    syncMonthlyBarUI(); // ✅ 추가
+    
     const select = document.getElementById("monthSelect");
     if(select && select.value){
       renderMonthly(select.value);
@@ -1689,6 +1747,9 @@ function renderMonthly(ym){ // ym: "YYYY-MM"
     }
   }
 
+  const filteredItems = applyMonthlyFilters(monthItems);
+
+  
   // 7) 리스트(간단 버전) — 필요하면 기존 recent-item 스타일 재사용
   if(monthItems.length === 0){
     listEl.innerHTML = `<p class="hint">이 달 기록이 없어. +로 추가해봐!</p>`;
@@ -2086,7 +2147,6 @@ renderRecent();
 renderTodaySpend();
 renderMonthSelect(); // ✅ 추가
 renderStats();
-renderMonthlyFilterSelects();
     
 // 페이지 최초 로딩 시 스크롤 위치 초기화
 window.scrollTo(0, 0);
@@ -2147,38 +2207,174 @@ const mFilter = {
   q: ""
 };
 
-
-
-    /* =========================
-   📎 월별 필터 셀렉트 채우기
+/* =========================
+   ✅ 월별 mbar(가로칩) + 패널 동작
    ========================= */
-function renderMonthlyFilterSelects(){
-  const catSel = document.getElementById("mFilterCategory");
-  const cardSel = document.getElementById("mFilterCardSel");
 
-  if(catSel){
-    const cats = ["all", ...CATEGORIES];
-    catSel.innerHTML = cats.map(c =>
-      `<option value="${c}">
-        ${c === "all" ? "카테고리: 전체" : c}
-      </option>`
-    ).join("");
-    catSel.value = mFilter.category;
-  }
+const mbar = document.getElementById("monthlyBar");
+const panel = document.getElementById("mbarPanel");
 
-  if(cardSel){
-    const cards = ["all", "삼성", "신한", "국민", "현금/계좌"];
-    cardSel.innerHTML = cards.map(c =>
-      `<option value="${c}">
-        ${c === "all" ? "카드: 전체" : c}
-      </option>`
-    ).join("");
-    cardSel.value = mFilter.card;
-  }
-
-  const qEl = document.getElementById("mFilterQuery");
-  if(qEl) qEl.value = mFilter.q || "";
+function getCurrentYM(){
+  const sel = document.getElementById("monthSelect");
+  return sel?.value || currentYM();
 }
+
+function rerenderMonthly(){
+  renderMonthly(getCurrentYM());
+}
+
+function setActiveTypeChip(type){ // all | expense | income
+  if(!mbar) return;
+  mbar.querySelectorAll(".mchip[data-type]").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.type === type);
+  });
+}
+
+function closePanel(){
+  if(!panel) return;
+  panel.classList.add("hidden");
+  panel.innerHTML = "";
+  panel.dataset.kind = "";
+}
+
+function openPanel(kind){ // "category" | "card" | "search"
+  if(!panel) return;
+
+  // 같은 버튼을 다시 누르면 닫기
+  if(!panel.classList.contains("hidden") && panel.dataset.kind === kind){
+    closePanel();
+    return;
+  }
+
+  panel.dataset.kind = kind;
+  panel.classList.remove("hidden");
+
+  if(kind === "category"){
+    const opts = ["all", ...CATEGORIES];
+    panel.innerHTML = `
+      <div style="display:flex; gap:10px; align-items:center;">
+        <select id="mPanelCategory" style="flex:1;">
+          ${opts.map(c=>`<option value="${c}">${c==="all" ? "카테고리: 전체" : c}</option>`).join("")}
+        </select>
+        <button type="button" class="mchip" id="mPanelApply">적용</button>
+      </div>
+    `;
+    const sel = document.getElementById("mPanelCategory");
+    sel.value = mFilter.category || "all";
+    document.getElementById("mPanelApply").onclick = ()=>{
+      mFilter.category = sel.value;
+      closePanel();
+      rerenderMonthly();
+    };
+    return;
+  }
+
+  if(kind === "card"){
+    const cards = ["all", "삼성", "신한", "국민", "현금/계좌"];
+    panel.innerHTML = `
+      <div style="display:flex; gap:10px; align-items:center;">
+        <select id="mPanelCard" style="flex:1;">
+          ${cards.map(c=>`<option value="${c}">${c==="all" ? "카드: 전체" : c}</option>`).join("")}
+        </select>
+        <button type="button" class="mchip" id="mPanelApply">적용</button>
+      </div>
+    `;
+    const sel = document.getElementById("mPanelCard");
+    sel.value = mFilter.card || "all";
+    document.getElementById("mPanelApply").onclick = ()=>{
+      mFilter.card = sel.value;
+      closePanel();
+      rerenderMonthly();
+    };
+    return;
+  }
+
+  if(kind === "search"){
+    panel.innerHTML = `
+      <div style="display:flex; gap:10px; align-items:center;">
+        <input id="mPanelQuery" type="text" placeholder="사용처/메모 검색"
+               style="flex:1; min-width:0;" />
+        <button type="button" class="mchip" id="mPanelApply">적용</button>
+      </div>
+      <div class="hint" style="margin-top:8px;">엔터로도 적용됨</div>
+    `;
+    const q = document.getElementById("mPanelQuery");
+    q.value = mFilter.q || "";
+    q.focus();
+    const apply = ()=>{
+      mFilter.q = (q.value || "").trim();
+      closePanel();
+      rerenderMonthly();
+    };
+    document.getElementById("mPanelApply").onclick = apply;
+    q.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter"){
+        e.preventDefault();
+        apply();
+      }
+    });
+    return;
+  }
+}
+
+// ✅ mbar 클릭 핸들러
+mbar?.addEventListener("click", (e)=>{
+  const btn = e.target.closest("button");
+  if(!btn) return;
+
+  // 타입(전체/지출/수입)
+  if(btn.dataset.type){
+    mFilter.type = btn.dataset.type; // all | expense | income
+    setActiveTypeChip(mFilter.type);
+    closePanel();
+    rerenderMonthly();
+    return;
+  }
+
+  // 드롭다운들
+  if(btn.id === "mbarCategoryBtn"){
+    openPanel("category");
+    return;
+  }
+  if(btn.id === "mbarCardBtn"){
+    openPanel("card");
+    return;
+  }
+  if(btn.id === "mbarSearchBtn"){
+    openPanel("search");
+    return;
+  }
+
+  // 초기화
+  if(btn.id === "mbarReset"){
+    mFilter.type = "all";
+    mFilter.category = "all";
+    mFilter.card = "all";
+    mFilter.q = "";
+    setActiveTypeChip("all");
+    closePanel();
+    rerenderMonthly();
+    return;
+  }
+});
+
+// ✅ 패널 바깥 클릭 시 닫기 (월별 카드 안에서 자연스럽게)
+document.addEventListener("click", (e)=>{
+  if(!panel || panel.classList.contains("hidden")) return;
+  if(e.target.closest("#monthlyBar")) return;
+  if(e.target.closest("#mbarPanel")) return;
+  closePanel();
+});
+
+// ✅ 월별 탭 들어올 때 칩 상태 동기화
+function syncMonthlyBarUI(){
+  setActiveTypeChip(mFilter.type || "all");
+  closePanel();
+}
+
+    
+
+
     
 
 function applyMonthlyFilters(records){
