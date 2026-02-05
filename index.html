@@ -2310,6 +2310,7 @@ document.getElementById("recentList")?.addEventListener("click", (e) => {
    ✏️ 월별 - 수정 버튼
    ========================= */
 document.getElementById("monthlyList")?.addEventListener("click", (e) => {
+  if(!document.body.classList.contains("edit-mode")) return; // ✅ 추가
   const btn = e.target.closest(".edit-btn");
   if(!btn) return;
 
@@ -2331,6 +2332,7 @@ document.getElementById("monthlyList")?.addEventListener("click", (e) => {
    🗑️ 월별 - 삭제 + Undo
    ========================= */
 document.getElementById("monthlyList")?.addEventListener("click", (e) => {
+  if(!document.body.classList.contains("edit-mode")) return; // ✅ 추가
   const del = e.target.closest(".delete-btn");
   if(!del) return;
 
@@ -2355,7 +2357,7 @@ document.getElementById("monthlyList")?.addEventListener("click", (e) => {
 
   // ✅ 홈/월별 둘 다 갱신
   renderRecent();
-  renderMonthly(getCurrentYM());
+  rerenderMonthly();
 
   pendingDelete = { item: removed, index: idx, timerId: null };
   showToast("삭제됨", { undo: true });
