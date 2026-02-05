@@ -888,15 +888,15 @@ body.edit-mode .delete-btn{
   z-index: auto;
 
   margin: 10px 0 8px;       /* TOP3 아래 공기 */
-  padding: 10px 12px;
+  padding: 0;
 
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: rgba(255,255,255,.88);
-  backdrop-filter: blur(10px);
-
+  border: none;
+  border-radius: 0;
+  background: transparent; /* ✅ 감싸는 박스 느낌 제거 */
+  backdrop-filter: none;
+  
   display:flex;
-  gap:10px;
+  gap:8px;
   align-items:center;
 
   overflow-x:auto;
