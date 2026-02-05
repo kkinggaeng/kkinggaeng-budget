@@ -938,6 +938,12 @@ body.edit-mode .delete-btn{
   opacity: .7;
 }
 
+    /* ✅ 월별: 필터 결과 없음 문구 간격 크게 */
+  #monthlyList .monthly-empty{
+    margin-top: 36px;
+    text-align: center;
+    opacity: .9;
+  }    
     
     
   </style>
@@ -1824,10 +1830,10 @@ function renderMonthly(ym){ // ym: "YYYY-MM"
   }
 
   if(filteredItems.length === 0){
-    listEl.innerHTML = `<p class="hint">필터 조건에 맞는 내역이 없어 🫧 (초기화 눌러봐)</p>`;
-    return;
+  listEl.innerHTML = `<p class="hint monthly-empty">필터 조건에 맞는 내역이 없어 🫧 (초기화 눌러봐)</p>`;
+  return;
   }
-
+  
   listEl.innerHTML = filteredItems.map(x=>{
     const d = (x.spentDate || "").replaceAll("-", ". ");
     const dateText = d ? (d + ".") : "";
