@@ -1812,7 +1812,10 @@ function renderMonthly(ym){ // ym: "YYYY-MM"
   }
 
   // ✅ 6) 필터 적용
-  const filteredItems = applyMonthlyFilters(monthItems);
+  const filteredItems =
+  (typeof applyMonthlyFilters === "function")
+    ? applyMonthlyFilters(monthItems)
+    : monthItems;
 
   // 7) 리스트 렌더
   if(monthItems.length === 0){
@@ -2209,18 +2212,7 @@ function renderRecent(){
 
 
     
-// 페이지 처음 열릴 때 1번 실행
-renderRecent();
-renderTodaySpend();
-renderMonthSelect(); // ✅ 추가
-renderStats();
-    
-// 페이지 최초 로딩 시 스크롤 위치 초기화
-window.scrollTo(0, 0);
 
-document.getElementById("monthSelect")?.addEventListener("change", (e)=>{
-  renderMonthly(e.target.value);
-});
       
 
 /* =========================
@@ -2578,6 +2570,21 @@ toastUndoBtn?.addEventListener("click", () => {
 
   showToast("복구됨 ✓", { undo: false, duration: 1200 });
 });
+
+
+// 페이지 처음 열릴 때 1번 실행
+renderRecent();
+renderTodaySpend();
+renderMonthSelect(); // ✅ 추가
+renderStats();
+    
+// 페이지 최초 로딩 시 스크롤 위치 초기화
+window.scrollTo(0, 0);
+
+document.getElementById("monthSelect")?.addEventListener("change", (e)=>{
+  renderMonthly(e.target.value);
+});
+
     
   </script>
 
