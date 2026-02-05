@@ -863,25 +863,6 @@ body.edit-mode .delete-btn{
       opacity: .85;
     }
 
-    /* =========================
-   📝 메모 슬라이드 열기 (월별 항목 클릭)
-   ========================= */
-document.getElementById("monthlyList")?.addEventListener("click", (e)=>{
-  if (document.body.classList.contains("edit-mode")) return; // ✅ 편집모드면 메모 금지
-  if (e.target.closest(".edit-btn") || e.target.closest(".delete-btn")) return; // ✅ 버튼 누르면 메모 금지
- 
-  const itemEl = e.target.closest(".recent-item");
-  if(!itemEl) return;
-
-  const id = itemEl.dataset.id;
-  if(!id) return;
-
-  const item = loadRecords().find(r => r.id === id);
-  if(!item) return;
-
-  openMemoSlide(item);
-});
-
     
 
     /* ✅ 월별 필터 UI */
@@ -2327,6 +2308,8 @@ document.getElementById("monthlyList")?.addEventListener("click", (e) => {
 });
 
 
+    
+
 
     /* =========================
    🗑️ 월별 - 삭제 + Undo
@@ -2366,6 +2349,28 @@ document.getElementById("monthlyList")?.addEventListener("click", (e) => {
     pendingDelete = null;
   }, UNDO_DURATION);
 });
+
+        /* =========================
+   📝 메모 슬라이드 열기 (월별 항목 클릭)
+   ========================= */
+document.getElementById("monthlyList")?.addEventListener("click", (e)=>{
+  if(document.body.classList.contains("edit-mode")) return;
+  if(e.target.closest(".edit-btn")) return;
+  if(e.target.closest(".delete-btn")) return;
+
+  
+  const itemEl = e.target.closest(".recent-item");
+  if(!itemEl) return;
+
+  const id = itemEl.dataset.id;
+  if(!id) return;
+
+  const item = loadRecords().find(r => r.id === id);
+  if(!item) return;
+
+  openMemoSlide(item);
+});
+
 
     
 
