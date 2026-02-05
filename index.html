@@ -418,6 +418,29 @@
     }
 
 
+/* ✅ 홈: 월별 전체 보기 버튼 */
+.go-monthly-btn{
+  width: 100%;
+  margin-top: 12px;
+  height: 44px;
+  border-radius: 14px;                 /* 둥근 네모 */
+  border: 1px solid rgba(127,174,158,.65); /* 세이지 테두리 */
+  background: rgba(255,255,255,.92);   /* 흰 배경 */
+  color: #2E323A;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(0,0,0,.06);
+}
+
+.go-monthly-btn:active{
+  transform: scale(.99);
+  opacity: .92;
+}
+    
+    
+
     .recent-right{
   display:flex;
   align-items:center;
@@ -998,7 +1021,13 @@ document.getElementById("monthlyList")?.addEventListener("click", (e)=>{
       <div class="card">
         <h2>최근 내역</h2>
         <div id="recentList"></div>
+
+        <!-- ✅ 월별 전체 보기 버튼 -->
+        <button id="goMonthly" type="button" class="go-monthly-btn">
+          월별에서 전체 보기 →
+        </button>
       </div>
+      
     </section>
 
     <!-- STATS -->
@@ -2145,7 +2174,7 @@ function renderRecent(){
       if (bd !== ad) return bd.localeCompare(ad);
       return (b.createdAt || "").localeCompare(a.createdAt || "");
     })
-    .slice(0, 30);
+    .slice(0, 7);
 
   
   if(list.length === 0){
@@ -2612,6 +2641,12 @@ toastUndoBtn?.addEventListener("click", () => {
   showToast("복구됨 ✓", { undo: false, duration: 1200 });
 });
 
+// ✅ 홈 버튼: 월별 탭으로 이동
+document.getElementById("goMonthly")?.addEventListener("click", () => {
+  setActiveTab("monthly");
+  window.scrollTo(0, 0);
+});
+    
 
 // 페이지 처음 열릴 때 1번 실행
 renderRecent();
