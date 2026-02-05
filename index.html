@@ -41,7 +41,7 @@
       color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
-      padding-bottom: calc(100px + env(safe-area-inset-bottom));
+      padding-bottom: calc(72px + env(safe-area-inset-bottom));
     }
 
     /* 상단 헤더 */
@@ -303,7 +303,7 @@
     }
 
     #monthlyList{
-      padding-bottom: 96px; /* 홈과 동일 */
+      padding-bottom: 36px;
     }
     
     #memo{
@@ -365,7 +365,7 @@
       flex-direction: column;
       gap: 10px;
       margin-top: 6px;
-      padding-bottom: 96px; /* 탭바 + 여유 */
+      padding-bottom: 0 @important;
     }
 
     /* 최근내역 첫 월 헤더는 위 여백 제거 */
@@ -950,6 +950,14 @@ document.getElementById("monthlyList")?.addEventListener("click", (e)=>{
 }
 
 
+    #homeRecentCard{
+      padding-bottom: 44px; /* ✅ 지금의 1/2 느낌: 36~52 사이가 예쁨 */
+    }
+    
+    #goMonthlyBtn{
+      margin-top: 10px;  /* ✅ 리스트 아래 6~12px 추천 */
+    }
+    
     /* ✅ 월별 mbar 칩 */
 .mchip{
   border:1px solid var(--line);
@@ -1018,12 +1026,12 @@ document.getElementById("monthlyList")?.addEventListener("click", (e)=>{
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="homeRecentCard">
         <h2>최근 내역</h2>
         <div id="recentList"></div>
 
         <!-- ✅ 월별 전체 보기 버튼 -->
-        <button id="goMonthly" type="button" class="go-monthly-btn">
+        <button id="goMonthlyBtn" type="button" class="go-monthly-btn">
           월별에서 전체 보기 →
         </button>
       </div>
