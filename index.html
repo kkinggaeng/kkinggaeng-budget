@@ -303,7 +303,7 @@
     }
 
     #monthlyList{
-      padding-bottom: 46px; /* 홈 recentList랑 동일 */
+      padding-bottom: 96px; /* 홈과 동일 */
     }
     
     #memo{
@@ -365,7 +365,7 @@
       flex-direction: column;
       gap: 10px;
       margin-top: 6px;
-      padding-bottom: 16px; /* 여유 공간 확보 */
+      padding-bottom: 96px; /* 탭바 + 여유 */
     }
 
     /* 최근내역 첫 월 헤더는 위 여백 제거 */
@@ -918,8 +918,8 @@ document.getElementById("monthlyList")?.addEventListener("click", (e)=>{
 }
 
     #page-monthly{
-  padding-bottom: 90px;
-}
+      padding-bottom: 0;
+  }
 
 
     /* ✅ 카드 안에 들어간 필터바 버전 */
