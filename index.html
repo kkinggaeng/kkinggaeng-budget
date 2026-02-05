@@ -98,10 +98,7 @@
       margin:0;
     }
 
-    /* 탭 페이지 */
-    .page{ display:none; }
-    .page.active{ display:block; }
-
+   
     /* 하단 탭바 */
     .tabbar{
      position:fixed; left:0; right:0; bottom:0;
@@ -1031,6 +1028,11 @@ body.edit-mode .delete-btn{
   justify-content: space-between;
   gap: 10px;
 }
+
+     /* 탭 페이지 */
+    .page{ display:none; }
+    .page.active{ display:block; }
+
     
   </style>
 </head>
@@ -1048,6 +1050,7 @@ body.edit-mode .delete-btn{
   </header>
 
   <main class="container">
+   
     <!-- HOME -->
     <section class="page active" id="page-home">
       <div class="card">
@@ -1072,9 +1075,9 @@ body.edit-mode .delete-btn{
           월별에서 전체 보기 →
         </button>
       </div>
-      
     </section>
 
+    
     <!-- STATS -->
     <section class="page" id="page-stats">
       <div class="card">
@@ -1101,6 +1104,7 @@ body.edit-mode .delete-btn{
     
 
     <!-- BUDGET -->
+    <section class="page" id="page-budget">
     <div class="card" id="budgetCard">
   <h2>이번 달 예산</h2>
 
