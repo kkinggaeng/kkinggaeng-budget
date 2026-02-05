@@ -2295,7 +2295,7 @@ document.getElementById("monthlyList")?.addEventListener("click", (e) => {
   const btn = e.target.closest(".edit-btn");
   if(!btn) return;
 
-  e.stopPropagation();
+  e.stopImmediatePropagation();
 
   const id = btn.dataset.id;
   if(!id) return;
@@ -2319,7 +2319,7 @@ document.getElementById("monthlyList")?.addEventListener("click", (e) => {
   const del = e.target.closest(".delete-btn");
   if(!del) return;
 
-  e.stopPropagation();
+  e.stopImmediatePropagation();
 
   const id = del.dataset.id;
   if(!id) return;
