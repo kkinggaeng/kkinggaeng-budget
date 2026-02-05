@@ -867,8 +867,9 @@ body.edit-mode .delete-btn{
    📝 메모 슬라이드 열기 (월별 항목 클릭)
    ========================= */
 document.getElementById("monthlyList")?.addEventListener("click", (e)=>{
-  if(document.body.classList.contains("edit-mode")) return;
-  
+  if (document.body.classList.contains("edit-mode")) return; // ✅ 편집모드면 메모 금지
+  if (e.target.closest(".edit-btn") || e.target.closest(".delete-btn")) return; // ✅ 버튼 누르면 메모 금지
+ 
   const itemEl = e.target.closest(".recent-item");
   if(!itemEl) return;
 
