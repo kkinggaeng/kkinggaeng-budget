@@ -362,7 +362,7 @@
       flex-direction: column;
       gap: 10px;
       margin-top: 6px;
-      padding-bottom: 0 @important;
+      padding-bottom: 0 !important;
     }
 
     /* 최근내역 첫 월 헤더는 위 여백 제거 */
@@ -1066,8 +1066,6 @@ body.edit-mode .delete-btn{
         </div>
       </div>
 
-      <div id="jsAlive" class="hint"></div>
-
       <div class="card" id="homeRecentCard">
         <h2>최근 내역</h2>
         <div id="recentList"></div>
@@ -1332,8 +1330,6 @@ body.edit-mode .delete-btn{
 
   <script>
 
-document.getElementById("jsAlive").textContent = "JS OK ✅";
-    
   window.addEventListener("error", (e) => {
   console.error("💥 JS Error:", e.message, e.filename, e.lineno, e.colno);
   });
