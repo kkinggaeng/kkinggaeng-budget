@@ -1215,7 +1215,8 @@ body.edit-mode .delete-btn{
     };
     const fab = document.getElementById('fab');
 
-    function setActiveTab(target){
+
+function setActiveTab(target){
   // pages
   Object.entries(pages).forEach(([key, el])=>{
     el.classList.toggle('active', key === target);
@@ -1262,6 +1263,15 @@ body.edit-mode .delete-btn{
       }
     }
   }
+
+  if(target === "monthly"){
+  syncMonthlyBarUI();
+
+  renderMonthSelect();              // ✅ 무조건 셀렉트 먼저 채움
+  const s = document.getElementById("monthSelect");
+  renderMonthly(s?.value || currentYM());  // ✅ 무조건 한 번 렌더
+  }
+
 }
 
     
@@ -1687,25 +1697,39 @@ memoSlide?.addEventListener("click", (e)=>{
    ========================= */
 function renderMonthSelect(){
   const select = document.getElementById("monthSelect");
+  const listEl = document.getElementById("monthlyList");
+  const titleEl = document.getElementById("monthlyTitle");
+  const summaryEl = document.getElementById("monthlySummary");
+  const top3El = document.getElementById("monthlyTop3");
   if(!select) return;
 
   const records = loadRecords();
 
   const months = [...new Set(
-  records.map(r => ymFromDateStr(r.spentDate)).filter(Boolean)
-)].sort().reverse();
+    records.map(r => ymFromDateStr(r.spentDate)).filter(Boolean)
+  )].sort().reverse();
 
-  
+  // ✅ 기록이 아예 없을 때도 월별 탭이 "빈 화면"이 되지 않게
+  if(months.length === 0){
+    select.innerHTML = `<option value="${currentYM()}">${currentYM().replace("-", "년 ")}월</option>`;
+    select.value = currentYM();
+
+    if(titleEl) titleEl.textContent = `${currentYM().slice(0,4)}년 ${currentYM().slice(5)}월`;
+    if(summaryEl) summaryEl.textContent = "아직 기록이 없어. 홈에서 +로 추가해봐!";
+    if(top3El) top3El.textContent = "";
+    if(listEl) listEl.innerHTML = `<p class="hint">이 달 기록이 없어. +로 추가해봐!</p>`;
+    return;
+  }
+
   select.innerHTML = months.map(m =>
     `<option value="${m}">${m.replace("-", "년 ")}월</option>`
   ).join("");
 
- if(months.length){
   select.value = months[0];
   renderMonthly(months[0]);
- }
-
 }
+
+    
 
    /* =========================
    🗓️ 월별 렌더링 (지출/수입/평균/무지출 + TOP3)
