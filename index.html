@@ -1365,6 +1365,10 @@ function setActiveTab(target){
   // + 버튼은 홈에서만 보이기
   fab.classList.toggle('hidden', target !== 'home');
 
+  if(target === "budget"){
+    renderBudget();
+  }
+
   // ✅ 통계 탭 들어갈 때마다 최신 반영
   if(target === "stats") renderStats();
 
@@ -2993,15 +2997,15 @@ document.getElementById("goMonthly")?.addEventListener("click", () => {
   window.scrollTo(0, 0);
 });
 
-    if(target === "budget") renderBudget();
     
 
 // 페이지 처음 열릴 때 1번 실행
 renderRecent();
 renderTodaySpend();
-renderMonthSelect(); // ✅ 추가
+renderMonthSelect();
 renderStats();
-renderBudget();
+// renderBudget();  // ← 일단 주석 처리
+
     
 // 페이지 최초 로딩 시 스크롤 위치 초기화
 window.scrollTo(0, 0);
