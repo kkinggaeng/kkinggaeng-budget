@@ -1419,6 +1419,9 @@ function setActiveTab(target){
     renderBudget();
   }
 
+  if(target === "budget") document.getElementById("budgetStatus").textContent = `${new Date().getFullYear()}년 ${String(new Date().getMonth()+1).padStart(2,"0")}월 기준으로 계산 중`;
+  
+
   // ✅ 통계 탭 들어갈 때마다 최신 반영
   if(target === "stats") renderStats();
 
@@ -2607,6 +2610,36 @@ function renderBudget(){
     showToast?.("예산 저장됨 ✓", { undo:false, duration:1200 });
   });
 })();
+
+
+
+    /* =========================
+   💾 예산 저장 버튼(강제 저장 + 재계산)
+   ========================= */
+document.getElementById("saveBudget")?.addEventListener("click", () => {
+  const foodInput  = document.getElementById("budgetFood");
+  const lifeInput  = document.getElementById("budgetLife");
+  const funInput   = document.getElementById("budgetFun");
+  const totalInput = document.getElementById("budgetTotal");
+
+  const b = loadBudgets();
+  b.food  = Number(foodInput?.dataset.raw  || 0);
+  b.life  = Number(lifeInput?.dataset.raw  || 0);
+  b.fun   = Number(funInput?.dataset.raw   || 0);
+  b.total = Number(totalInput?.dataset.raw || 0);
+  saveBudgets(b);
+
+  renderBudget();
+
+  // 상태 문구(선택)
+  const d = new Date();
+  const ymText = `${d.getFullYear()}년 ${String(d.getMonth()+1).padStart(2,"0")}월 기준으로 계산 중`;
+  const status = document.getElementById("budgetStatus");
+  if(status) status.textContent = ymText;
+
+  // 토스트 있으면 토스트로 알려주기(있을 때만)
+  if(typeof showToast === "function") showToast("예산 저장됨 ✓", { duration: 1200 });
+});
 
     
 
