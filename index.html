@@ -2492,23 +2492,28 @@ function renderBudgetRow({ used, budget, metaEl, fillEl }){
     return;
   }
 
-  const p = pct(used, budget);
+  const p = pct(used, budget);           // used/budget %
   const remain = budget - used;
+  const warnLine = Math.round(budget * 0.8);   // ✅ 80% 마지노선 금액
 
   fillEl.style.width = `${Math.min(100, p)}%`;
   fillEl.classList.toggle("over", used > budget);
 
+  // ✅ 80% 경고 / 100% 초과 메시지
   if(used > budget){
     metaEl.innerHTML =
-      `사용 <b class="amt-expense">${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} · ` +
-      `<b class="amt-expense">초과 ${fmtKRW(Math.abs(remain))}</b> (${p}%)`;
-  }else{
+      `사용 <b class="amt-expense">${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} · <b class="amt-expense">초과 ${fmtKRW(Math.abs(remain))}</b> (${p}%)`;
+  } else if(used >= warnLine){
     metaEl.innerHTML =
-      `사용 <b>${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} · ` +
-      `남음 <b class="amt-income">${fmtKRW(remain)}</b> (${p}%)`;
+      `사용 <b>${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} · 남음 <b class="amt-income">${fmtKRW(remain)}</b> · <b style="color:rgba(201,74,74,.7)">80% 근접</b> (${p}%)`;
+  } else {
+    metaEl.innerHTML =
+      `사용 <b>${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} · 남음 <b class="amt-income">${fmtKRW(remain)}</b> (${p}%)`;
   }
 }
 
+
+    
 function renderBudget(){
   const b = loadBudgets();
 
