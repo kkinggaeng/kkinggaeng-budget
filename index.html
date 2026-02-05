@@ -999,13 +999,14 @@ body.edit-mode .delete-btn{
 }
 
 .budget-threshold{
-  position:absolute;
-  left:80%;
+  position: absolute;
+  left: 100%;
   top:0;
   width:2px;
   height:100%;
   background: rgba(46,50,58,.22); /* 얇은 기준선 */
   border-radius: 2px;
+  transform: translateX(-2px);
 }
 
 .budget-meta{
@@ -1028,6 +1029,23 @@ body.edit-mode .delete-btn{
   justify-content: space-between;
   gap: 10px;
 }
+
+
+    /* ✅ 예산 탭 라벨: 작게/차분하게 */
+#budgetCard .budget-label{
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  margin-bottom: 4px;
+}
+
+/* (선택) 예산 row 간격 살짝 다듬기 */
+#budgetCard .budget-row{
+  margin-bottom: 14px;
+}
+
+    
 
      /* 탭 페이지 */
     .page{ display:none; }
@@ -1103,67 +1121,70 @@ body.edit-mode .delete-btn{
     </section>
     
 
-    <!-- BUDGET -->
-    <section class="page" id="page-budget">
-    <div class="card" id="budgetCard">
-  <h2>이번 달 예산</h2>
+ <!-- BUDGET -->
+<section class="page" id="page-budget">
+  <div class="card" id="budgetCard">
+    <h2>이번 달 예산</h2>
 
-  <div class="row">
-    <label>식비</label>
-    <input id="budgetFood" type="text" placeholder="예: 600,000" inputmode="numeric" autocomplete="off" />
-    <div class="budget-meta" id="budgetFoodMeta"></div>
-    <div class="budget-bar">
-      <div class="budget-threshold"></div>
-      <div class="budget-fill" id="budgetFoodFill"></div>
+    <!-- ✅ 총생활비(청구용) -->
+    <div class="row budget-row">
+      <label class="budget-label">총생활비</label>
+      <input id="budgetTotal" type="text" placeholder="예: 2,600,000"
+             inputmode="numeric" autocomplete="off" />
+      <div class="budget-meta" id="budgetTotalMeta"></div>
+      <div class="budget-bar">
+        <div class="budget-threshold"></div>
+        <div class="budget-fill" id="budgetTotalFill"></div>
+      </div>
     </div>
+
+    <!-- (선택) 세부 예산: 식비 -->
+    <div class="row budget-row">
+      <label class="budget-label">식비</label>
+      <input id="budgetFood" type="text" placeholder="예: 600,000"
+             inputmode="numeric" autocomplete="off" />
+      <div class="budget-meta" id="budgetFoodMeta"></div>
+      <div class="budget-bar">
+        <div class="budget-threshold"></div>
+        <div class="budget-fill" id="budgetFoodFill"></div>
+      </div>
+    </div>
+
+    <!-- (선택) 세부 예산: 생필품 -->
+    <div class="row budget-row">
+      <label class="budget-label">생필품</label>
+      <input id="budgetLife" type="text" placeholder="예: 400,000"
+             inputmode="numeric" autocomplete="off" />
+      <div class="budget-meta" id="budgetLifeMeta"></div>
+      <div class="budget-bar">
+        <div class="budget-threshold"></div>
+        <div class="budget-fill" id="budgetLifeFill"></div>
+      </div>
+    </div>
+
+    <!-- (선택) 세부 예산: 취미 -->
+    <div class="row budget-row">
+      <label class="budget-label">취미</label>
+      <input id="budgetFun" type="text" placeholder="예: 200,000"
+             inputmode="numeric" autocomplete="off" />
+      <div class="budget-meta" id="budgetFunMeta"></div>
+      <div class="budget-bar">
+        <div class="budget-threshold"></div>
+        <div class="budget-fill" id="budgetFunFill"></div>
+      </div>
+    </div>
+
+    <div class="actions" style="margin-top:0;">
+      <button class="action-btn" id="saveBudget" type="button">예산 저장</button>
+    </div>
+
+    <p class="hint" id="budgetStatus" style="margin-top:10px;"></p>
+
+    <p class="hint" style="margin-top:12px;">
+      * 예산은 이 기기(로컬)에만 저장돼. (서버 업로드 없음)
+    </p>
   </div>
-
-  <div class="row">
-    <label>생활비</label>
-    <input id="budgetLife" type="text" placeholder="예: 400,000" inputmode="numeric" autocomplete="off" />
-    <div class="budget-meta" id="budgetLifeMeta"></div>
-    <div class="budget-bar">
-      <div class="budget-threshold"></div>
-      <div class="budget-fill" id="budgetLifeFill"></div>
-    </div>
-  </div>
-
-  <div class="row">
-    <label>취미 / 여가</label>
-    <input id="budgetFun" type="text" placeholder="예: 200,000" inputmode="numeric" autocomplete="off" />
-    <div class="budget-meta" id="budgetFunMeta"></div>
-    <div class="budget-bar">
-      <div class="budget-threshold"></div>
-      <div class="budget-fill" id="budgetFunFill"></div>
-    </div>
-  </div>
-
-  <div class="budget-total">
-    <div class="hint">총 예산 대비</div>
-    <div class="budget-total-row">
-      <div id="budgetTotalText" style="font-size:16px; font-weight:800;">-</div>
-    </div>
-    <div class="budget-bar" style="margin-top:10px;">
-      <div class="budget-threshold"></div>
-      <div class="budget-fill" id="budgetTotalFill"></div>
-    </div>
-    <div class="budget-meta" id="budgetTotalMeta" style="margin-top:8px;"></div>
-  </div>
-
-      
-<div class="actions" style="margin-top:0;">
-  <button class="action-btn" id="saveBudget">예산 저장</button>
-</div>
-
-<p class="hint" id="budgetStatus" style="margin-top:10px;"></p>
-
-
-  <p class="hint" style="margin-top:12px;">
-    * 예산은 이 기기(로컬)에만 저장돼. (서버 업로드 없음)
-  </p>
-</div>
-       
-    </section>
+</section>
 
 
     
@@ -2353,12 +2374,11 @@ function renderRecent(){
 
 
 
-
 /* =========================
-   🎯 예산 (로컬 저장)
+   🎯 예산 (로컬 저장) - 총생활비 포함 버전
    ========================= */
 
-const BUDGET_KEY = "budgets_v1";
+const BUDGET_KEY = "budgets_v2";
 
 // 예산 항목별로 어떤 카테고리를 집계에 포함할지
 const BUDGET_MAP = {
@@ -2371,31 +2391,34 @@ function loadBudgets(){
   try{
     const obj = JSON.parse(localStorage.getItem(BUDGET_KEY) || "{}");
     return {
-      food: Number(obj.food || 0),
-      life: Number(obj.life || 0),
-      fun:  Number(obj.fun  || 0),
+      total: Number(obj.total || 0),
+      food:  Number(obj.food  || 0),
+      life:  Number(obj.life  || 0),
+      fun:   Number(obj.fun   || 0),
     };
   }catch(e){
-    return { food:0, life:0, fun:0 };
+    return { total:0, food:0, life:0, fun:0 };
   }
 }
 
 function saveBudgets(b){
-  localStorage.setItem(BUDGET_KEY, JSON.stringify(b));
+  localStorage.setItem(BUDGET_KEY, JSON.stringify({
+    total: Number(b.total || 0),
+    food:  Number(b.food  || 0),
+    life:  Number(b.life  || 0),
+    fun:   Number(b.fun   || 0),
+  }));
 }
 
 function setupBudgetInput(el){
   if(!el) return;
   el.addEventListener("input", ()=>{
-    const digits = el.value.replace(/[^0-9]/g,"");
+    const digits = (el.value || "").replace(/[^0-9]/g,"");
     el.dataset.raw = digits;
     el.value = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   });
 }
 
-
-
-    
 function sumThisMonthByCats(catList){
   const ym = currentYM();
   const list = loadRecords();
@@ -2405,6 +2428,18 @@ function sumThisMonthByCats(catList){
     if((r.type || "expense") === "income") return acc;
     const cat = r.category || "기타";
     if(!catList.includes(cat)) return acc;
+    acc += Number(r.amount || 0);
+    return acc;
+  }, 0);
+}
+
+// ✅ 이번달 전체 지출(카테고리 상관없이)
+function sumThisMonthTotalExpense(){
+  const ym = currentYM();
+  const list = loadRecords();
+  return list.reduce((acc, r)=>{
+    if((r.spentDate || "").slice(0,7) !== ym) return acc;
+    if((r.type || "expense") === "income") return acc;
     acc += Number(r.amount || 0);
     return acc;
   }, 0);
@@ -2432,18 +2467,23 @@ function renderBudgetRow({ used, budget, metaEl, fillEl }){
   fillEl.classList.toggle("over", used > budget);
 
   if(used > budget){
-    metaEl.innerHTML = `사용 <b class="amt-expense">${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} · <b class="amt-expense">초과 ${fmtKRW(Math.abs(remain))}</b> (${p}%)`;
+    metaEl.innerHTML =
+      `사용 <b class="amt-expense">${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} · ` +
+      `<b class="amt-expense">초과 ${fmtKRW(Math.abs(remain))}</b> (${p}%)`;
   }else{
-    metaEl.innerHTML = `사용 <b>${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} · 남음 <b class="amt-income">${fmtKRW(remain)}</b> (${p}%)`;
+    metaEl.innerHTML =
+      `사용 <b>${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} · ` +
+      `남음 <b class="amt-income">${fmtKRW(remain)}</b> (${p}%)`;
   }
 }
 
 function renderBudget(){
   const b = loadBudgets();
 
-  const foodInput = document.getElementById("budgetFood");
-  const lifeInput = document.getElementById("budgetLife");
-  const funInput  = document.getElementById("budgetFun");
+  const totalInput = document.getElementById("budgetTotal");
+  const foodInput  = document.getElementById("budgetFood");
+  const lifeInput  = document.getElementById("budgetLife");
+  const funInput   = document.getElementById("budgetFun");
 
   // 초기 입력칸 채우기(표시용)
   const applyInputValue = (el, val)=>{
@@ -2452,15 +2492,25 @@ function renderBudget(){
     el.value = val ? String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "";
   };
 
-  applyInputValue(foodInput, b.food);
-  applyInputValue(lifeInput, b.life);
-  applyInputValue(funInput,  b.fun);
+  applyInputValue(totalInput, b.total);
+  applyInputValue(foodInput,  b.food);
+  applyInputValue(lifeInput,  b.life);
+  applyInputValue(funInput,   b.fun);
 
   // 이번달 사용액 집계
-  const usedFood = sumThisMonthByCats(BUDGET_MAP.food);
-  const usedLife = sumThisMonthByCats(BUDGET_MAP.life);
-  const usedFun  = sumThisMonthByCats(BUDGET_MAP.fun);
+  const usedTotal = sumThisMonthTotalExpense();
+  const usedFood  = sumThisMonthByCats(BUDGET_MAP.food);
+  const usedLife  = sumThisMonthByCats(BUDGET_MAP.life);
+  const usedFun   = sumThisMonthByCats(BUDGET_MAP.fun);
 
+  // ✅ 총생활비
+  renderBudgetRow({
+    used: usedTotal, budget: b.total,
+    metaEl: document.getElementById("budgetTotalMeta"),
+    fillEl: document.getElementById("budgetTotalFill"),
+  });
+
+  // ✅ 세부 예산(선택)
   renderBudgetRow({
     used: usedFood, budget: b.food,
     metaEl: document.getElementById("budgetFoodMeta"),
@@ -2479,44 +2529,39 @@ function renderBudget(){
     fillEl: document.getElementById("budgetFunFill"),
   });
 
-  // 총합
-  const totalBudget = (b.food||0) + (b.life||0) + (b.fun||0);
-  const totalUsed = usedFood + usedLife + usedFun;
-
-  const totalText = document.getElementById("budgetTotalText");
-  const totalMeta = document.getElementById("budgetTotalMeta");
-  const totalFill = document.getElementById("budgetTotalFill");
-
-  if(totalText) totalText.textContent = `${fmtKRW(totalUsed)} / ${fmtKRW(totalBudget)}`;
-
-  renderBudgetRow({
-    used: totalUsed, budget: totalBudget,
-    metaEl: totalMeta,
-    fillEl: totalFill,
-  });
+  // 상태문구(선택)
+  const st = document.getElementById("budgetStatus");
+  if(st){
+    const ym = currentYM().replace("-", "년 ") + "월";
+    st.textContent = `${ym} 기준으로 계산 중`;
+  }
 }
 
-
-    
-// 예산 입력 이벤트(저장)
+// ✅ 예산 입력 이벤트(저장)
 (function(){
-  const foodInput = document.getElementById("budgetFood");
-  const lifeInput = document.getElementById("budgetLife");
-  const funInput  = document.getElementById("budgetFun");
+  const totalInput = document.getElementById("budgetTotal");
+  const foodInput  = document.getElementById("budgetFood");
+  const lifeInput  = document.getElementById("budgetLife");
+  const funInput   = document.getElementById("budgetFun");
+  const saveBtn    = document.getElementById("saveBudget");
 
-  [foodInput, lifeInput, funInput].forEach(setupBudgetInput);
+  [totalInput, foodInput, lifeInput, funInput].forEach(setupBudgetInput);
 
   const saveAndRerender = ()=>{
     const b = loadBudgets();
-    b.food = Number(foodInput?.dataset.raw || 0);
-    b.life = Number(lifeInput?.dataset.raw || 0);
-    b.fun  = Number(funInput?.dataset.raw  || 0);
+    b.total = Number(totalInput?.dataset.raw || 0);
+    b.food  = Number(foodInput?.dataset.raw  || 0);
+    b.life  = Number(lifeInput?.dataset.raw  || 0);
+    b.fun   = Number(funInput?.dataset.raw   || 0);
     saveBudgets(b);
     renderBudget();
+
+    const st = document.getElementById("budgetStatus");
+    if(st) st.textContent = "예산 저장됨 ✓";
   };
 
-  // 입력 끝났을 때 저장(blur) + 엔터
-  [foodInput, lifeInput, funInput].forEach(el=>{
+  // blur + 엔터 저장
+  [totalInput, foodInput, lifeInput, funInput].forEach(el=>{
     if(!el) return;
     el.addEventListener("blur", saveAndRerender);
     el.addEventListener("keydown", (e)=>{
@@ -2526,9 +2571,15 @@ function renderBudget(){
       }
     });
   });
-})();
-    
 
+  // 버튼 저장
+  saveBtn?.addEventListener("click", ()=>{
+    saveAndRerender();
+    showToast?.("예산 저장됨 ✓", { undo:false, duration:1200 });
+  });
+})();
+
+    
 
       
 
