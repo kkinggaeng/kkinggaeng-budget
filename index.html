@@ -1691,19 +1691,19 @@ function closeMemoSlide(){
 }
     
 function openMemoSlide(item){
+  // ✅ 메모 없으면 아예 열지 않기 (먼저)
+  if(!(item.memo || "").trim()) return;
+
   memoTitle.textContent = item.category || "메모";
   memoMeta.textContent =
     `${item.spentDate} · ${item.card || ""} · ${item.place || ""}`;
 
-  memoBody.textContent = item.memo?.trim() || "메모 없음 🫧";
+  memoBody.textContent = item.memo.trim();
 
-  document.body.classList.add("modal-open"); // ✅ 뒤 스크롤 차단
+  document.body.classList.add("modal-open");
   memoSlide.classList.remove("hidden");
-
-  if(!(item.memo || "").trim()) return; // 메모 없으면 무시
-  
 }
-
+    
     
 // ✅ 닫기 버튼
 document.getElementById("memoSlideClose")?.addEventListener("click", ()=>{
