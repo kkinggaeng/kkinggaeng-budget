@@ -1000,11 +1000,11 @@ body.edit-mode .delete-btn{
 
 .budget-threshold{
   position: absolute;
-  left: 100%;
+  left: 80%;
   top:0;
   width:2px;
   height:100%;
-  background: rgba(46,50,58,.22); /* 얇은 기준선 */
+  background: rgba(201,74,74,.35);  /* 연한 경고 레드 */
   border-radius: 2px;
   transform: translateX(-2px);
 }
@@ -1040,9 +1040,32 @@ body.edit-mode .delete-btn{
   margin-bottom: 4px;
 }
 
-/* (선택) 예산 row 간격 살짝 다듬기 */
+/* 예산 row 사이 간격 (전체적으로 조여줌) */
 #budgetCard .budget-row{
-  margin-bottom: 14px;
+  margin-bottom: 10px; /* 지금의 1/2 느낌으로 조절: 8~12 추천 */
+}
+
+/* 마지막 row는 저장버튼과 더 붙게 */
+#budgetCard .budget-row:last-of-type{
+  margin-bottom: 6px;
+}
+
+/* budget 카드 바닥 여백 크게 줘서 탭바에 안 가리게 */
+#budgetCard{
+  padding-bottom: 44px; /* 필요하면 52~60까지도 OK */
+}
+    
+    /* ✅ 예산 상태 문구: 위/아래 여백 크게 */
+#budgetStatus{
+  margin-top: 14px !important;   /* 지금의 2배 느낌 */
+  margin-bottom: 20px !important;
+}
+
+/* ✅ 예산 안내(로컬 저장) 문구: 글씨 줄이고 살짝 연하게 */
+#budgetCard .hint{
+  font-size: 11px;
+  line-height: 1.45;
+  color: rgba(102,102,102,.85);
 }
 
     
@@ -1126,9 +1149,9 @@ body.edit-mode .delete-btn{
   <div class="card" id="budgetCard">
     <h2>이번 달 예산</h2>
 
-    <!-- ✅ 총생활비(청구용) -->
+    <!-- ✅ 총 생활비(청구용) -->
     <div class="row budget-row">
-      <label class="budget-label">총생활비</label>
+      <label class="budget-label">총 생활비</label>
       <input id="budgetTotal" type="text" placeholder="예: 2,600,000"
              inputmode="numeric" autocomplete="off" />
       <div class="budget-meta" id="budgetTotalMeta"></div>
