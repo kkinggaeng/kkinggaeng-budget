@@ -2282,8 +2282,22 @@ document.getElementById("recentList")?.addEventListener("click", (e)=>{
 
   openMemoSlide(item);
 });
+
     
 
+    document.getElementById("monthlyList")?.addEventListener("click", (e)=>{
+  const itemEl = e.target.closest(".recent-item");
+  if(!itemEl) return;
+
+  const id = itemEl.dataset.id;
+  if(!id) return;
+
+  const item = loadRecords().find(r => r.id === id);
+  if(!item) return;
+
+  openMemoSlide(item);
+});
+    
 
 // ===== 월별 탭 전용 필터 상태 =====
 const mFilter = {
