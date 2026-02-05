@@ -1146,6 +1146,14 @@ body.edit-mode .delete-btn{
     <div class="budget-meta" id="budgetTotalMeta" style="margin-top:8px;"></div>
   </div>
 
+      
+<div class="actions" style="margin-top:0;">
+  <button class="action-btn" id="saveBudget">예산 저장</button>
+</div>
+
+<p class="hint" id="budgetStatus" style="margin-top:10px;"></p>
+
+
   <p class="hint" style="margin-top:12px;">
     * 예산은 이 기기(로컬)에만 저장돼. (서버 업로드 없음)
   </p>
@@ -2980,6 +2988,8 @@ document.getElementById("goMonthly")?.addEventListener("click", () => {
   setActiveTab("monthly");
   window.scrollTo(0, 0);
 });
+
+    if(target === "budget") renderBudget();
     
 
 // 페이지 처음 열릴 때 1번 실행
@@ -2987,6 +2997,7 @@ renderRecent();
 renderTodaySpend();
 renderMonthSelect(); // ✅ 추가
 renderStats();
+renderBudget();
     
 // 페이지 최초 로딩 시 스크롤 위치 초기화
 window.scrollTo(0, 0);
