@@ -2169,32 +2169,34 @@ function renderDonutSVG(items, total){
     `;
   }
 
-  let offset = 0;
+ let offset = 0;
+
+const bumpSize = 10;     // 튀어나오는 정도 (6~12 추천)
+const PL = 100;         // pathLength 고정 단위
+const GAP = 1.2;        // 조각 사이 틈(단위: pathLength 기준). 0.8~2 추천
 
 const segments = items.map(([name, value], i) => {
-  const frac = value / total;
-  const GAP = 2;
-  const dash = Math.max(1, (frac * C) - GAP);
-  const gap  = C - dash;
+  const frac = total ? (value / total) : 0;
 
-  // ✅ Top3만 bump
   const isTop3 = i < 3;
   const bump = isTop3 ? bumpSize : 0;
-  const strokeW = isTop3 ? normalStroke : normalStroke;
+
+  // ✅ pathLength 기준으로 dash 계산 (반지름이 달라도 OK)
+  const dash = Math.max(0.2, (frac * PL) - GAP);
+  const gap  = PL - dash;
 
   const seg = `
     <circle
-      cx="${cx}"
-      cy="${cy}"
-      r="${r + bump}"
+      cx="${cx}" cy="${cy}" r="${r + bump}"
       fill="none"
-      stroke="${DONUT_COLORS[i] || DONUT_COLORS[DONUT_COLORS.length - 1]}"
-      stroke-width="${strokeW}"
+      stroke="${DONUT_COLORS[i] || DONUT_COLORS[DONUT_COLORS.length-1]}"
+      stroke-width="${isTop3 ? stroke + 2 : stroke}"
       stroke-linecap="butt"
+      pathLength="${PL}"
       stroke-dasharray="${dash} ${gap}"
       stroke-dashoffset="${-offset}"
       transform="rotate(-90 ${cx} ${cy})"
-      class="donut-seg ${isTop3 ? 'top3' : ''}"
+      class="donut-seg"
       data-name="${name}"
       data-val="${value}"
       style="cursor:pointer;"
@@ -2205,6 +2207,7 @@ const segments = items.map(([name, value], i) => {
   return seg;
 }).join("");
 
+  
   
   // ✅ 도넛 렌더
   const ymDot = currentYM().replace("-", "."); // ✅ 2026.02
