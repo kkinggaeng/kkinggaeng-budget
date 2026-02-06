@@ -2142,6 +2142,8 @@ const DONUT_COLORS = [
 
 // ✅ SVG 도넛 생성 (stroke-dasharray로 조각 만들기)
 function renderDonutSVG(items, total){
+  const top3Names = items.slice(0,3).map(([name]) => name);
+  
   const PANEL = getComputedStyle(document.documentElement).getPropertyValue('--panel').trim() || '#ffffff';
   const size = 140;
   const cx = size/2;
@@ -2170,10 +2172,12 @@ function renderDonutSVG(items, total){
     const GAP = 2; // ✅ 조각 사이 틈(픽셀) - 2~5 추천
     const dash = Math.max(1, (frac * C) - GAP); // 조각 길이에서 GAP만큼 빼기
     const gap  = C - dash;
+    const isTop3 = top3Names.includes(name);
+    const bump = isTop3 ? 4 : 0; // ← 튀어나오는 정도 (3~6 추천)
 
     const seg = `
       <circle
-        cx="${cx}" cy="${cy}" r="${r}"
+        cx="${cx}" cy="${cy}" r="${r + bump}"
         fill="none"
         stroke="${DONUT_COLORS[i] || DONUT_COLORS[DONUT_COLORS.length-1]}"
         stroke-width="${stroke}"
