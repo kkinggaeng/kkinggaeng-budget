@@ -1540,15 +1540,6 @@ if (target === "monthly") {
   renderMonthly(s?.value || currentYM());
 }
 
-  
-  if(target === "monthly"){
-  syncMonthlyBarUI();
-
-  renderMonthSelect();              // ✅ 무조건 셀렉트 먼저 채움
-  const s = document.getElementById("monthSelect");
-  renderMonthly(s?.value || currentYM());  // ✅ 무조건 한 번 렌더
-  }
-
 
 
 }
@@ -1625,7 +1616,7 @@ const cardEl = document.getElementById('card');
 const spentDateEl = document.getElementById('spentDate');
 const memoEl = document.getElementById('memo'); // ✅ 추가!
     
-Categories(){
+function renderCategories(){
   categoryEl.innerHTML = "";
   CATEGORIES.forEach(name=>{
     const opt = document.createElement('option');
@@ -1634,6 +1625,7 @@ Categories(){
     categoryEl.appendChild(opt);
   });
 }
+    
 renderCategories();
 
 function openModal(){
