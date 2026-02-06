@@ -1459,11 +1459,6 @@ function setActiveTab(target){
     el.classList.toggle('active', key === target);
   });
 
-// 정리 탭 눌렀을 때 로딩
-if (target === "review") {
-  loadReview();
-}
-
   
   // tabs
   tabs.forEach(t=>{
@@ -1498,6 +1493,13 @@ if (target === "review") {
     });
   }
 
+// 정리 탭 눌렀을 때 로딩
+if (target === "review") {
+  loadReview();
+}
+
+
+  
   // ✅ 월별 탭 들어갈 때: 필터 UI 동기화 + 월 렌더
   if(target === "monthly"){
     syncMonthlyBarUI(); // ✅ 추가
