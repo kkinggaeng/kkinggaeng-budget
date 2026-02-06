@@ -2520,11 +2520,11 @@ function renderBudgetRow({ used, budget, metaEl, fillEl }){
   // ✅ 상태 라벨(분리)
   let stateHTML = "";
   if(p >= 100){
-    stateHTML = `<span class="budget-state over">🚨 초과</span>`;
+    stateHTML = `<span class="budget-state over">· 🚨 초과</span>`;
   } else if(p >= 80){
-    stateHTML = `<span class="budget-state warn">⚠️ 경고</span>`;
+    stateHTML = `<span class="budget-state warn">· ⚠️ 경고</span>`;
   } else {
-    stateHTML = `<span class="budget-state ok">✅ 정상</span>`;
+    stateHTML = `<span class="budget-state ok">· ✅ 정상</span>`;
   }
 
   // ✅ 본문 텍스트
@@ -2532,7 +2532,7 @@ function renderBudgetRow({ used, budget, metaEl, fillEl }){
     metaEl.innerHTML =
       `<span class="budget-meta-main">
         사용 <b class="amt-expense">${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} ·
-        <b class="amt-expense">${fmtKRW(Math.abs(remain))} 초과</b> (${p}%)
+        <b class="amt-expense">${fmtKRW(Math.abs(remain))} </b> (${p}%)
       </span>
       ${stateHTML}`;
   } else {
