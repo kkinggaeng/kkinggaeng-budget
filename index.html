@@ -1101,12 +1101,21 @@ body.edit-mode .delete-btn{
     .page{ display:none; }
     .page.active{ display:block; }
 
-    #page-review .hint{
+
+/* 정리 탭: textarea 아래 버튼 간격 줄이기 */
+#page-review .review-actions{
+  margin-top: 6px; /* 12px의 절반 */
+}
+    
+    
+
+    /* 정리 탭 전용 힌트: 예산 힌트(.hint)와 분리 */
+#page-review .review-hint{
   font-size: 12px;
   line-height: 1.45;
   color: rgba(102,102,102,.75);
   letter-spacing: -0.2px;
-      padding-bottom: 15px;
+  margin-top: 15px;  /* 지금보다 아래로 더 내리기 */
 }
 
     
@@ -1319,11 +1328,11 @@ body.edit-mode .delete-btn{
       rows="4"
     ></textarea>
 
-    <div class="actions" style="margin-top:12px;">
+    <div class="actions review-actions">
       <button class="action-btn" id="saveReview">저장</button>
     </div>
 
-    <p class="hint">
+    <p class="hint review-hint">
       * 이 정리는 이 기기에만 저장돼.
     </p>
   </div>
