@@ -1911,33 +1911,7 @@ function loadRecords(){
 }
 
 
-// 정리 내용 저장용 JS
 
-    const REVIEW_KEY = "monthly_review_v1";
-
-function currentYM(){
-  const d = new Date();
-  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0");
-}
-
-function loadReview(){
-  const ym = currentYM();
-  const all = JSON.parse(localStorage.getItem(REVIEW_KEY) || "{}");
-  const textarea = document.getElementById("reviewMemo");
-  if(textarea) textarea.value = all[ym] || "";
-}
-
-function saveReview(){
-  const ym = currentYM();
-  const textarea = document.getElementById("reviewMemo");
-  if(!textarea) return;
-
-  const all = JSON.parse(localStorage.getItem(REVIEW_KEY) || "{}");
-  all[ym] = textarea.value.trim();
-  localStorage.setItem(REVIEW_KEY, JSON.stringify(all));
-
-  showToast?.("정리 저장됨 ✓", { duration: 1200 });
-}
 
 document.getElementById("saveReview")?.addEventListener("click", saveReview);
 
