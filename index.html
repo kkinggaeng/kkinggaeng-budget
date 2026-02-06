@@ -2248,43 +2248,41 @@ function renderStats(){
   const top1El  = document.getElementById("statsTop1");
   const top5El  = document.getElementById("statsTop5");
 
+  // 0) 도넛 먼저 그림
   if(donutEl) donutEl.innerHTML = renderDonutSVG(list, total);
-  if(donutEl){
-    donutEl.onclick = (e) => {
-      const seg = e.target.closest(".donut-seg");
-      if(!seg) return;
 
-      const name = seg.dataset.name;
-      const val  = Number(seg.dataset.val || 0);
-      const pct  = total ? Math.round((val/total)*100) : 0;
-
-      if(top1El){
-        top1El.innerHTML = `<b>${name}</b> · ${fmtKRW(val)} (${pct}%)`;
-
-          // ✅ TOP5 막대 하이라이트
-    if(top5El){
-      const rows = top5El.querySelectorAll(".bar-row");
-      rows.forEach(r => r.classList.remove("active", "dim"));
-
-      // 클릭한 카테고리만 active, 나머지는 dim
-      rows.forEach(r => {
-        if(r.dataset.cat === name) r.classList.add("active");
-        else r.classList.add("dim");
-      });
-
-      // 선택된 row가 화면 밖이면 살짝 스크롤(선택)
-      const active = top5El.querySelector('.bar-row.active');
-      active?.scrollIntoView({ block:"nearest", behavior:"smooth" });
-    }
-      }
-    };
-  }
-
-  
-  
+  // 1) 합계 텍스트
   if(totalEl) totalEl.textContent = fmtKRW(total);
 
-  if(top1El){
+  // 2) TOP5 막대 렌더 (먼저 만들어둬야 하이라이트가 먹음)
+  if(top5El){
+    if(!list.length || total <= 0){
+      top5El.innerHTML = `<p class="hint">아직 데이터가 없어. 지출을 추가해봐!</p>`;
+    }else{
+      const onlyTop5 = list.filter(([n]) => n !== "기타").slice(0,5);
+      const maxVal = Math.max(...onlyTop5.map(([,v])=> v), 1);
+
+      top5El.innerHTML = onlyTop5.map(([name, val], i)=>{
+        const pct = Math.round((val / total) * 100);
+        const w = Math.round((val / maxVal) * 100);
+
+        return `
+          <div class="bar-row" data-cat="${name}">
+            <div class="bar-name">${name}</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${w}%; background:${DONUT_COLORS[i] || "#9AA3AF"};"></div>
+            </div>
+            <div class="bar-amt">${fmtKRW(val)}<span class="hint" style="margin-left:6px;">${pct}%</span></div>
+          </div>
+        `;
+      }).join("");
+    }
+  }
+
+  // 3) TOP1 기본 문구(초기 상태)
+  const setDefaultTop1 = ()=>{
+    if(!top1El) return;
+
     if(list.length && total > 0){
       const [name, val] = list[0];
       const pct = Math.round((val/total)*100);
@@ -2292,35 +2290,72 @@ function renderStats(){
     }else{
       top1El.textContent = "이번 달 지출 기록이 없어 🙂";
     }
-  }
+  };
+  setDefaultTop1();
 
-  if(top5El){
-    if(!list.length || total <= 0){
-      top5El.innerHTML = `<p class="hint">아직 데이터가 없어. 지출을 추가해봐!</p>`;
-      return;
-    }
+  // 4) 막대 하이라이트/해제 함수
+  const clearBars = ()=>{
+    if(!top5El) return;
+    top5El.querySelectorAll(".bar-row").forEach(r=>{
+      r.classList.remove("active","dim");
+    });
+  };
 
-    // ✅ TOP5만 막대로 (기타는 막대에서 빼고 싶으면 여기서 필터)
-    const onlyTop5 = list.filter(([n]) => n !== "기타").slice(0,5);
-    const maxVal = Math.max(...onlyTop5.map(([,v])=> v), 1);
+  const highlightBars = (catName)=>{
+    if(!top5El) return;
+    const rows = top5El.querySelectorAll(".bar-row");
+    rows.forEach(r => r.classList.remove("active","dim"));
 
-    top5El.innerHTML = onlyTop5.map(([name, val], i)=>{
-  const pct = Math.round((val / total) * 100);
-  const w = Math.round((val / maxVal) * 100);
+    rows.forEach(r=>{
+      if(r.dataset.cat === catName) r.classList.add("active");
+      else r.classList.add("dim");
+    });
 
-  return `
-    <div class="bar-row" data-cat="${name}">
-      <div class="bar-name">${name}</div>
-      <div class="bar-track">
-        <div class="bar-fill" style="width:${w}%; background:${DONUT_COLORS[i] || "#9AA3AF"};"></div>
-      </div>
-      <div class="bar-amt">${fmtKRW(val)}<span class="hint" style="margin-left:6px;">${pct}%</span></div>
-    </div>
-  `;
-}).join("");
+    top5El.querySelector(".bar-row.active")
+      ?.scrollIntoView({ block:"nearest", behavior:"smooth" });
+  };
+
+  // 5) 도넛 클릭 토글
+  let selectedCat = null;
+
+  if(donutEl){
+    donutEl.onclick = (e) => {
+      const seg = e.target.closest(".donut-seg");
+
+      // ✅ 도넛 빈 곳 클릭 -> 원복
+      if(!seg){
+        selectedCat = null;
+        setDefaultTop1();
+        clearBars();
+        return;
+      }
+
+      const name = seg.dataset.name;
+      const val  = Number(seg.dataset.val || 0);
+      const pct  = total ? Math.round((val/total)*100) : 0;
+
+      // ✅ 같은 조각 다시 클릭 -> 원복(토글)
+      if(selectedCat === name){
+        selectedCat = null;
+        setDefaultTop1();
+        clearBars();
+        return;
+      }
+
+      // ✅ 선택
+      selectedCat = name;
+
+      if(top1El){
+        top1El.innerHTML = `<b>${name}</b> · ${fmtKRW(val)} (${pct}%)`;
+      }
+
+      // ✅ 막대 하이라이트
+      highlightBars(name);
+    };
   }
 }
 
+    
 
 
     
