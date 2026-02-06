@@ -2755,6 +2755,41 @@ function renderBudget(){
 })();
 
 
+  /* =========================
+   📝 정리(리뷰) 저장
+   ========================= */
+
+const REVIEW_KEY = "monthly_review_v1";
+
+function currentYM(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+}
+
+function loadReview(){
+  const all = JSON.parse(localStorage.getItem(REVIEW_KEY) || "{}");
+  const ym = currentYM();
+  const textarea = document.getElementById("reviewMemo");
+  if(!textarea) return;
+
+  textarea.value = all[ym] || "";
+}
+
+function saveReview(){
+  const textarea = document.getElementById("reviewMemo");
+  if(!textarea) return;
+
+  const all = JSON.parse(localStorage.getItem(REVIEW_KEY) || "{}");
+  const ym = currentYM();
+
+  all[ym] = textarea.value.trim();
+  localStorage.setItem(REVIEW_KEY, JSON.stringify(all));
+
+  showToast?.("정리 저장됨 ✓", { duration: 1200 });
+}
+
+
+                     
 
     /* =========================
    💾 예산 저장 버튼(강제 저장 + 재계산)
@@ -2897,39 +2932,7 @@ document.getElementById("monthlyList")?.addEventListener("click", (e)=>{
 
 
 
-    /* =========================
-   📝 정리(리뷰) 저장
-   ========================= */
-
-const REVIEW_KEY = "monthly_review_v1";
-
-function currentYM(){
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
-}
-
-function loadReview(){
-  const all = JSON.parse(localStorage.getItem(REVIEW_KEY) || "{}");
-  const ym = currentYM();
-  const textarea = document.getElementById("reviewMemo");
-  if(!textarea) return;
-
-  textarea.value = all[ym] || "";
-}
-
-function saveReview(){
-  const textarea = document.getElementById("reviewMemo");
-  if(!textarea) return;
-
-  const all = JSON.parse(localStorage.getItem(REVIEW_KEY) || "{}");
-  const ym = currentYM();
-
-  all[ym] = textarea.value.trim();
-  localStorage.setItem(REVIEW_KEY, JSON.stringify(all));
-
-  showToast?.("정리 저장됨 ✓", { duration: 1200 });
-}
-
+  
 
     
 
