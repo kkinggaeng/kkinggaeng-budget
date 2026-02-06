@@ -1354,6 +1354,35 @@ body.edit-mode .delete-btn{
     </div>
   </div>
 </div>
+
+
+  <!-- REVIEW / 정리 -->
+<section class="page" id="page-review">
+  <div class="card">
+    <h2>이번 달 정리</h2>
+
+    <p class="hint">
+      숫자 말고, 느낌을 한 줄로 남겨도 돼.
+    </p>
+
+    <textarea
+      id="reviewMemo"
+      placeholder="예: 이번 달은 배달을 줄인 게 제일 잘한 선택이었다."
+      rows="4"
+    ></textarea>
+
+    <div class="actions" style="margin-top:12px;">
+      <button class="action-btn" id="saveReview">저장</button>
+    </div>
+
+    <p class="hint" style="margin-top:10px;">
+      * 이 정리는 이 기기에만 저장돼.
+    </p>
+  </div>
+</section>
+
+  
+ 
   <!-- Bottom tabs -->
   <nav class="tabbar" role="tablist" aria-label="하단 탭">
     <button class="tab active" data-target="home" role="tab" aria-selected="true">
@@ -1371,6 +1400,10 @@ body.edit-mode .delete-btn{
     <button class="tab" data-target="monthly" role="tab" aria-selected="false">
       <div class="icon">🗓️</div>
       <div>월별</div>
+    </button>
+    <button class="tab" data-target="review" role="tab">
+      <div class="icon">🧾</div>
+      <div>정리</div>
     </button>
   </nav>
 
@@ -1426,6 +1459,12 @@ function setActiveTab(target){
     el.classList.toggle('active', key === target);
   });
 
+// 정리 탭 눌렀을 때 로딩
+if (target === "review") {
+  loadReview();
+}
+
+  
   // tabs
   tabs.forEach(t=>{
     const isActive = t.dataset.target === target;
@@ -1862,6 +1901,41 @@ function loadRecords(){
   return list;
 }
 
+
+/* 정리 내용 저장용 JS */
+
+    const REVIEW_KEY = "monthly_review_v1";
+
+function currentYM(){
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0");
+}
+
+function loadReview(){
+  const ym = currentYM();
+  const all = JSON.parse(localStorage.getItem(REVIEW_KEY) || "{}");
+  const textarea = document.getElementById("reviewMemo");
+  if(textarea) textarea.value = all[ym] || "";
+}
+
+function saveReview(){
+  const ym = currentYM();
+  const textarea = document.getElementById("reviewMemo");
+  if(!textarea) return;
+
+  const all = JSON.parse(localStorage.getItem(REVIEW_KEY) || "{}");
+  all[ym] = textarea.value.trim();
+  localStorage.setItem(REVIEW_KEY, JSON.stringify(all));
+
+  showToast?.("정리 저장됨 ✓", { duration: 1200 });
+}
+
+document.getElementById("saveReview")?.addEventListener("click", saveReview);
+
+
+
+
+    
     
 /* =========================
    📝 메모 슬라이드
