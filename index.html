@@ -1013,7 +1013,7 @@ body.edit-mode .delete-btn{
   margin-top: 6px;
   font-size: 12px;
   color: var(--muted);
-  letter-spacing: -0.2px;
+  letter-spacing: -0.3px;
   line-height: 1.35;
   word-spacing: -1px;
 }
@@ -2522,11 +2522,11 @@ function renderBudgetRow({ used, budget, metaEl, fillEl }){
   // ✅ 상태 라벨(분리)
   let stateHTML = "";
   if(p >= 100){
-    stateHTML = `<span class="budget-state over">· 🚨 초과</span>`;
+    stateHTML = `<span class="budget-state over">🚨</span>`;
   } else if(p >= 80){
-    stateHTML = `<span class="budget-state warn">· ⚠️ 경고</span>`;
+    stateHTML = `<span class="budget-state warn">⚠️</span>`;
   } else {
-    stateHTML = `<span class="budget-state ok">· ✅ 정상</span>`;
+    stateHTML = `<span class="budget-state ok">✅</span>`;
   }
 
   // ✅ 본문 텍스트
