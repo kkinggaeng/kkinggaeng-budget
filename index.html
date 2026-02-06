@@ -2168,11 +2168,11 @@ function renderDonutSVG(items, total){
     `;
   }
 
- let offset = 0;
+let offset = 0;
 
-const bumpSize = 10;     // 튀어나오는 정도 (6~12 추천)
-const PL = 100;         // pathLength 고정 단위
-const GAP = 1.2;        // 조각 사이 틈(단위: pathLength 기준). 0.8~2 추천
+const bumpSize = 10;  // 6~12
+const PL = 100;       // pathLength 기준 단위
+const GAP = 1.2;      // 0.8~2
 
 const segments = items.map(([name, value], i) => {
   const frac = total ? (value / total) : 0;
@@ -2180,7 +2180,6 @@ const segments = items.map(([name, value], i) => {
   const isTop3 = i < 3;
   const bump = isTop3 ? bumpSize : 0;
 
-  // ✅ pathLength 기준으로 dash 계산 (반지름이 달라도 OK)
   const dash = Math.max(0.2, (frac * PL) - GAP);
   const gap  = PL - dash;
 
@@ -2188,8 +2187,8 @@ const segments = items.map(([name, value], i) => {
     <circle
       cx="${cx}" cy="${cy}" r="${r + bump}"
       fill="none"
-      stroke="${DONUT_COLORS[i] || DONUT_COLORS[DONUT_COLORS.length-1]}"
-      stroke-width="${isTop3 ? stroke + 2 : stroke}"
+      stroke="${DONUT_COLORS[i] || DONUT_COLORS[DONUT_COLORS.length - 1]}"
+      stroke-width="${isTop3 ? (stroke + 2) : stroke}"
       stroke-linecap="butt"
       pathLength="${PL}"
       stroke-dasharray="${dash} ${gap}"
@@ -2204,9 +2203,7 @@ const segments = items.map(([name, value], i) => {
 
   offset += (dash + GAP);
   return seg;
-}).join("");
-
-  
+}).join("");  
   
   // ✅ 도넛 렌더
   const ymDot = currentYM().replace("-", "."); // ✅ 2026.02
