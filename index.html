@@ -1101,14 +1101,22 @@ body.edit-mode .delete-btn{
     .page{ display:none; }
     .page.active{ display:block; }
 
-    #page-review .hint{
+    #page-review .hint1{
   font-size: 12px;
   line-height: 1.45;
   color: rgba(102,102,102,.75);
   letter-spacing: -0.2px;
+      padding-bottom: 15px;
 }
 
- 
+ #page-review .hint2{
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(102,102,102,.75);
+  letter-spacing: -0.2px;
+   padding-top: 15px;
+   padding-bototm: 40px;
+}
 
     
   </style>
@@ -1310,7 +1318,7 @@ body.edit-mode .delete-btn{
   <div class="card">
     <h2>이번 달 정리</h2>
 
-    <p class="hint">
+    <p class="hint1">
       숫자 말고, 느낌을 한 줄로 남겨도 돼.
     </p>
 
@@ -1324,7 +1332,7 @@ body.edit-mode .delete-btn{
       <button class="action-btn" id="saveReview">저장</button>
     </div>
 
-    <p class="hint">
+    <p class="hint2">
       * 이 정리는 이 기기에만 저장돼.
     </p>
   </div>
@@ -1544,6 +1552,12 @@ tabs.forEach(t=>{
   t.addEventListener('click', ()=> setActiveTab(t.dataset.target));
 });
 
+
+    
+// ✅ 정리 저장 버튼
+
+document.getElementById("saveReview")?.addEventListener("click", saveReview);
+    
     
 // ✅ 편집모드 토글
 const toggleEditBtn = document.getElementById("toggleEdit");
@@ -2879,6 +2893,42 @@ document.getElementById("monthlyList")?.addEventListener("click", (e)=>{
 
   openMemoSlide(item);
 });
+
+
+
+
+    /* =========================
+   📝 정리(리뷰) 저장
+   ========================= */
+
+const REVIEW_KEY = "monthly_review_v1";
+
+function currentYM(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+}
+
+function loadReview(){
+  const all = JSON.parse(localStorage.getItem(REVIEW_KEY) || "{}");
+  const ym = currentYM();
+  const textarea = document.getElementById("reviewMemo");
+  if(!textarea) return;
+
+  textarea.value = all[ym] || "";
+}
+
+function saveReview(){
+  const textarea = document.getElementById("reviewMemo");
+  if(!textarea) return;
+
+  const all = JSON.parse(localStorage.getItem(REVIEW_KEY) || "{}");
+  const ym = currentYM();
+
+  all[ym] = textarea.value.trim();
+  localStorage.setItem(REVIEW_KEY, JSON.stringify(all));
+
+  showToast?.("정리 저장됨 ✓", { duration: 1200 });
+}
 
 
     
