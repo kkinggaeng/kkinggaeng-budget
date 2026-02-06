@@ -2254,11 +2254,8 @@ function renderStats(){
 
       if(top1El){
         top1El.innerHTML = `<b>${name}</b> · ${fmtKRW(val)} (${pct}%)`;
-      }
-    };
-  }
 
-  // ✅ TOP5 막대 하이라이트
+          // ✅ TOP5 막대 하이라이트
     if(top5El){
       const rows = top5El.querySelectorAll(".bar-row");
       rows.forEach(r => r.classList.remove("active", "dim"));
@@ -2273,6 +2270,9 @@ function renderStats(){
       const active = top5El.querySelector('.bar-row.active');
       active?.scrollIntoView({ block:"nearest", behavior:"smooth" });
     }
+      }
+    };
+  }
 
   
   
