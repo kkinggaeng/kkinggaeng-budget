@@ -1459,12 +1459,13 @@ console.log("JS START");
     // 탭 전환
     const tabs = document.querySelectorAll('.tab');
     const pages = {
-      home: document.getElementById('page-home'),
-      stats: document.getElementById('page-stats'),
-      budget: document.getElementById('page-budget'), // ✅ 추가
-      monthly: document.getElementById('page-monthly'),
-      review: document.getElementById('page-review'),
-    };
+  home: document.getElementById("page-home"),
+  stats: document.getElementById("page-stats"),
+  budget: document.getElementById("page-budget"),
+  monthly: document.getElementById("page-monthly"),
+  review: document.getElementById("page-review"), // ✅ 반드시
+};
+    
     const fab = document.getElementById('fab');
 
 
@@ -1589,13 +1590,12 @@ const closeBtn = document.getElementById('close');
 const saveBtn = document.getElementById('save');
 
 // 모달 배경 클릭 시 닫기
-modal.addEventListener("click", (e) => {
+modal?.addEventListener("click", (e) => {
   if (e.target === modal) {
-    editingId = null;    // 수정 중이면 초기화
+    editingId = null;
     closeModal();
   }
 });
-
     
 const typeEl = document.getElementById('type');
 const amountEl = document.getElementById('amount');
