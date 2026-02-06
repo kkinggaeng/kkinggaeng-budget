@@ -2191,9 +2191,10 @@ function renderDonutSVG(items, total){
 
 let offset = 0;
 
-const GAP = 2; // 조각 사이 여백(px 기준)
 const segments = items.map(([name, value], i)=>{
-  const frac = value / total;
+  const frac = total ? (value / total) : 0;
+
+  const GAP = 2; // 조각 사이 틈(픽셀) 1~3 추천
   const dash = Math.max(1, (frac * C) - GAP);
   const gap  = C - dash;
 
@@ -2208,12 +2209,17 @@ const segments = items.map(([name, value], i)=>{
       stroke-dashoffset="${-offset}"
       transform="rotate(-90 ${cx} ${cy})"
       class="donut-seg"
+      data-name="${name}"
+      data-val="${value}"
+      style="cursor:pointer;"
     />
   `;
-  offset += dash + GAP;
+
+  offset += (dash + GAP);
   return seg;
 }).join("");
 
+  
   
   // ✅ 도넛 렌더
   const ymDot = currentYM().replace("-", "."); // ✅ 2026.02
