@@ -1068,12 +1068,31 @@ body.edit-mode .delete-btn{
   line-height: 1.45;
   color: rgba(102,102,102,.85);
   opacity: .85;
-  letter-spacing: -0.1px;
+  letter-spacing: -0.2px;
 }
 
     #budgetCard .actions{
   margin-bottom: 3px;
 }
+
+
+    /* ✅ 예산 메타: 본문/상태 분리 */
+.budget-meta-main{
+  display: inline;
+}
+
+.budget-state{
+  display: inline-block;
+  margin-left: 8px;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: -0.2px;
+  white-space: nowrap; /* ✅ 상태문구는 줄바꿈 안 되게 */
+}
+
+.budget-state.warn{ color: rgba(201,74,74,.75); }
+.budget-state.over{ color: rgba(201,74,74,.95); }
+.budget-state.ok{ color: rgba(62,142,126,.85); }
     
 
      /* 탭 페이지 */
@@ -2492,26 +2511,40 @@ function renderBudgetRow({ used, budget, metaEl, fillEl }){
     return;
   }
 
-  const p = pct(used, budget);           // used/budget %
+  const p = Math.round((used / budget) * 100);
   const remain = budget - used;
-  const warnLine = Math.round(budget * 0.8);   // ✅ 80% 마지노선 금액
 
   fillEl.style.width = `${Math.min(100, p)}%`;
-  fillEl.classList.toggle("over", used > budget);
+  fillEl.classList.toggle("over", p >= 100);
 
-  // ✅ 80% 경고 / 100% 초과 메시지
-  if(used > budget){
+  // ✅ 상태 라벨(분리)
+  let stateHTML = "";
+  if(p >= 100){
+    stateHTML = `<span class="budget-state over">🚨 초과</span>`;
+  } else if(p >= 80){
+    stateHTML = `<span class="budget-state warn">⚠️ 경고</span>`;
+  } else {
+    stateHTML = `<span class="budget-state ok">✅ 정상</span>`;
+  }
+
+  // ✅ 본문 텍스트
+  if(p >= 100){
     metaEl.innerHTML =
-      `사용 <b class="amt-expense">${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} · <b class="amt-expense">초과 ${fmtKRW(Math.abs(remain))}</b> (${p}%)`;
-  } else if(used >= warnLine){
-    metaEl.innerHTML =
-      `사용 <b>${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} · 남음 <b class="amt-income">${fmtKRW(remain)}</b> · <b style="color:rgba(201,74,74,.7)">80% 근접</b> (${p}%)`;
+      `<span class="budget-meta-main">
+        사용 <b class="amt-expense">${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} ·
+        <b class="amt-expense">${fmtKRW(Math.abs(remain))} 초과</b> (${p}%)
+      </span>
+      ${stateHTML}`;
   } else {
     metaEl.innerHTML =
-      `사용 <b>${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} · 남음 <b class="amt-income">${fmtKRW(remain)}</b> (${p}%)`;
+      `<span class="budget-meta-main">
+        사용 <b>${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} ·
+        <b class="amt-income">${fmtKRW(remain)}</b> 남음 (${p}%)
+      </span>
+      ${stateHTML}`;
   }
 }
-
+    
 
     
 function renderBudget(){
