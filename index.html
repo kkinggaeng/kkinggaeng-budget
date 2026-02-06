@@ -2541,7 +2541,7 @@ function renderBudgetRow({ used, budget, metaEl, fillEl }){
     metaEl.innerHTML =
       `<span class="budget-meta-main">
         사용 <b>${fmtKRW(used)}</b> / 예산 ${fmtKRW(budget)} ·
-        <b class="amt-income">${fmtKRW(remain)}</b> 남음 (${p}%)
+        <b class="amt-income">${fmtKRW(remain)}</b> 남음(${p}%)
       </span>
       ${stateHTML}`;
   }
