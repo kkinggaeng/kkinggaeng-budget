@@ -1445,6 +1445,9 @@ body.edit-mode .delete-btn{
 
   <script>
 
+
+console.log("JS START");
+    
   window.addEventListener("error", (e) => {
   console.error("💥 JS Error:", e.message, e.filename, e.lineno, e.colno);
   });
@@ -3293,6 +3296,9 @@ window.scrollTo(0, 0);
 document.getElementById("monthSelect")?.addEventListener("change", (e)=>{
   renderMonthly(e.target.value);
 });
+
+
+console.log("JS END");
 
     
   </script>
