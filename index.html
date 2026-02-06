@@ -1552,11 +1552,6 @@ tabs.forEach(t=>{
   t.addEventListener('click', ()=> setActiveTab(t.dataset.target));
 });
 
-
-    
-// ✅ 정리 저장 버튼
-
-document.getElementById("saveReview")?.addEventListener("click", saveReview);
     
     
 // ✅ 편집모드 토글
@@ -3292,6 +3287,15 @@ document.getElementById("goMonthly")?.addEventListener("click", () => {
   window.scrollTo(0, 0);
 });
 
+
+    
+    
+// ✅ 정리 저장 버튼
+
+document.getElementById("saveReview")?.addEventListener("click", saveReview);
+
+
+    
     
 
 // 페이지 처음 열릴 때 1번 실행
