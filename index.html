@@ -2151,6 +2151,9 @@ function renderDonutSVG(items, total){
   const r = 52;
   const stroke = 16;
   const C = 2 * Math.PI * r;
+  const bumpSize = 6;      // 튀어나오는 정도 (4~8 추천)
+  const normalStroke = stroke;
+  const bumpedStroke = stroke; // 굵기는 동일 (굵게 하고 싶으면 +2)
 
   if(!items.length || total <= 0){
     const ymDot = currentYM().replace("-", "."); // ✅ 2026.02
@@ -2167,34 +2170,42 @@ function renderDonutSVG(items, total){
   }
 
   let offset = 0;
-  const segments = items.map(([name, value], i)=>{
-    const frac = value / total;
-    const GAP = 2; // ✅ 조각 사이 틈(픽셀) - 2~5 추천
-    const dash = Math.max(1, (frac * C) - GAP); // 조각 길이에서 GAP만큼 빼기
-    const gap  = C - dash;
-    const isTop3 = top3Names.includes(name);
-    const bump = isTop3 ? 4 : 0; // ← 튀어나오는 정도 (3~6 추천)
 
-    const seg = `
-      <circle
-        cx="${cx}" cy="${cy}" r="${r + bump}"
-        fill="none"
-        stroke="${DONUT_COLORS[i] || DONUT_COLORS[DONUT_COLORS.length-1]}"
-        stroke-width="${stroke}"
-        stroke-linecap="butt"
-        stroke-dasharray="${dash} ${gap}"
-        stroke-dashoffset="${-offset}"
-        transform="rotate(-90 ${cx} ${cy})"
-        class="donut-seg"
-        data-name="${name}"
-        data-val="${value}"
-        style="cursor:pointer;"
-      />
-    `;
-    offset += (dash + GAP);
-    return seg;
-  }).join("");
+const segments = items.map(([name, value], i) => {
+  const frac = value / total;
+  const GAP = 2;
+  const dash = Math.max(1, (frac * C) - GAP);
+  const gap  = C - dash;
 
+  // ✅ Top3만 bump
+  const isTop3 = i < 3;
+  const bump = isTop3 ? bumpSize : 0;
+  const strokeW = isTop3 ? normalStroke : normalStroke;
+
+  const seg = `
+    <circle
+      cx="${cx}"
+      cy="${cy}"
+      r="${r + bump}"
+      fill="none"
+      stroke="${DONUT_COLORS[i] || DONUT_COLORS[DONUT_COLORS.length - 1]}"
+      stroke-width="${strokeW}"
+      stroke-linecap="butt"
+      stroke-dasharray="${dash} ${gap}"
+      stroke-dashoffset="${-offset}"
+      transform="rotate(-90 ${cx} ${cy})"
+      class="donut-seg ${isTop3 ? 'top3' : ''}"
+      data-name="${name}"
+      data-val="${value}"
+      style="cursor:pointer;"
+    />
+  `;
+
+  offset += (dash + GAP);
+  return seg;
+}).join("");
+
+  
   // ✅ 도넛 렌더
   const ymDot = currentYM().replace("-", "."); // ✅ 2026.02
 
