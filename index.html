@@ -1118,6 +1118,11 @@ body.edit-mode .delete-btn{
   margin-top: 15px;  /* 지금보다 아래로 더 내리기 */
 }
 
+    /* 정리 탭: 설명 문구 ↔ 입력 필드 간격 */
+#page-review .review-desc{
+  margin-bottom: 8px;  /* 추천: 6~10px 사이 */
+}
+
     
   </style>
 </head>
@@ -1318,10 +1323,9 @@ body.edit-mode .delete-btn{
   <div class="card">
     <h2>이번 달 정리</h2>
 
-    <p class="hint">
+    <p class="hint review-desc">
       숫자 말고, 느낌을 한 줄로 남겨도 돼.
     </p>
-
     <textarea
       id="reviewMemo"
       placeholder="예: 이번 달은 배달을 줄인 게 제일 잘한 선택이었다."
