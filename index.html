@@ -1508,21 +1508,17 @@ function setActiveTab(target){
 
   
   // ✅ 월별 탭 들어갈 때: 필터 UI 동기화 + 월 렌더
-  if(target === "monthly"){
-    syncMonthlyBarUI(); // ✅ 추가
-    
-    const select = document.getElementById("monthSelect");
-    if(select && select.value){
-      renderMonthly(select.value);
-    }else{
-      renderMonthSelect();
-      const select2 = document.getElementById("monthSelect");
-      if(select2 && select2.value){
-        renderMonthly(select2.value);
-      }
-    }
-  }
+if (target === "monthly") {
+  syncMonthlyBarUI();
 
+  // 셀렉트 항상 먼저 준비
+  renderMonthSelect();
+
+  const s = document.getElementById("monthSelect");
+  renderMonthly(s?.value || currentYM());
+}
+
+  
   if(target === "monthly"){
   syncMonthlyBarUI();
 
@@ -1589,7 +1585,7 @@ const modal = document.getElementById('modal');
 const closeBtn = document.getElementById('close');
 const saveBtn = document.getElementById('save');
 
-/* 모달 배경 클릭 시 닫기 */
+// 모달 배경 클릭 시 닫기
 modal.addEventListener("click", (e) => {
   if (e.target === modal) {
     editingId = null;    // 수정 중이면 초기화
@@ -1912,7 +1908,7 @@ function loadRecords(){
 }
 
 
-/* 정리 내용 저장용 JS */
+// 정리 내용 저장용 JS
 
     const REVIEW_KEY = "monthly_review_v1";
 
