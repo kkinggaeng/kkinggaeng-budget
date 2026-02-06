@@ -1101,6 +1101,13 @@ body.edit-mode .delete-btn{
     .page{ display:none; }
     .page.active{ display:block; }
 
+
+    #reviewCard .hint{
+  font-size: 12px;
+  opacity: .75;
+  margin-top: 14px;
+}
+
     
   </style>
 </head>
@@ -1293,6 +1300,37 @@ body.edit-mode .delete-btn{
 </div>
       
   </section>
+
+
+
+  <!-- REVIEW / 정리 -->
+<section class="page" id="page-review">
+  <div class="card">
+    <h2>이번 달 정리</h2>
+
+    <p class="hint">
+      숫자 말고, 느낌을 한 줄로 남겨도 돼.
+    </p>
+
+    <textarea
+      id="reviewMemo"
+      placeholder="예: 이번 달은 배달을 줄인 게 제일 잘한 선택이었다."
+      rows="4"
+    ></textarea>
+
+    <div class="actions" style="margin-top:12px;">
+      <button class="action-btn" id="saveReview">저장</button>
+    </div>
+
+    <p class="hint">
+      * 이 정리는 이 기기에만 저장돼.
+    </p>
+  </div>
+</section>
+
+  
+
+    
   </main>
 
   <!-- Floating + button (Home only) -->
@@ -1354,34 +1392,6 @@ body.edit-mode .delete-btn{
     </div>
   </div>
 </div>
-
-
-  <!-- REVIEW / 정리 -->
-<section class="page" id="page-review">
-  <div class="card">
-    <h2>이번 달 정리</h2>
-
-    <p class="hint">
-      숫자 말고, 느낌을 한 줄로 남겨도 돼.
-    </p>
-
-    <textarea
-      id="reviewMemo"
-      placeholder="예: 이번 달은 배달을 줄인 게 제일 잘한 선택이었다."
-      rows="4"
-    ></textarea>
-
-    <div class="actions" style="margin-top:12px;">
-      <button class="action-btn" id="saveReview">저장</button>
-    </div>
-
-    <p class="hint" style="margin-top:10px;">
-      * 이 정리는 이 기기에만 저장돼.
-    </p>
-  </div>
-</section>
-
-  
  
   <!-- Bottom tabs -->
   <nav class="tabbar" role="tablist" aria-label="하단 탭">
