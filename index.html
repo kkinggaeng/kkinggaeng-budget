@@ -1514,11 +1514,6 @@ function setActiveTab(target){
     });
   }
 
-// 정리 탭 눌렀을 때 로딩
-if (target === "review") {
-  loadReview();
-}
-
 
   
   // ✅ 월별 탭 들어갈 때: 필터 UI 동기화 + 월 렌더
@@ -3303,8 +3298,7 @@ renderRecent();
 renderTodaySpend();
 renderMonthSelect();
 renderStats();
-// renderBudget();  // ← 일단 주석 처리
-
+renderBudget();
     
 // 페이지 최초 로딩 시 스크롤 위치 초기화
 window.scrollTo(0, 0);
