@@ -1102,40 +1102,8 @@ body.edit-mode .delete-btn{
     .page.active{ display:block; }
 
 
-/* 정리 탭: textarea 아래 버튼 간격 줄이기 */
-#page-review .review-actions{
-  margin-top: 6px; /* 12px의 절반 */
-}
 
-    #page-review .review-actions button{
-  margin-top:0 !important;
-}
-    
-/* 정리 탭: 카드 하부 여백 확보 */
-#page-review{
-  padding-bottom: 30px; /* 요청한 만큼 */
-}
-
-
-
-    /* 정리 탭 전용 힌트: 예산 힌트(.hint)와 분리 */
-#page-review .review-hint{
-  font-size: 12px;
-  line-height: 1.45;
-  color: rgba(102,102,102,.75);
-  letter-spacing: -0.2px;
-  margin-top: 15px;  /* 지금보다 아래로 더 내리기 */
-}
-
-    /* 정리 탭: 설명 문구 ↔ 입력 필드 간격 */
-#page-review .review-desc{
-  margin-bottom: 8px;  /* 추천: 6~10px 사이 */
-}
-
-    #page-review .card{
-      padding-bottom: 48px;
-    }
-
+   
     
   </style>
 </head>
@@ -1331,31 +1299,6 @@ body.edit-mode .delete-btn{
 
 
 
-  <!-- REVIEW / 정리 -->
-<section class="page" id="page-review">
-  <div class="card">
-    <h2>이번 달 정리</h2>
-
-    <p class="hint review-desc">
-      숫자 말고, 느낌을 한 줄로 남겨도 돼.
-    </p>
-    <textarea
-      id="reviewMemo"
-      placeholder="예: 이번 달은 배달을 줄인 게 제일 잘한 선택이었다."
-      rows="4"
-    ></textarea>
-
-    <div class="actions review-actions">
-      <button class="action-btn" id="saveReview">저장</button>
-    </div>
-
-    <p class="hint review-hint">
-      * 이 정리는 이 기기에만 저장돼.
-    </p>
-  </div>
-</section>
-
-  
 
     
   </main>
@@ -1438,10 +1381,6 @@ body.edit-mode .delete-btn{
       <div class="icon">🗓️</div>
       <div>월별</div>
     </button>
-    <button class="tab" data-target="review" role="tab">
-      <div class="icon">✍️</div>
-      <div>정리</div>
-    </button>
   </nav>
 
   <!-- ✅ Toast (script 위로 이동) -->
@@ -1489,7 +1428,6 @@ console.log("JS START");
   stats: document.getElementById("page-stats"),
   budget: document.getElementById("page-budget"),
   monthly: document.getElementById("page-monthly"),
-  review: document.getElementById("page-review"), // ✅ 반드시
 };
     
     const fab = document.getElementById('fab');
@@ -1558,9 +1496,6 @@ if (target === "monthly") {
   }
 
 
-  if (target === "review") {
-  loadReview();
-  }
 
 }
 
@@ -2740,39 +2675,6 @@ function renderBudget(){
 })();
 
 
-  /* =========================
-   📝 정리(리뷰) 저장
-   ========================= */
-
-const REVIEW_KEY = "monthly_review_v1";
-
-function currentYM(){
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
-}
-
-function loadReview(){
-  const all = JSON.parse(localStorage.getItem(REVIEW_KEY) || "{}");
-  const ym = currentYM();
-  const textarea = document.getElementById("reviewMemo");
-  if(!textarea) return;
-
-  textarea.value = all[ym] || "";
-}
-
-function saveReview(){
-  const textarea = document.getElementById("reviewMemo");
-  if(!textarea) return;
-
-  const all = JSON.parse(localStorage.getItem(REVIEW_KEY) || "{}");
-  const ym = currentYM();
-
-  all[ym] = textarea.value.trim();
-  localStorage.setItem(REVIEW_KEY, JSON.stringify(all));
-
-  showToast?.("정리 저장됨 ✓", { duration: 1200 });
-}
-
 
                      
 
@@ -3280,9 +3182,6 @@ document.getElementById("goMonthly")?.addEventListener("click", () => {
 
     
     
-// ✅ 정리 저장 버튼
-
-document.getElementById("saveReview")?.addEventListener("click", saveReview);
 
 
     
