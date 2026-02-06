@@ -1981,6 +1981,41 @@ memoSlide?.addEventListener("click", (e)=>{
   }
 });    
     
+
+
+
+// =========================
+// 📅 홈: 월 진행도 (D-day + 도트)
+// =========================
+
+function daysInMonth(d=new Date()){
+  return new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+}
+
+function renderMonthProgress(){
+  const d = new Date();
+  const totalDays = daysInMonth(d);
+  const today = d.getDate();
+  const remain = totalDays - today;
+
+  const dDayEl = document.getElementById("dDayText");
+  const dotsEl = document.getElementById("monthDots");
+  const pctEl  = document.getElementById("monthProgressPct");
+  if(!dotsEl || !dDayEl) return;
+
+  dDayEl.textContent = `D-${remain}`;
+
+  const pct = Math.round((today / totalDays) * 100);
+  if(pctEl) pctEl.textContent = `${pct}%`;
+
+  let html = "";
+  for(let i=1; i<=totalDays; i++){
+    html += `<span class="month-dot ${i<=today ? "filled" : ""}"></span>`;
+  }
+  dotsEl.innerHTML = html;
+}
+    
+
     
     
 /* =========================
@@ -2271,38 +2306,6 @@ const segments = items.map(([name, value], i)=>{
   `;
 }
 
-
-// =========================
-// 📅 홈: 월 진행도 (D-day + 도트)
-// =========================
-
-function daysInMonth(d=new Date()){
-  return new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
-}
-
-function renderMonthProgress(){
-  const d = new Date();
-  const totalDays = daysInMonth(d);
-  const today = d.getDate();
-  const remain = totalDays - today;
-
-  const dDayEl = document.getElementById("dDayText");
-  const dotsEl = document.getElementById("monthDots");
-  const pctEl  = document.getElementById("monthProgressPct");
-  if(!dotsEl || !dDayEl) return;
-
-  dDayEl.textContent = `D-${remain}`;
-
-  const pct = Math.round((today / totalDays) * 100);
-  if(pctEl) pctEl.textContent = `${pct}%`;
-
-  let html = "";
-  for(let i=1; i<=totalDays; i++){
-    html += `<span class="month-dot ${i<=today ? "filled" : ""}"></span>`;
-  }
-  dotsEl.innerHTML = html;
-}
-    
 
 // ✅ 통계 탭 렌더(이번달 기준)
 function renderStats(){
