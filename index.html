@@ -1124,26 +1124,33 @@ body.edit-mode .delete-btn{
 
     
 /* 홈 - 월 진행 도트 */
-#monthProgressCard { padding-bottom: 18px; }
+#monthProgressCard { 
+  padding-bottom: 12px;   /* 18 → 12로 줄임 */
+  padding-top: 14px;      /* 카드 위 여백도 살짝 */
+}
 
+/* ✅ 도트: 한 줄로 꽉 채우기 (Grid 추천) */
 .month-dots{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  margin-top:12px;
+  display: grid;
+  grid-template-columns: repeat(28, 1fr); /* ✅ 2월=28일이면 28. (JS에서 자동으로 넣는게 베스트) */
+  gap: 4px;                /* 6 → 4 줄임 */
+  margin-top: 8px;         /* 12 → 8 줄임 */
+  align-items: center;
 }
 
 .month-dot{
-  width:10px;
-  height:10px;
-  border-radius:999px;
+  width: 100%;
+  aspect-ratio: 1 / 1;     /* 정사각형 유지 */
+  max-width: 10px;         /* 너무 커지지 않게 */
+  justify-self: center;    /* 칸 중앙 */
+  border-radius: 999px;
   background: rgba(0,0,0,.10); /* 빈 도트 */
 }
 
 .month-dot.filled{
-  background: rgba(107,141,255,.9); /* 채운 도트(포인트) */
+  background: #B7B3C6;     /* ✅ Muted Lavender Gray */
 }
-   
+    
     
   </style>
 </head>
@@ -1177,18 +1184,21 @@ body.edit-mode .delete-btn{
         </div>
       </div>
 
-      <div class="card" id="monthProgressCard">
-        <div class="row" style="align-items:flex-start;">
-          <div style="flex:1;">
-            <div style="font-weight:800; font-size:16px;">이번 달 종료까지 <span id="dDayText">D-</span></div>
-            <div class="hint" style="margin-top:6px;">한 달 진행도</div>
+    <div class="card" id="monthProgressCard">
+      <div class="row" style="align-items:flex-start;">
+        <div style="flex:1;">
+          <div style="font-weight:800; font-size:16px;">한 달 진행도</div>
+          <div class="hint" style="margin-top:4px;">
+            이번 달 종료까지 <span id="dDayText">D-</span>
           </div>
-          <div id="monthProgressPct" class="hint" style="font-weight:800;"></div>
         </div>
 
-        <div id="monthDots" class="month-dots" aria-label="월 진행 표시"></div>
+        <div id="monthProgressPct" class="hint" style="font-weight:800;"></div>
       </div>
 
+      <div id="monthDots" class="month-dots" aria-label="월 진행 표시"></div>
+    </div>
+      
       <div class="card" id="RecentCard">
         <h2>최근 내역</h2>
         <div id="recentList"></div>
