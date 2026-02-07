@@ -25,6 +25,9 @@
 
     --radius:16px;
 
+    --tabbar-h: 66px;          /* 네가 쓰는 탭바 기본 높이 */
+    --fab-gap: 20px;           /* 탭바 위로 띄울 여유 */
+      
     /* NEW: surfaces used by header/tabbar/modal */
     --surface: rgba(255,255,255,.78);
     --surface-strong: rgba(255,255,255,.92);
@@ -148,7 +151,9 @@
   .fab{
     position: fixed;
     right: 18px;
-    bottom: 86px;
+    /* ✅ 탭바 + safe-area + 여유 만큼 위로 */
+    bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + var(--fab-gap));
+
     width: 54px;
     height: 54px;
     border-radius: 18px;
@@ -162,7 +167,7 @@
     padding-bottom: 2px;
 
     cursor: pointer;
-    z-index: 12;
+    z-index: 50;
 
     /* Sage 톤 */
     background: linear-gradient(180deg, #8FBFB0, #7FAE9E);
