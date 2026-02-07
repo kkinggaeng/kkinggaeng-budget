@@ -44,8 +44,7 @@
       color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
-      padding-bottom: calc(66px + env(safe-area-inset-bottom));
-  
+      
       }
 
     /* 상단 헤더 */
@@ -109,9 +108,8 @@
   right: 0;
   bottom: 0;
 
-  /* ✅ 핵심: 안전영역까지 포함한 '전체 높이' */
-  height: calc(66px + env(safe-area-inset-bottom));
-
+  height: var(--tabbar-h);
+     
   /* ✅ 아이콘/텍스트는 위 66px 영역에 깔끔히 */
   padding-bottom: env(safe-area-inset-bottom);
   box-sizing: border-box;
@@ -1113,7 +1111,9 @@ body.edit-mode .delete-btn{
     
 
      /* 탭 페이지 */
-    .page{ display:none; }
+    .page{ display:none; 
+           padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 12px);
+         }
     .page.active{ display:block; }
 
 
