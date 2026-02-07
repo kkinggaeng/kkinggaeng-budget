@@ -44,6 +44,7 @@
       color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
+      padding-bottom: 0;
       
       }
 
@@ -108,14 +109,13 @@
   right: 0;
   bottom: 0;
 
-  height: var(--tabbar-h);
-     
-  /* ✅ 아이콘/텍스트는 위 66px 영역에 깔끔히 */
-  padding-bottom: env(safe-area-inset-bottom);
+  height: calc(66px + env(safe-area-inset-bottom));
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+
   box-sizing: border-box;
      
-  background: rgba(255,255,255,.82);
-  backdrop-filter: blur(14px);
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(16px);
   border-top: 1px solid var(--line);
   display: flex;
   z-index: 10;
@@ -911,9 +911,6 @@ body.edit-mode .delete-btn{
   min-width: 0;
 }
 
-    #page-monthly{
-      padding-bottom: 0;
-  }
 
 
     /* ✅ 카드 안에 들어간 필터바 버전 */
@@ -1112,7 +1109,7 @@ body.edit-mode .delete-btn{
 
      /* 탭 페이지 */
     .page{ display:none; 
-           padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 12px);
+           padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 14px);
          }
     .page.active{ display:block; }
 
