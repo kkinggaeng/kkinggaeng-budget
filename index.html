@@ -1300,6 +1300,25 @@ body.edit-mode .delete-btn{
       * 예산은 이 기기(로컬)에만 저장돼. (서버 업로드 없음)
     </p>
   </div>
+
+
+  <!-- ✅ 데이터 백업/복구 -->
+<div class="card" id="dataToolsCard" style="margin-top:14px;">
+  <h2>데이터</h2>
+
+  <div class="actions" style="gap:10px;">
+    <button class="action-btn" id="exportDataBtn" type="button">백업</button>
+    <button class="action-btn" id="importDataBtn" type="button">복구</button>
+  </div>
+
+  <input id="importFileInput" type="file" accept="application/json" style="display:none;" />
+
+  <p class="hint" style="margin-top:10px;">
+    * 백업 파일(.json)을 저장해두면, 앱이 꼬여도 복구 가능해.
+  </p>
+</div>
+
+  
 </section>
 
 
@@ -1940,6 +1959,123 @@ document.getElementById("saveReview")?.addEventListener("click", saveReview);
 
 
 
+/* =========================
+   💾 데이터 백업/복구
+   ========================= */
+
+// ✅ 백업에 포함할 로컬스토리지 키들
+const BACKUP_KEYS = [
+  "records",      // 지출/수입 기록
+  "budgets_v2"    // 예산(총생활비 포함 버전)
+  // 필요하면 나중에 여기에 키 추가하면 됨
+];
+
+function buildBackupPayload(){
+  const data = {};
+  BACKUP_KEYS.forEach(k=>{
+    data[k] = localStorage.getItem(k); // 문자열 그대로 보관 (없으면 null)
+  });
+
+  return {
+    app: "kkinggaeng-budget",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    data
+  };
+}
+
+function downloadJSON(obj, filename){
+  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+}
+
+function exportData(){
+  const payload = buildBackupPayload();
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  const filename = `가계부_백업_${y}${m}${day}.json`;
+
+  downloadJSON(payload, filename);
+  showToast?.("백업 파일 저장됨 ✓", { duration: 1200 });
+}
+
+function applyImportedData(payload){
+  if(!payload || payload.version !== 1 || !payload.data) {
+    throw new Error("백업 파일 형식이 아니야.");
+  }
+
+  // ✅ 덮어쓰기 적용
+  BACKUP_KEYS.forEach(k=>{
+    const v = payload.data[k];
+    if(v === null || typeof v === "undefined"){
+      localStorage.removeItem(k);
+    }else{
+      localStorage.setItem(k, v);
+    }
+  });
+
+  // ✅ UI 갱신(있는 것만)
+  renderRecent?.();
+  renderTodaySpend?.();
+  renderBudget?.();
+  renderStats?.();
+  rerenderMonthly?.();
+
+  showToast?.("복구 완료 ✓", { duration: 1400 });
+}
+
+function importDataFromFile(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const text = reader.result;
+      const payload = JSON.parse(text);
+
+      const ok = confirm("복구하면 현재 데이터가 덮어써져. 진행할까?");
+      if(!ok) return;
+
+      applyImportedData(payload);
+    }catch(err){
+      console.error(err);
+      alert("복구 실패: 파일이 올바른 백업(.json)인지 확인해줘.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ✅ 버튼 이벤트 연결 (DOM 로딩 이후에 실행되게)
+(function setupBackupUI(){
+  const exportBtn = document.getElementById("exportDataBtn");
+  const importBtn = document.getElementById("importDataBtn");
+  const fileInput = document.getElementById("importFileInput");
+
+  exportBtn?.addEventListener("click", exportData);
+
+  importBtn?.addEventListener("click", ()=>{
+    fileInput?.click();
+  });
+
+  fileInput?.addEventListener("change", (e)=>{
+    const file = e.target.files?.[0];
+    if(!file) return;
+    importDataFromFile(file);
+    // 같은 파일 다시 선택 가능하게 초기화
+    e.target.value = "";
+  });
+})();
+    
+    
 
     
     
