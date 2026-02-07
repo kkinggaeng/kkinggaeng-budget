@@ -41,7 +41,7 @@
       color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
-      padding-bottom: calc(76px + env(safe-area-inset-bottom));
+      padding-bottom: calc(66px + env(safe-area-inset-bottom));
     }
 
     /* 상단 헤더 */
@@ -1160,16 +1160,29 @@ body.edit-mode .delete-btn{
 
 
 
-    #dataToolsCard{
-  padding-bottom: 72px; /* 64~84 사이에서 취향 */
+/* ===== 데이터(백업/복구) 카드 전용 ===== */
+#dataToolsCard h2{
+  margin-bottom: 6px;   /* 제목-버튼 간격 줄이기(핵심) */
 }
 
-    #dataToolsCard .hint{
+#dataToolsCard .actions{
+  margin-top: 0 !important;   /* actions 기본 여백/inline style 영향 줄이기 */
+  margin-bottom: 6px;         /* 버튼 아래도 과하면 줄이기 */
+}
+
+/* 데이터 카드 hint만 예산 hint 느낌으로(작게/살짝 투명) */
+#dataToolsCard .hint{
   font-size: 12px;
   line-height: 1.45;
-  color: rgba(102,102,102,.75);
+  color: rgba(102,102,102,.85);
   opacity: .75;
   letter-spacing: -0.2px;
+  margin-top: 14px !important; /* inline style(10px)보다 살짝 줄이고 싶으면 8px */
+}
+
+/* “카드 하부 흰부분(패딩)” 크게: 지금의 4배 느낌 */
+#dataToolsCard{
+  padding-bottom: 64px; /* 48~80 사이에서 취향. 4배 느낌이면 64 추천 */
 }
 
     
@@ -1334,7 +1347,7 @@ body.edit-mode .delete-btn{
 
   <input id="importFileInput" type="file" accept="application/json" style="display:none;" />
 
-  <p class="hint" style="margin-top:6px;">
+  <p class="hint" style="margin-top:10px;">
     * 백업 파일(.json)을 저장해두면, 앱이 꼬여도 복구 가능해.
   </p>
 </div>
