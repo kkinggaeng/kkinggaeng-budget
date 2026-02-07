@@ -41,6 +41,8 @@
       color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
+      padding-bottom: calc(66px + env(safe-area-inset-bottom));
+  
       }
 
     /* 상단 헤더 */
@@ -115,7 +117,7 @@
   backdrop-filter: blur(14px);
   border-top: 1px solid var(--line);
   display: flex;
-  z-index: 1000;
+  z-index: 10;
   margin: 0 !important;
 }
     
@@ -1106,9 +1108,7 @@ body.edit-mode .delete-btn{
     
 
      /* 탭 페이지 */
-    .page{ display:none; 
-          padding-bottom: calc(66px + env(safe-area-inset-bottom));
-   }
+    .page{ display:none; }
     .page.active{ display:block; }
 
 
