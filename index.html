@@ -41,8 +41,7 @@
       color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
-      padding-bottom: calc(66px + env(safe-area-inset-bottom));
-    }
+      }
 
     /* 상단 헤더 */
   .header{
@@ -106,14 +105,13 @@
   bottom: 0;
 
   /* ✅ iOS safe-area까지 탭바 배경이 내려가도록 */
-  height: calc(66px + env(safe-area-inset-bottom));
-  padding: 8px 10px calc(10px + env(safe-area-inset-bottom));
-
+  height: 66px;
+  padding-bottom: env(safe-area-inset-bottom);
   background: rgba(255,255,255,.82);
   backdrop-filter: blur(14px);
   border-top: 1px solid var(--line);
   display: flex;
-  z-index: 10;
+  z-index: 1000;
   margin: 0 !important;
 }
     
@@ -1104,7 +1102,9 @@ body.edit-mode .delete-btn{
     
 
      /* 탭 페이지 */
-    .page{ display:none; }
+    .page{ display:none; 
+          padding-bottom: calc(66px + env(safe-area-inset-bottom));
+   }
     .page.active{ display:block; }
 
 
