@@ -1162,8 +1162,8 @@ body.edit-mode .delete-btn{
 
   <main class="container">
    
-    <!--  -->
-    <section class="page active" id="page-">
+    <!-- HOME -->
+    <section class="page active" id="page-home">
       <div class="card">
         <h2>홈</h2>
         <p class="hint">
@@ -1417,7 +1417,7 @@ body.edit-mode .delete-btn{
  
   <!-- Bottom tabs -->
   <nav class="tabbar" role="tablist" aria-label="하단 탭">
-    <button class="tab active" data-target="" role="tab" aria-selected="true">
+    <button class="tab active" data-target="home" role="tab" aria-selected="true">
       <div class="icon">🏠</div>
       <div>홈</div>
     </button>
@@ -1476,7 +1476,7 @@ console.log("JS START");
     // 탭 전환
     const tabs = document.querySelectorAll('.tab');
     const pages = {
-  : document.getElementById("page-"),
+  : document.getElementById("page-home"),
   stats: document.getElementById("page-stats"),
   budget: document.getElementById("page-budget"),
   monthly: document.getElementById("page-monthly"),
@@ -1500,7 +1500,7 @@ function setActiveTab(target){
   });
 
   // + 버튼은 홈에서만 보이기
-  fab.classList.toggle('hidden', target !== '');
+  fab.classList.toggle('hidden', target !== 'home');
 
 if(target === "home") renderMonthProgress();
   
