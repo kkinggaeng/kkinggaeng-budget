@@ -1157,6 +1157,21 @@ body.edit-mode .delete-btn{
 .month-dot.filled{
   background: #C6C0B6;     /* ✅ Airy Taupe, Mushroom */
 }
+
+
+
+    #dataToolsCard{
+  padding-bottom: 72px; /* 64~84 사이에서 취향 */
+}
+
+    #dataToolsCard .hint{
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(102,102,102,.75);
+  opacity: .75;
+  letter-spacing: -0.2px;
+}
+
     
     
   </style>
@@ -1312,14 +1327,14 @@ body.edit-mode .delete-btn{
 <div class="card" id="dataToolsCard" style="margin-top:14px;">
   <h2>데이터</h2>
 
-  <div class="actions" style="gap:10px;">
+  <div class="actions" style="gap:10px; margin-top: 4px;">
     <button class="action-btn" id="exportDataBtn" type="button">백업</button>
     <button class="action-btn" id="importDataBtn" type="button">복구</button>
   </div>
 
   <input id="importFileInput" type="file" accept="application/json" style="display:none;" />
 
-  <p class="hint" style="margin-top:10px;">
+  <p class="hint" style="margin-top:6px;">
     * 백업 파일(.json)을 저장해두면, 앱이 꼬여도 복구 가능해.
   </p>
 </div>
