@@ -104,9 +104,13 @@
   right: 0;
   bottom: 0;
 
-  /* ✅ iOS safe-area까지 탭바 배경이 내려가도록 */
-  height: 66px;
+  /* ✅ 핵심: 안전영역까지 포함한 '전체 높이' */
+  height: calc(66px + env(safe-area-inset-bottom));
+
+  /* ✅ 아이콘/텍스트는 위 66px 영역에 깔끔히 */
   padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box;
+     
   background: rgba(255,255,255,.82);
   backdrop-filter: blur(14px);
   border-top: 1px solid var(--line);
