@@ -710,17 +710,18 @@ body.edit-mode .delete-btn{
 }
 
     
+/* ===== 통계(도넛/막대) ===== */
 
-    
+/* ✅ TOP5 막대: 막대 길이 줄이고, 금액은 절대 줄바꿈 안 나게 */
 .bar-row{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:8px;            /* 기존 10px → 조금 조이기 */
   margin:10px 0;
 }
 
 .bar-name{
-  width:72px;
+  width:64px;         /* 기존 72px → 조금 줄여서 오른쪽 공간 확보 */
   font-size:13px;
   color:var(--muted);
   letter-spacing:-0.2px;
@@ -729,8 +730,9 @@ body.edit-mode .delete-btn{
   text-overflow:ellipsis;
 }
 
+/* 🔥 핵심: 막대 길이를 고정폭으로 줄이기 */
 .bar-track{
-  flex:1;
+  flex: 0 0 110px;    /* 기존 flex:1 → 막대가 너무 길어지는 문제 해결 */
   height:10px;
   border-radius:999px;
   background: rgba(0,0,0,.06);
@@ -744,13 +746,22 @@ body.edit-mode .delete-btn{
   filter: saturate(.9) brightness(1.02);
 }
 
+/* 🔥 핵심: 금액 영역을 넓히고, 줄바꿈 금지 */
 .bar-amt{
-  width:90px;
+  flex: 1 1 auto;     /* 남은 공간은 금액이 먹게 */
+  min-width: 132px;   /* 6~7자리 금액 + '원' 안정권 */
   text-align:right;
   font-size:13px;
   color:var(--text);
+  white-space: nowrap;           /* ✅ 두 줄 금지 */
+  font-variant-numeric: tabular-nums;
 }
 
+.bar-amt .hint{
+  white-space: nowrap; /* %도 같이 줄바꿈 금지 */
+}
+
+    
 /* ✅ 통계 탭: 페이드 + 4px 미세 이동 */
 #statsDonutWrap.anim-in,
 #statsTop5.anim-in{
