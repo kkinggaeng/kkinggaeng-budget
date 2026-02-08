@@ -1220,7 +1220,12 @@ body.edit-mode .delete-btn{
 #dataToolsCard .actions{
   margin-top: -10px !important;
 }
-    
+
+
+    /* ✅ 모달 열릴 때 탭바 숨김 (버튼 가림 방지) */
+body.modal-open .tabbar{
+  display:none !important;
+}
     
   </style>
 </head>
@@ -1729,6 +1734,7 @@ renderCategories();
 function openModal(){
   modal.classList.remove('hidden');
   document.body.classList.add('modal-open');
+ 
 }
 
 function closeModal(){
