@@ -212,7 +212,6 @@
     .sheet{
       width:100%;
       height: auto;
-      max-height: 80dvh;
       background:var(--panel);
       border:1px solid var(--line);
       border-radius:20px 20px 0 0;
@@ -225,6 +224,7 @@
 
     .sheet-inner{
       padding: 16px 16px 56px;
+  
     }
 
 
@@ -244,7 +244,7 @@
       display: flex;
       gap: 12px;        /* 지출/수입 gap이 10이면 10~12 */
       margin-top: 12px;
-      padding-bottom: 24px;
+      padding-bottom: calc(28px + env(safe-area-inset-bottom));
     }
     .actions button{
       flex: 1;
