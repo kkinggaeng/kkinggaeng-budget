@@ -109,8 +109,8 @@
   right: 0;
   bottom: 0;
 
-  height: calc(66px + env(safe-area-inset-bottom));
-  padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+  height: 84px    /* iPhone 11 Pro 기준 */;
+  padding-bottom: 20px;   /* 홈 인디게이터 숨 쉴 공간 */
 
   box-sizing: border-box;
      
@@ -149,9 +149,7 @@
   .fab{
     position: fixed;
     right: 18px;
-    /* ✅ 탭바 + safe-area + 여유 만큼 위로 */
-    bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + var(--fab-gap));
-
+    bottom: 100px; 
     width: 54px;
     height: 54px;
     border-radius: 18px;
