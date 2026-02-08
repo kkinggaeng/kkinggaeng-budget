@@ -708,21 +708,26 @@ body.edit-mode .delete-btn{
   font-weight: 800;
   letter-spacing: -0.3px;
 }
+
+    
 /* ===== 통계(도넛/막대) ===== */
 
-/* ✅ TOP5 막대: 통계 탭에만 적용 (다른 막대에 영향 X) */
+/* ===== 통계 TOP5 막대 (카드 밖으로 안 튀게: 반응형 + min-width:0) ===== */
+
 #statsTop5 .bar-row{
   display:flex;
   align-items:center;
   gap:8px;
   margin:10px 0;
+  min-width:0;            /* ✅ 중요: flex 줄어들 수 있게 */
+  overflow:hidden;        /* ✅ 카드 밖으로 튀는 거 방지 */
 }
 
-/* ✅ 카테고리명: 최소폭 확보 + 한 줄 + ... */
+/* 카테고리명: 너무 길면 ... */
 #statsTop5 .bar-name{
-  flex: 0 0 72px;          /* ← 이름 영역 확보 (64~90 조절) */
-  min-width: 72px;
-  max-width: 96px;
+  flex: 0 1 72px;         /* ✅ 고정이 아니라 '줄어들 수 있게' */
+  min-width: 52px;        /* 너무 작아지진 않게 */
+  max-width: 88px;        /* 너무 커져서 다른 걸 먹지 않게 */
   font-size:13px;
   color:var(--muted);
   letter-spacing:-0.2px;
@@ -731,9 +736,11 @@ body.edit-mode .delete-btn{
   text-overflow:ellipsis;
 }
 
-/* ✅ 막대: 너가 원한 고정 길이 유지 */
+/* 막대: 화면에 따라 자동으로 줄어드는 폭 */
 #statsTop5 .bar-track{
-  flex: 0 0 150px;         /* ← 160도 OK, 아이폰에서 숫자 깨지면 140~155 추천 */
+  flex: 1 1 auto;
+  min-width: 90px;                         /* ✅ 여기 줄이면 금액 공간 늘어남 */
+  max-width: clamp(120px, 32vw, 160px);    /* ✅ 핵심: 아이폰에서도 안 넘침 */
   height:10px;
   border-radius:999px;
   background: rgba(0,0,0,.06);
@@ -747,12 +754,12 @@ body.edit-mode .delete-btn{
   filter: saturate(.9) brightness(1.02);
 }
 
-/* ✅ 금액: 절대 줄바꿈 금지 + 숫자 영역 넉넉히 */
+/* 금액: 한 줄 고정 + 너무 길면 내부에서만 살짝 줄이거나 잘림 */
 #statsTop5 .bar-amt{
-  flex: 1 1 auto;
-  min-width: 132px;        /* ← “1,000,000원 33%”급도 버티게 */
+  flex: 0 0 auto;
+  min-width: 110px;       /* ✅ 여기 줄이면 더 잘 맞음 (100~120 조절) */
   text-align:right;
-  font-size:13px;
+  font-size:12.5px;       /* ✅ 아이폰 안정권 */
   letter-spacing:-0.4px;
   color:var(--text);
   white-space:nowrap;
@@ -762,6 +769,7 @@ body.edit-mode .delete-btn{
 #statsTop5 .bar-amt .hint{
   white-space:nowrap;
 }
+
     
 /* ✅ 통계 탭: 페이드 + 4px 미세 이동 */
 #statsDonutWrap.anim-in,
