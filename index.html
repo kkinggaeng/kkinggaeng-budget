@@ -194,17 +194,15 @@
       font-size:12px;
     }
 
-/* ✅ 모달은 화면 전체를 꽉 채우게 */
+/* ✅ 모달은 화면 전체를 꽉 채우게 x */
 .modal{
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
   padding-bottom: 0; /* 중요 */
   margin-bottom: 0;
   inset: 0;
+  
   display: flex;
-  align-items: stretch;
+  align-items: flex-end;
   justify-content: stretch;
   z-index: 9999;
 }
@@ -213,6 +211,8 @@
     
     .sheet{
       width:100%;
+      height: auto;
+      max-height: 80dvh;
       background:var(--panel);
       border:1px solid var(--line);
       border-radius:20px 20px 0 0;
