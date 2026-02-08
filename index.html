@@ -197,7 +197,11 @@
 /* ✅ 모달은 화면 전체를 꽉 채우게 */
 .modal{
   position: fixed;
+  left: 0;
+  right: 0;
   bottom: 0;
+  padding-bottom: 0; /* 중요 */
+  margin-bottom: 0;
   inset: 0;
   display: flex;
   align-items: stretch;
