@@ -25,7 +25,7 @@
 
     --radius:16px;
 
-    --tabbar-h: 84px;          /* 네가 쓰는 탭바 기본 높이 */
+    --tabbar-h: 72px;          /* 네가 쓰는 탭바 기본 높이 */
     --fab-gap: 20px;           /* 탭바 위로 띄울 여유 */
       
     /* NEW: surfaces used by header/tabbar/modal */
@@ -37,7 +37,9 @@
 
     
     *{box-sizing:border-box}
-    html,body{height:100%}
+    html,body{ margin: 0;
+  background: var(--bg);
+              height:100%;}
     body{
       margin:0;
       background:var(--bg);
@@ -103,22 +105,24 @@
     }
 
    
-   .tabbar{
+.tabbar{
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
 
-  height: 84px;
-  padding-bottom: env(safe-area-inset-bottom);
-  box-sizing: border-box;
-     
-  background: rgba(255,255,255,.92);
-  backdrop-filter: blur(16px);
+  height: var(--tabbar-h);
+  background: var(--panel);
   border-top: 1px solid var(--line);
+
   display: flex;
-  z-index: 10;
-  margin: 0 !important;
+  justify-content: space-around;
+  align-items: center;
+
+  z-index: 9999;
+
+  /* iOS 버그 방어 */
+  transform: translateZ(0);
 }
     
     .tab{
@@ -1125,10 +1129,14 @@ body.edit-mode .delete-btn{
     
 
      /* 탭 페이지 */
-    .page{ display:none; 
-  padding-bottom: calc(84px + env(safe-area-inset-bottom));
-}
-    .page.active{ display:block; }
+  .page{
+    display: none;
+    padding-bottom: var(--tabbar-h);
+  }
+
+  .page.active{
+    display: block;
+  }
 
 
 
