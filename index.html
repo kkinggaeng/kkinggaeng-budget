@@ -202,10 +202,20 @@
   inset: 0;
   
   display: flex;
-  background: var(--panel);
+  background: rgba(0,0,0,.08); /* 원하면 dim (싫으면 0으로) */
   align-items: flex-end;
   justify-content: stretch;
   z-index: 9999;
+}
+
+    /* ✅ 키보드로 생긴 아래 공간만 흰색(패널색)으로 채우기 */
+.modal::after{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:0;
+  height: calc(var(--kb) + env(safe-area-inset-bottom));
+  background: var(--panel); /* 흰 배경이면 #fff */
+  pointer-events:none;
 }
 
 
@@ -225,6 +235,9 @@
       max-height: min(85vh, 690px);
       display: flex;
       flex-direction: column;
+
+      transform: translateY(calc(-1 * var(--kb)));
+  will-change: transform;
     
       }
 
@@ -3591,6 +3604,23 @@ document.getElementById("monthSelect")?.addEventListener("change", (e)=>{
 
 
 console.log("JS END");
+
+
+(function setupKeyboardGap(){
+  if(!window.visualViewport) return;
+
+  const set = () => {
+    const vv = window.visualViewport;
+    // 키보드 높이 추정: layout viewport - visual viewport
+    const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+    document.documentElement.style.setProperty('--kb', kb + 'px');
+  };
+
+  window.visualViewport.addEventListener('resize', set);
+  window.visualViewport.addEventListener('scroll', set);
+  window.addEventListener('orientationchange', set);
+  set();
+})();
 
     
   </script>
