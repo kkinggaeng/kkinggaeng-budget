@@ -732,7 +732,7 @@ body.edit-mode .delete-btn{
 
 /* 🔥 핵심: 막대 길이를 고정폭으로 줄이기 */
 .bar-track{
-  flex: 0 0 110px;    /* 기존 flex:1 → 막대가 너무 길어지는 문제 해결 */
+  flex: 0 0 160px;    /* 기존 flex:1 → 막대가 너무 길어지는 문제 해결 */
   height:10px;
   border-radius:999px;
   background: rgba(0,0,0,.06);
@@ -749,9 +749,10 @@ body.edit-mode .delete-btn{
 /* 🔥 핵심: 금액 영역을 넓히고, 줄바꿈 금지 */
 .bar-amt{
   flex: 1 1 auto;     /* 남은 공간은 금액이 먹게 */
-  min-width: 132px;   /* 6~7자리 금액 + '원' 안정권 */
+  min-width: 118px;   /* 6~7자리 금액 + '원' 안정권 */
   text-align:right;
   font-size:13px;
+  letter-spacing: -0.4px;
   color:var(--text);
   white-space: nowrap;           /* ✅ 두 줄 금지 */
   font-variant-numeric: tabular-nums;
