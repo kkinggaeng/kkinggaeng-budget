@@ -218,10 +218,12 @@
     .row{display:flex; flex-direction:column; gap:6px; margin-bottom:10px}
     input,select{
       background:var(--panel2);
+      line-height: 1.25;
       border:1px solid var(--line);
       color:var(--text);
       padding:10px;
       border-radius:10px;
+      appearance: none;
     }
     .actions{
       display: flex;
@@ -1464,11 +1466,7 @@ body.edit-mode .delete-btn{
   <button class="fab" id="fab" type="button"><span>+</span></button>
   <div class="modal hidden" id="modal">
   <div class="sheet">
-    <h3>지출 / 수입 추가</h3>
-
     <div class="row">
-      <label class="label">구분</label>
-
         <div class="segmented" id="typeSegment" role="group" aria-label="지출 수입 선택">
           <button type="button" class="seg-btn active" data-value="expense">지출</button>
           <button type="button" class="seg-btn" data-value="income">수입</button>
