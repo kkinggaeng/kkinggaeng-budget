@@ -197,38 +197,13 @@
 /* ✅ 모달은 화면 전체를 꽉 채우게 */
 .modal{
   position: fixed;
+  bottom: 0;
   inset: 0;
   display: flex;
   align-items: stretch;
   justify-content: stretch;
 }
 
-/* ✅ 모달 카드(컨텐츠)가 화면 높이를 다 쓰고, 내부는 세로 flex */
-.modal .modal-card,
-.modal .modal-content{
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ✅ 모달 본문(입력 폼)은 스크롤, footer는 아래에 고정 */
-.modal .modal-body{
-  flex: 1 1 auto;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* ✅ 저장/닫기(footer)를 바닥에 딱 붙이기 */
-.modal .modal-footer,
-.modal .actions.footer,
-.modal .modal-actions{
-  position: sticky;
-  bottom: 0;
-  background: #fff;
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-  margin: 0;                 /* 🔥 허공 만드는 margin 제거 */
-  border-top: 1px solid rgba(0,0,0,.06);
-}
 
     
     .sheet{
@@ -1541,7 +1516,7 @@ body.modal-open .tabbar{
       </select>
     </div>
 
-    <div class="actions modal-footer">
+    <div class="actions">
       <button class="action-btn" id="save">저장</button>
       <button class="action-btn" id="close">닫기</button>
     </div>
