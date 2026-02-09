@@ -119,7 +119,7 @@
   justify-content: space-around;
   align-items: center;
 
-  z-index: 700;
+  z-index: 100;
 
   /* iOS 버그 방어 */
   transform: translateZ(0);
@@ -166,7 +166,7 @@
     padding-bottom: 2px;
 
     cursor: pointer;
-    z-index: 50;
+    z-index: 150;
 
     /* Sage 톤 */
     background: linear-gradient(180deg, #8FBFB0, #7FAE9E);
@@ -205,7 +205,7 @@
   background: rgba(0,0,0,.08); /* 원하면 dim (싫으면 0으로) */
   align-items: flex-end;
   justify-content: stretch;
-  z-index: 9999;
+  z-index: 9000;
 }
 
     /* ✅ 키보드로 생긴 아래 공간만 흰색(패널색)으로 채우기 */
@@ -238,7 +238,8 @@
 
       transform: translateY(calc(-1 * var(--kb)));
   will-change: transform;
-    
+      
+    z-index: 9100;
       }
 
     .sheet-inner{
@@ -677,7 +678,7 @@ body.edit-mode .delete-btn{
   left: 50%;
   bottom: calc(86px + env(safe-area-inset-bottom)); /* 탭바 위 */
   transform: translateX(-50%);
-  z-index: 999;
+  z-index: 1000;
 
   background: rgba(46,50,58,.92); /* Cloud Ink 느낌 */
   color: #F7F8FA;
